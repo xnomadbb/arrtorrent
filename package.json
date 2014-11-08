@@ -1,0 +1,14 @@
+{
+  "name": "arrtorrent",
+  "version": "0.0.1",
+  "description": "TODO",
+  "license": "WTFPL",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "carrier": "^0.1.14",
+    "express": "^4.9.8",
+    "scgi-stream": "^0.3.1",
+    "ws": "^0.4.32",
+    "xmlrpc": "^1.2.0"
+  }
+}

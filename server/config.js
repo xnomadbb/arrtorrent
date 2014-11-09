@@ -1,8 +1,11 @@
 "use strict"; // jshint node: true
 var config;
 
-// Attempt to find conf files...
-// else:
-config = require('./user-config'); // Settings from app folder (the default settings unless fiddled with)
+//TODO Look in usual location for config folder, default to the following
+config = require(__dirname + '/../config/arrtorrent');
+
+//TODO Create these paths from config folder
+config.ssl_key = __dirname + '/../config/server.key';
+config.ssl_cert = __dirname + '/../config/server.crt';
 
 module.exports = config;

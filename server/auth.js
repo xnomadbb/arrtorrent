@@ -22,7 +22,7 @@ function extractCredentialsFromInfo(info) {
 	var query = url.parse(info.req.url, true).query;
 	return {
 		username: query.username,
-		password: query.password // TODO: Obfuscate during transport to mitigate leakage to casual onlookers
+		password: new Buffer(query.password, 'base64').toString('binary')
 	};
 }
 

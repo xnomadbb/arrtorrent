@@ -1,6 +1,8 @@
-var jsonrpc = require('./json-rpc');
+require('traceur-runtime'); // This seems to have to be *somewhere*, anywhere, to work
+var React = require('react');
+var ArrTorrent = require('./arrtorrent');
 
-var ws = new WebSocket('wss://' + document.location.host + '/arr?username=user&password=' + btoa('hackme'));
-ws.onmessage = function (event) {
-	console.log(event.data);
-};
+React.render(
+	<ArrTorrent />,
+	document.getElementById('arr')
+);

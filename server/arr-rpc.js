@@ -65,7 +65,7 @@ ArrRPC.prototype._prepareParams = function(params) {
 
 // Add event.* methods to receive events from rtorrent
 ArrRPC.prototype._addEventMethods = function() {
-	var eventCmd = '~/arrtorrent/event-piper.js'; //FIXME dynamically create this path
+	var eventCmd = __dirname + '/event-piper.js';
 	var eventTypes = ['closed', 'erased', 'finished', 'hash_done', 'hash_queued', 'hash_removed', 'inserted', 'inserted_new', 'inserted_session', 'opened', 'paused', 'resumed'];
 	var calls = [];
 	for (var i=0; i < eventTypes.length; i++) {

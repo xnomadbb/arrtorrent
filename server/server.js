@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 "use strict"; // jshint node: true
 var http = require('http');
 var express = require('express');
@@ -10,7 +11,7 @@ var ClientSocket = require('./client-socket');
 var EventReader = require('./event-reader');
 
 var app = express();
-app.use(express.static(__dirname + '/public_html'));
+app.use(express.static(__dirname + '/../web_build'));
 
 var server = http.createServer(app);
 server.listen(config.port);

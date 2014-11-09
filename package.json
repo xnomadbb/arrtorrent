@@ -10,5 +10,8 @@
     "scgi-stream": "^0.3.1",
     "ws": "^0.4.32",
     "xmlrpc": "^1.2.0"
+  },
+  "devDependencies": {
+    "browserify": "^6.2.0"
   }
 }

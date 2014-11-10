@@ -1,9 +1,10 @@
-var React = require('react');
-var ArrRpc = require('./rpc');
-var Login = React.createClass({
-	handleSubmit: function() {
-		var username = this.refs.username.getDOMNode().value;
-		var password = this.refs.password.getDOMNode().value;
+const React = require('react');
+const ArrRpc = require('./rpc');
+
+class Login {
+	handleSubmit() {
+		let username = this.refs.username.getDOMNode().value;
+		let password = this.refs.password.getDOMNode().value;
 		try {
 			var rpc = new ArrRpc({username, password});
 		} catch (e) {
@@ -16,8 +17,8 @@ var Login = React.createClass({
 
 		// Pass rpc to parent, login has succeeded
 		this.props.onsuccess(rpc);
-	},
-	render: function() {
+	}
+	render() {
 		return (
 			<div className="login-container">
 				<input type="text" placeholder="Username" ref="username" className="login-username" />
@@ -26,6 +27,6 @@ var Login = React.createClass({
 			</div>
 		);
 	}
-});
+}
 
-module.exports = Login;
+module.exports = React.createClass(Login.prototype);

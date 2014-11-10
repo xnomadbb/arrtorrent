@@ -1,9 +1,10 @@
-var React = require('react');
-var ArrRoot = React.createClass({
-	render: function() {
+const React = require('react');
+
+class ArrRoot {
+	render() {
 		//TODO make ui/etc, obviously
 		return <h1>Login Successful</h1>;
 	}
-});
+}
 
-module.exports = ArrRoot;
+module.exports = React.createClass(ArrRoot.prototype);

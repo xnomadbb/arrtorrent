@@ -1,4 +1,4 @@
-let jsonrpc = require('./json-rpc');
+const jsonrpc = require('./json-rpc');
 
 class ArrRpc {
 	constructor(options) {
@@ -18,9 +18,7 @@ class ArrRpc {
 	connect(wsUrl) {
 		//TODO: Make this useful, hook up to JSON-RPC, etc
 		var ws = new WebSocket(wsUrl);
-		ws.onmessage = function (event) {
-			console.log(event.data);
-		};
+		ws.onmessage = e => console.log(e.data);
 	}
 }
 

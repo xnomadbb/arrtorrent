@@ -1,0 +1,14 @@
+{
+	"browser": true,
+	"node": true,
+	"devel": true,
+	"esnext": true,
+	"funcscope": true,
+
+	"eqeqeq": true,
+	"latedef": "nofunc",
+	"noarg": true,
+	"undef": true,
+	"unused": true,
+	"strict": true
+}

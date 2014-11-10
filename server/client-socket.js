@@ -1,5 +1,5 @@
-"use strict"; // jshint node: true
-var JsonRpcClass = require('../client/json-rpc');
+"use strict";
+var JsonRpcClass = require('../client/json-rpc.jsx');
 
 function ClientSocket(ws, ArrRpc, rtEvents) {
 	console.log('accepted ws connection');
@@ -35,6 +35,5 @@ function ClientSocket(ws, ArrRpc, rtEvents) {
 		rtEvents.removeListener('rtEvent', relayRtEvent);
 	});
 }
-
 
 module.exports = ClientSocket;

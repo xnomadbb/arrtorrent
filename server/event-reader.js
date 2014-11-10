@@ -1,4 +1,4 @@
-"use strict"; // jshint node: true
+"use strict";
 var net = require('net');
 var fs = require('fs');
 var events = require('events');

@@ -1,5 +1,3 @@
-"use strict"; // jshint node: true
-
 // This is mostly JSON-RPC 1.0 compatible: http://json-rpc.org/wiki/specification
 // We give responses to notifications (requests with a null id) rather than silence.
 // We send errors on parse failures/etc rather than closing the connection.
@@ -9,6 +7,7 @@
 function JsonRpc(transport, routeRequest) {
 	// transport: must support onmessage property and send method
 	// routeRequest(jsonRpcRequest, JsonRpc): must handle given request and call JsonRpc.sendResultResponse or JsonRpc.sendErrorResponse
+	"use strict";
 	var self = this;
 	var nextOutgoingRequestId = 1;
 	var pendingRequestCallbacks = {};

@@ -1,5 +1,4 @@
-"use strict"; // jshint node: true
-var config = require('./config');
+"use strict";
 
 function ArrRPC(xmlrpc) {
 	this.xmlrpc = xmlrpc;

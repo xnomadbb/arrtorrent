@@ -1,4 +1,4 @@
-"use strict"; // jshint node: true
+"use strict";
 var config;
 
 //TODO Look in usual location for config folder, default to the following

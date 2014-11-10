@@ -7,7 +7,7 @@ class ArrTorrent {
 		return {
 			isAuthenticated: false,
 			rpc: null
-		}
+		};
 	}
 	onLogin(rpc) {
 		this.setState({

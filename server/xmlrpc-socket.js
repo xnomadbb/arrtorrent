@@ -1,4 +1,4 @@
-"use strict"; // jshint node: true
+"use strict";
 var net          = require('net'),
     scgiStream   = require('scgi-stream'),
     Serializer   = require('xmlrpc/lib/serializer'),
@@ -66,7 +66,7 @@ Client.prototype.methodCall = function methodCall(method, params, callback) {
 	options.stream = net.createConnection(this.sockFile);
 
 	var handler = function(response) {
-		if (response.statusCode == 404) {
+		if (response.statusCode === 404) {
 			callback(new Error('Not Found'));
 		}
 		else {

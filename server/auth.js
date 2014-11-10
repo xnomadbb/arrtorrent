@@ -1,4 +1,4 @@
-"use strict"; // jshint node: true
+"use strict";
 var url = require('url');
 var config = require('./config');
 var bcrypt = require('bcrypt-nodejs');

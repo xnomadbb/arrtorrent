@@ -1,11 +1,13 @@
 "use strict";
+var config = require('./config');
 
 function ArrRPC(xmlrpc) {
 	this.xmlrpc = xmlrpc;
 
 	// Methods to be intercepted
 	this._magicMethods = {
-		'arr.multicall': this._multicall.bind(this)
+		'arr.multicall': this._multicall.bind(this),
+		'arr.get_config': this._getConfig.bind(this)
 	};
 
 	this._addEventMethods();
@@ -48,6 +50,19 @@ ArrRPC.prototype._multicall = function(calls, callback) {
 
 		callback(err, simpleValues);
 	});
+};
+
+ArrRPC.prototype._getConfigBlacklist = ['auth']; // Config keys not to expose
+ArrRPC.prototype._getConfig = function(params, callback) {
+	//FIXME Make a proper clone, wipe blacklisted keys, ensure output is serializable
+	var safeConfig = {};
+	for (var key in config) {
+		if (this._getConfigBlacklist.indexOf(key) === -1) {
+			safeConfig[key] = config[key];
+		}
+	}
+
+	callback(null, safeConfig);
 };
 
 ArrRPC.prototype._prepareParams = function(params) {

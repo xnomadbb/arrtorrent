@@ -1,4 +1,5 @@
 const React = require('react');
+const ToReactClass = require('./to-react-class');
 const Login = require('./login');
 const ArrRoot = require('./arrroot');
 
@@ -6,22 +7,20 @@ class ArrTorrent {
 	getInitialState() {
 		return {
 			isAuthenticated: false,
-			rpc: null
 		};
 	}
-	onLogin(rpc) {
+	onLogin() {
 		this.setState({
 			isAuthenticated: true,
-			rpc: rpc
 		});
 	}
 	render() {
 		if (this.state.isAuthenticated) {
-			return <ArrRoot rpc={this.state.rpc} />;
+			return <ArrRoot />;
 		} else {
 			return <Login onsuccess={this.onLogin} />;
 		}
 	}
 }
 
-module.exports = React.createClass(ArrTorrent.prototype);
+module.exports = ToReactClass(ArrTorrent);

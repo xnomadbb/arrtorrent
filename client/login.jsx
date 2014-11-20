@@ -1,12 +1,14 @@
 const React = require('react');
+const ToReactClass = require('./to-react-class');
 const ArrRpc = require('./rpc');
 
 class Login {
 	handleSubmit() {
 		let username = this.refs.username.getDOMNode().value;
 		let password = this.refs.password.getDOMNode().value;
+		ArrRpc.configure({username, password});
 		try {
-			var rpc = new ArrRpc({username, password});
+			ArrRpc.connect(ArrRpc.createUrl());
 		} catch (e) {
 			//TODO Report failure
 			console.log('arrrpc init:', e);
@@ -15,8 +17,8 @@ class Login {
 
 		//TODO Test RPC to ensure it actually works
 
-		// Pass rpc to parent, login has succeeded
-		this.props.onsuccess(rpc);
+		// Login has succeeded, notify parent
+		this.props.onsuccess();
 	}
 	render() {
 		return (
@@ -29,4 +31,4 @@ class Login {
 	}
 }
 
-module.exports = React.createClass(Login.prototype);
+module.exports = ToReactClass(Login);

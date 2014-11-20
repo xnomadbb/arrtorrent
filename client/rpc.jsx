@@ -1,10 +1,9 @@
 const jsonrpc = require('./json-rpc');
 
 class ArrRpc {
-	constructor(options) {
-		this.username = options.username;
-		this.password = options.password;
-		this.connect(this.createUrl());
+	configure(options) {
+		this.username = options.username || this.username;
+		this.password = options.password || this.password;
 	}
 
 	createUrl() {
@@ -16,10 +15,18 @@ class ArrRpc {
 	}
 
 	connect(wsUrl) {
-		//TODO: Make this useful, hook up to JSON-RPC, etc
-		var ws = new WebSocket(wsUrl);
-		ws.onmessage = e => console.log(e.data);
+		this.ws = new WebSocket(wsUrl);
+		this.jsonrpc = new jsonrpc(this.ws, this.routeRequests);
+		this.sendRequest = this.jsonrpc.sendRequest.bind(this.jsonrpc);
+	}
+
+	routeRequests(message) {
+		// We shouldn't get much here except for rtorrent events
+		console.log(message);
 	}
 }
 
-module.exports = ArrRpc;
+// We're gonna use this everywhere and it's not "stateful" in the same sense
+// that the UI is. Not really interested in passing this around to absolutely
+// fucking everywhere. Yay, singleton!
+module.exports = new ArrRpc();

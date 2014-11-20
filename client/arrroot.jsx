@@ -1,4 +1,5 @@
 const React = require('react');
+const ToReactClass = require('./to-react-class');
 
 class ArrRoot {
 	render() {
@@ -7,4 +8,4 @@ class ArrRoot {
 	}
 }
 
-module.exports = React.createClass(ArrRoot.prototype);
+module.exports = ToReactClass(ArrRoot);

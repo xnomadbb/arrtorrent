@@ -4,6 +4,7 @@
 BIN = ./node_modules/.bin
 RESUNIQ != cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1
 
+# Beware building web in sensitive environments, as sourcemaps include full file full paths.
 web: clean
 	mkdir web_build
 	$(BIN)/browserify client/client.jsx --outfile web_build/bundle.$(RESUNIQ).js --debug --extension=.jsx -t [ reactify --es6 ] -t ./esx6ify
@@ -12,4 +13,7 @@ web: clean
 
 clean:
 	rm -rf web_build
+
+run:
+	node server/server.js
 

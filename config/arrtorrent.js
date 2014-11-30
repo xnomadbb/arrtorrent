@@ -3,7 +3,7 @@ module.exports = {
 
 	// Settings for rtorrent connectivity
 	rtorrent: {
-		socket: '/tmp/rtorrent.sock.fake', // Path to rtorrent.rc's scgi_local
+		socket: '/tmp/rtorrent.sock', // Path to rtorrent.rc's scgi_local
 		eventSocket: '/tmp/arrtorrent_events.sock', // Arbitrary path to event socket, will be created on startup
 	},
 

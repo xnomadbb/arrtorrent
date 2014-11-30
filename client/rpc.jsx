@@ -1,6 +1,7 @@
 const jsonrpc = require('./json-rpc');
+const EventEmitter = require('events').EventEmitter;
 
-class ArrRpc {
+class ArrRpc extends EventEmitter {
 	configure(options) {
 		this.username = options.username || this.username;
 		this.password = options.password || this.password;
@@ -14,10 +15,51 @@ class ArrRpc {
 		return `${scheme}//${host}/arr?username=${user}&password=${pass}`;
 	}
 
+	isAlive() {
+		if (!this.ws || this.ws.readyState === this.ws.CLOSED || this.ws.readyState === this.ws.CLOSING) {
+			return false;
+		}
+		return true;
+	}
+
 	connect(wsUrl) {
+		if (this.isAlive()) {
+			return;
+		}
+
+		// JSON-RPC handles all onmessages
 		this.ws = new WebSocket(wsUrl);
+		this.ws.onopen  = this.wsDidOpen.bind(this);
+		this.ws.onerror = this.wsDidError.bind(this);
+		this.ws.onclose = this.wsDidClose.bind(this);
+	}
+
+	wsDidOpen() {
 		this.jsonrpc = new jsonrpc(this.ws, this.routeRequests);
 		this.sendRequest = this.jsonrpc.sendRequest.bind(this.jsonrpc);
+		this.sendRequest('arr.get_config', [], this.configLoad.bind(this));
+		this.emit('wsOpen');
+	}
+
+	wsDidError() {
+		// Close will always fire immediately after error
+		this.isErrored = true;
+	}
+
+	wsDidClose(event) {
+		if (this.isErrored) {
+			this.isErrored = false;
+			// No use passing around the CloseEvent, everything except wasClean is restricted
+			this.emit('wsError');
+		}
+		this.emit('wsClose');
+	}
+
+	configLoad(message) {
+		if (!message.error) {
+			this.config = message.result;
+			this.emit('configLoaded');
+		}
 	}
 
 	routeRequests(message) {

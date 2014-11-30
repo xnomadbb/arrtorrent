@@ -7,18 +7,15 @@ class Login {
 		let username = this.refs.username.getDOMNode().value;
 		let password = this.refs.password.getDOMNode().value;
 		ArrRpc.configure({username, password});
-		try {
-			ArrRpc.connect(ArrRpc.createUrl());
-		} catch (e) {
-			//TODO Report failure
-			console.log('arrrpc init:', e);
-			return;
-		}
-
-		//TODO Test RPC to ensure it actually works
-
-		// Login has succeeded, notify parent
-		this.props.onsuccess();
+		ArrRpc.once('wsError', this.authDidFail);
+		ArrRpc.connect(ArrRpc.createUrl());
+	}
+	authDidFail() {
+		//TODO Report to user
+		console.log('auth failed');
+	}
+	componentWillUnmount() {
+		ArrRpc.removeListener('wsError', this.authDidFail);
 	}
 	render() {
 		return (

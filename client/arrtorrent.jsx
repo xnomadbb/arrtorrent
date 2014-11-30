@@ -2,6 +2,7 @@ const React = require('react');
 const ToReactClass = require('./to-react-class');
 const Login = require('./login');
 const ArrRoot = require('./arrroot');
+const ArrRpc = require('./rpc');
 
 class ArrTorrent {
 	getInitialState() {
@@ -9,7 +10,14 @@ class ArrTorrent {
 			isAuthenticated: false,
 		};
 	}
-	onLogin() {
+	componentWillMount() {
+		ArrRpc.on('wsOpen', this.rpcDidOpen);
+	}
+	componentWillUnmount() {
+		ArrRpc.removeListener('wsOpen', this.rpcDidOpen);
+	}
+	rpcDidOpen() {
+		// We don't account for credential changes here; once authenticated, we assume it stays that way.
 		this.setState({
 			isAuthenticated: true,
 		});
@@ -18,7 +26,7 @@ class ArrTorrent {
 		if (this.state.isAuthenticated) {
 			return <ArrRoot />;
 		} else {
-			return <Login onsuccess={this.onLogin} />;
+			return <Login />;
 		}
 	}
 }

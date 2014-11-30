@@ -54,12 +54,10 @@ ArrRPC.prototype._multicall = function(calls, callback) {
 
 ArrRPC.prototype._getConfigBlacklist = ['auth']; // Config keys not to expose
 ArrRPC.prototype._getConfig = function(params, callback) {
-	//FIXME Make a proper clone, wipe blacklisted keys, ensure output is serializable
-	var safeConfig = {};
-	for (var key in config) {
-		if (this._getConfigBlacklist.indexOf(key) === -1) {
-			safeConfig[key] = config[key];
-		}
+	//XXX Is config guaranteed to be JSONable?
+	var safeConfig = JSON.parse(JSON.stringify(config)); // Deep clone
+	for (var i=0; i < this._getConfigBlacklist.length; i++) {
+		delete safeConfig[this._getConfigBlacklist[i]];
 	}
 
 	callback(null, safeConfig);

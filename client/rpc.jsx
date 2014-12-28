@@ -35,10 +35,21 @@ class ArrRpc extends EventEmitter {
 	}
 
 	wsDidOpen() {
-		this.jsonrpc = new jsonrpc(this.ws, this.routeRequests);
-		this.sendRequest = this.jsonrpc.sendRequest.bind(this.jsonrpc);
-		this.sendRequest('arr.get_config', [], this.configLoad.bind(this));
-		this.emit('wsOpen');
+		// Wait a bit to ensure success, then process open handler
+		var authTimer;
+		function cancelAuth() {
+			clearTimeout(authTimer);
+		}
+		this.once('wsError', cancelAuth);
+
+		// After wait (if we haven't had an error), proceed and stop listening for errors
+		authTimer = setTimeout(() => {
+			this.jsonrpc = new jsonrpc(this.ws, this.routeRequests);
+			this.sendRequest = this.jsonrpc.sendRequest.bind(this.jsonrpc);
+			this.sendRequest('arr.get_config', [], this.configLoad.bind(this));
+			this.removeListener('wsError', cancelAuth);
+			this.emit('wsOpen');
+		}, 300);
 	}
 
 	wsDidError() {

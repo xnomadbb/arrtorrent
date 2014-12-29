@@ -3,8 +3,13 @@ const ArrRpc = require('./rpc');
 
 class TorrentStore extends EventEmitter {
 	constructor() {
-		this.viewNames = [];
+		this.viewIds = [];
+		this.viewNames = {};
 		this.viewHashes = {};
+
+		this.builtinViewIds = ['main', 'default', 'name', 'active', 'started', 'stopped', 'complete', 'incomplete', 'hashing', 'seeding', 'leeching'];
+		this.blacklistViewIds = ['default', 'name'];
+
 		if (ArrRpc.config) {
 			this.loadInit();
 		} else {
@@ -14,23 +19,40 @@ class TorrentStore extends EventEmitter {
 
 	loadInit() {
 		ArrRpc.sendRequest('view_list', [], response => {
-			this.viewNames = response.result;
-			this.updateViewHashes(this.viewNames);
+			this.viewIds = [];
+			// Determine names from ids
+			for (let i=0; i < response.result.length; i++) {
+				let id = response.result[i];
+				if (this.blacklistViewIds.indexOf(id) === -1) {
+					this.viewIds.push(id);
+					this.viewNames[id] = this.nameFromId(id);
+				}
+			}
+			this.updateViewHashes(this.viewIds);
 		});
 	}
 
 	updateViewHashes(viewList) {
 		let multicalls = viewList.map(v => ['d.multicall', [v, 'd.get_hash=']]);
 		ArrRpc.sendRequest('arr.multicall', multicalls, response => {
+			// Associate infohash list with each view
 			for (let i=0; i < response.result.length; i++) {
-				this.viewHashes[viewList[i]] = response.result[i][0];
+				this.viewHashes[viewList[i]] = response.result[i][0] || [];
 			}
 			console.log(viewList, this.viewHashes);
 			this.emit('view.change');
 		});
 	}
 
+	nameFromId(viewId) {
+		// Just capitalize builtin names
+		if (this.builtinViewIds.indexOf(viewId) !== -1) {
+			return viewId[0].toUpperCase() + viewId.slice(1);
+		}
+
+		//TODO Parse ids for fancy arr-defined views (per-tracker, label, etc)
+		return 'TODO Non-builtin view id specified';
+	}
 }
-window.rpc = ArrRpc;
 
 module.exports = new TorrentStore();

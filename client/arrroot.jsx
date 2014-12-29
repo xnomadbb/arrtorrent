@@ -8,8 +8,8 @@ class ArrRoot {
 			activeView: 'main'
 		};
 	}
-	changeView(viewName) {
-		this.setState({activeView: viewName});
+	changeView(viewId) {
+		this.setState({activeView: viewId});
 	}
 	render() {
 		//TODO make ui/etc, obviously

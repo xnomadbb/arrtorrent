@@ -6,7 +6,9 @@ const SidebarItem = require('./sidebar-item');
 class SidebarViews {
 	getInitialState() {
 		return {
-			views: {}
+			viewIds: [],
+			viewHashes: {},
+			viewNames: {}
 		};
 	}
 	componentWillMount() {
@@ -16,15 +18,26 @@ class SidebarViews {
 		TorrentStore.removeListener('view.change', this.viewDidChange);
 	}
 	viewDidChange() {
-		this.setState({'views': TorrentStore.viewHashes});
+		this.setState({
+			viewIds: TorrentStore.viewIds,
+			viewHashes: TorrentStore.viewHashes,
+			viewNames: TorrentStore.viewNames
+		});
 	}
 	render() {
 		let children = [];
-		let views = this.state.views;
-		for (var name in views) {
-			let count = views[name] ? views[name].length : 0;
-			let isActive = name === this.props.activeView;
-			children.push(<SidebarItem key={name} isActive={isActive} onChange={this.props.onChange} name={name} count={count} />);
+
+		for (let i=0; i < this.state.viewIds.length; i++) {
+			let viewId = this.state.viewIds[i];
+			let isActive = viewId === this.props.activeView;
+
+			let count = this.state.viewHashes[viewId];
+			count = count ? count.length : 0;
+
+			let name = this.state.viewNames[viewId];
+			name = name ? name : 'Unknown View';
+
+			children.push(<SidebarItem key={viewId} viewId={viewId} name={name} isActive={isActive} count={count} onChange={this.props.onChange} />);
 		}
 
 		return <ul>{ children }</ul>;

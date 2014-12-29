@@ -8,7 +8,12 @@ class TorrentStore extends EventEmitter {
 		this.viewHashes = {};
 
 		this.builtinViewIds = ['main', 'default', 'name', 'active', 'started', 'stopped', 'complete', 'incomplete', 'hashing', 'seeding', 'leeching'];
-		this.blacklistViewIds = ['default', 'name'];
+		this.blacklistViewIds = [
+			// Useless?
+			'default', 'name',
+			// rutorrent ratio groups (not sure)?
+			'rat_0', 'rat_1', 'rat_2', 'rat_3', 'rat_4', 'rat_5', 'rat_6', 'rat_7'
+		];
 
 		if (ArrRpc.config) {
 			this.loadInit();
@@ -37,7 +42,7 @@ class TorrentStore extends EventEmitter {
 		ArrRpc.sendRequest('arr.multicall', multicalls, response => {
 			// Associate infohash list with each view
 			for (let i=0; i < response.result.length; i++) {
-				this.viewHashes[viewList[i]] = response.result[i][0] || [];
+				this.viewHashes[viewList[i]] = response.result[i].map(r => r[0]) || [];
 			}
 			console.log(viewList, this.viewHashes);
 			this.emit('view.change');

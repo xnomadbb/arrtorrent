@@ -3,7 +3,7 @@
 # Beware building in sensitive environments, as sourcemaps include full file full paths.
 
 BIN = ./node_modules/.bin
-RESUNIQ != cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1
+RESUNIQ := $(shell cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
 
 dev: clean
 	mkdir web_build

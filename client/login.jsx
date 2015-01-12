@@ -1,5 +1,5 @@
 const React = require('react');
-const ToReactClass = require('./to-react-class');
+const util = require('./util');
 const ArrRpc = require('./rpc');
 
 class Login {
@@ -28,4 +28,4 @@ class Login {
 	}
 }
 
-module.exports = ToReactClass(Login);
+module.exports = util.toReactClass(Login);

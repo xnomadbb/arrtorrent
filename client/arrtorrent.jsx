@@ -1,5 +1,5 @@
 const React = require('react');
-const ToReactClass = require('./to-react-class');
+const util = require('./util');
 const Login = require('./login');
 const ArrRoot = require('./arrroot');
 const ArrRpc = require('./rpc');
@@ -31,4 +31,4 @@ class ArrTorrent {
 	}
 }
 
-module.exports = ToReactClass(ArrTorrent);
+module.exports = util.toReactClass(ArrTorrent);

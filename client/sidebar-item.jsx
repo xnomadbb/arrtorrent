@@ -1,5 +1,5 @@
 const React = require('react/addons');
-const ToReactClass = require('./to-react-class');
+const util = require('./util');
 
 class SidebarItem {
 	handleClick() {
@@ -15,4 +15,4 @@ class SidebarItem {
 	}
 }
 
-module.exports = ToReactClass(SidebarItem);
+module.exports = util.toReactClass(SidebarItem);

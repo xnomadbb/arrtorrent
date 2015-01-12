@@ -1,5 +1,5 @@
 const React = require('react');
-const ToReactClass = require('./to-react-class');
+const util = require('./util');
 const SidebarItem = require('./sidebar-item');
 const ViewStore = require('./stores/view');
 
@@ -57,4 +57,4 @@ class SidebarViews {
 	}
 }
 
-module.exports = ToReactClass(SidebarViews);
+module.exports = util.toReactClass(SidebarViews);

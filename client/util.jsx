@@ -1,3 +1,4 @@
+const React = require('react');
 const url = require('url');
 const sha1 = require('sha1');
 
@@ -176,6 +177,14 @@ const util = {
 
 			return trackerHost;
 		},
+	},
+	toReactClass: es6class => {
+		// Custom tranformation to turn an es6-style class into something React likes:
+		// - displayName is only generated via JSX when a React.createClass is assigned
+		//   directly to an identifier. displayName gives us pretty labels in devtools,
+		//   so that's nice to have.
+		var prototype = Object.assign({displayName: es6class.name}, es6class.prototype);
+		return React.createClass(prototype);
 	},
 };
 module.exports = util;

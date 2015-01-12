@@ -1,5 +1,5 @@
 const React = require('react');
-const ToReactClass = require('./to-react-class');
+const util = require('./util');
 const Sidebar = require('./sidebar');
 
 class ArrRoot {
@@ -22,4 +22,4 @@ class ArrRoot {
 	}
 }
 
-module.exports = ToReactClass(ArrRoot);
+module.exports = util.toReactClass(ArrRoot);

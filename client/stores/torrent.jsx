@@ -1,4 +1,5 @@
 const EventEmitter = require('events').EventEmitter;
+const zlib = require('zlib');
 const ArrRpc = require('../rpc');
 const util = require('../util');
 
@@ -114,24 +115,30 @@ class TorrentStore extends EventEmitter {
 		this.emit('change', changes);
 	}
 
-	//TODO per-user caches, detect stale caches older than some threshold, etc. This is a hack atm
+	//TODO per-user caches, detect stale caches older than some threshold, don't attempt >5MB, etc. This is a hack atm
 	_localStoragePersist() {
-		localStorage.arr_torrent_cache = JSON.stringify(this.torrents);
+		zlib.deflate(JSON.stringify(this.torrents), function(err, result) {
+			localStorage.arr_torrent_cache = result.toString('binary');
+		});
 	}
 	_localStorageRestore() {
 		if (localStorage.arr_torrent_cache) {
-			let newTorrents = JSON.parse(localStorage.arr_torrent_cache);
-			for (let prop in this.torrents) {
-				delete this.torrents[prop];
-			}
-			for (let prop in newTorrents) {
-				this.torrents[prop] = newTorrents[prop];
-			}
-			this.emit('change', {
-				added: this.torrents,
-				removed: {},
-				modified: this.torrents,
-			});
+			let buff = new Buffer(localStorage.arr_torrent_cache, 'binary');
+			zlib.inflate(buff, function(err, result) {
+				let newTorrents = JSON.parse(result.toString());
+				for (let prop in this.torrents) {
+					delete this.torrents[prop];
+				}
+				for (let prop in newTorrents) {
+					this.torrents[prop] = newTorrents[prop];
+				}
+				this.emit('change', {
+					added: this.torrents,
+					removed: {},
+					modified: this.torrents,
+				});
+			}.bind(this));
+
 		}
 	}
 }

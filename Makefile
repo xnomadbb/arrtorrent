@@ -18,6 +18,24 @@ prod: clean
 	cp client/index.html web_build
 	sed -i -e s/@@BUNDLEJS@@/bundle.$(RESUNIQ).js/g web_build/index.html
 
+watch_dev:
+	while true; do \
+		inotifywait -e close_write -r -qq ./client; \
+		sleep 0.2; \
+		make dev; \
+		pkill node; \
+		make run & \
+	done;
+
+watch_prod:
+	while true; do \
+		inotifywait -e close_write -r -qq ./client; \
+		sleep 0.2; \
+		make prod &> /dev/null; \
+		pkill node; \
+		make run & \
+	done;
+
 clean:
 	rm -rf web_build
 

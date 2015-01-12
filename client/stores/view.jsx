@@ -1,6 +1,6 @@
 const EventEmitter = require('events').EventEmitter;
+const url = require('url');
 const sha1 = require('sha1');
-const ArrRpc = require('../rpc');
 const TorrentStore = require('./torrent');
 
 // There are currently views for states, labels, and trackers. rutorrent does searches and feeds as well.
@@ -55,17 +55,7 @@ class ViewStore extends EventEmitter {
 			// rutorrent ratio groups (not sure)?  'rat_0', 'rat_1', 'rat_2', 'rat_3', 'rat_4', 'rat_5', 'rat_6', 'rat_7'
 		};
 
-		if (ArrRpc.config) {
-			this.loadInit();
-		} else {
-			ArrRpc.once('configLoaded', this.loadInit.bind(this));
-		}
-
 		TorrentStore.on('change', this.torrentsDidChange.bind(this));
-	}
-
-	loadInit() {
-		//TODO load trackers
 	}
 
 	torrentsDidChange(changes) {
@@ -123,7 +113,19 @@ class ViewStore extends EventEmitter {
 			this.viewContents.state_error[torrent.hash] = torrent;
 		}
 
-		//TODO Process tracker views
+		// Process tracker views
+		// We group by domain, not announce URL.
+		// Note that viewId below is one of the few ways for us to create code
+		// referencing trackers which don't wish to be named/linked/mentioned.
+		if (torrent.trackers) {
+			for (let i=0; i < torrent.trackers.length; i++) {
+				let urlFields = url.parse(torrent.trackers[i].url);
+				let trackerHost = urlFields.hostname.replace(/^tracker\./i, ''); // Remove any leading "tracker."
+				let viewId = 'tracker_' + sha1(trackerHost); // CSS-safe unique id
+				this._addView(viewId, trackerHost, 'tracker'); // Ensure view exists
+				this.viewContents[viewId][torrent.hash] = torrent;
+			}
+		}
 	}
 
 	// Add view to store if it doesn't yet exist

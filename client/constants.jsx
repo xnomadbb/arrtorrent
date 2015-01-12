@@ -49,6 +49,8 @@ const constants = {
 				'd.get_peers_complete',
 				'd.get_peers_connected',
 				'd.get_peers_not_connected',
+
+				't.multicall=,t.get_url=',
 			],
 			mutable: [ // Normally static but can be changed by infrequent actions
 				// Options, mutable via user input
@@ -131,6 +133,18 @@ const constants = {
 			'd.get_directory_base': 'directory_base',
 			'd.get_loaded_file': 'torrent_file_session',
 			'd.get_tied_to_file': 'torrent_file_watch',
+
+			't.multicall=,t.get_url=': 'trackers',
+		},
+		complexFieldDeserializers: {
+			'trackers': rawResponse => {
+				return rawResponse.map(rawTracker => {
+					return {
+						'url': rawTracker[0],
+						//'url': rawTracker[1],
+					};
+				});
+			},
 		},
 	},
 };

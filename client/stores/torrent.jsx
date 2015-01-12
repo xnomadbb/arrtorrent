@@ -8,6 +8,7 @@ class TorrentStore extends EventEmitter {
 		// Useless?  'default', 'name',
 		// rutorrent ratio groups (not sure)?  'rat_0', 'rat_1', 'rat_2', 'rat_3', 'rat_4', 'rat_5', 'rat_6', 'rat_7'
 		this.torrents = {};
+		window.torrents = this.torrents; //XXX DEBUG
 
 		if (ArrRpc.config) {
 			this.loadInit();
@@ -31,7 +32,11 @@ class TorrentStore extends EventEmitter {
 		// Format multicall
 		let multicall_args = [view];
 		for (let i=0; i < fieldList.length; i++) {
-			multicall_args.push(fieldList[i] + '=');
+			if (fieldList[i].indexOf('=') === -1) {
+				multicall_args.push(fieldList[i] + '=');
+			} else {
+				multicall_args.push(fieldList[i]);
+			}
 		}
 
 		ArrRpc.sendRequest('d.multicall', multicall_args, response => {
@@ -70,8 +75,16 @@ class TorrentStore extends EventEmitter {
 			// Copy each source field over
 			let isModified = false;
 			for (let j=0; j < fieldList.length; j++) {
-				let fieldName = Constants.torrent.commandToField[fieldList[j]];
-				if (dstInfo[fieldName] !== srcInfo[j]) {
+				let command = fieldList[j];
+				let fieldName = Constants.torrent.commandToField[command];
+
+				// Transform results of nested commands
+				if (fieldName in Constants.torrent.complexFieldDeserializers) {
+					srcInfo[j] = Constants.torrent.complexFieldDeserializers[fieldName](srcInfo[j]);
+				}
+
+				// Apply changes if differences exist
+				if (JSON.stringify(dstInfo[fieldName]) != JSON.stringify(srcInfo[j])) {
 					dstInfo[fieldName] = srcInfo[j];
 					isModified = true;
 				}

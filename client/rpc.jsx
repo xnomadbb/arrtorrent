@@ -83,3 +83,4 @@ class ArrRpc extends EventEmitter {
 // that the UI is. Not really interested in passing this around to absolutely
 // fucking everywhere. Yay, singleton!
 module.exports = new ArrRpc();
+window.rpc = module.exports; //XXX DEBUG

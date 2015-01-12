@@ -1,8 +1,7 @@
 const url = require('url');
 const sha1 = require('sha1');
 
-// Constant data tables/lookups used throughout
-const constants = {
+const util = {
 	torrent: {
 		commands: {
 			// Categorized dict of {category: [...d.commands]}
@@ -171,7 +170,7 @@ const constants = {
 			trackerHost = trackerHost.replace(/^tracker\./i, ''); // Remove any leading "tracker."
 
 			let trackerHash = sha1(trackerHost);
-			if (trackerHash === constants.tracker.identifiers.ptp_tracker) {
+			if (trackerHash === util.tracker.identifiers.ptp_tracker) {
 				trackerHost = trackerHost.split('.').splice(1).join('.') // Chop witty subdomain
 			}
 
@@ -179,4 +178,4 @@ const constants = {
 		},
 	},
 };
-module.exports = constants;
+module.exports = util;

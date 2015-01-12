@@ -1,7 +1,7 @@
 const EventEmitter = require('events').EventEmitter;
 const sha1 = require('sha1');
 const TorrentStore = require('./torrent');
-const Constants = require('../constants');
+const util = require('../util');
 
 // There are currently views for states, labels, and trackers. rutorrent does searches and feeds as well.
 class ViewStore extends EventEmitter {
@@ -117,7 +117,7 @@ class ViewStore extends EventEmitter {
 		// We group by domain, not announce URL.
 		if (torrent.trackers) {
 			for (let i=0; i < torrent.trackers.length; i++) {
-				let trackerHost = Constants.tracker.urlToDomain(torrent.trackers[i].url);
+				let trackerHost = util.tracker.urlToDomain(torrent.trackers[i].url);
 				let viewId = 'tracker_' + sha1(trackerHost); // CSS-safe unique id
 				this._addView(viewId, trackerHost, 'tracker'); // Ensure view exists
 				this.viewContents[viewId][torrent.hash] = torrent;

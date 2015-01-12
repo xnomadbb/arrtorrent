@@ -1,6 +1,6 @@
 const EventEmitter = require('events').EventEmitter;
 const ArrRpc = require('../rpc');
-const Constants = require('../constants');
+const util = require('../util');
 
 class TorrentStore extends EventEmitter {
 	constructor() {
@@ -20,7 +20,7 @@ class TorrentStore extends EventEmitter {
 
 	loadInit() {
 		// Load all torrent data
-		let fieldList = [].concat(Constants.torrent.commands.immutable, Constants.torrent.commands.mutable, Constants.torrent.commands.dynamic);
+		let fieldList = [].concat(util.torrent.commands.immutable, util.torrent.commands.mutable, util.torrent.commands.dynamic);
 		this.queryTorrentInfo('main', fieldList);
 
 		// Load from localStorage so we have a functional UI until the initial sync completes
@@ -76,11 +76,11 @@ class TorrentStore extends EventEmitter {
 			let isModified = false;
 			for (let j=0; j < fieldList.length; j++) {
 				let command = fieldList[j];
-				let fieldName = Constants.torrent.commandToField[command];
+				let fieldName = util.torrent.commandToField[command];
 
 				// Transform results of nested commands
-				if (fieldName in Constants.torrent.complexFieldDeserializers) {
-					srcInfo[j] = Constants.torrent.complexFieldDeserializers[fieldName](srcInfo[j]);
+				if (fieldName in util.torrent.complexFieldDeserializers) {
+					srcInfo[j] = util.torrent.complexFieldDeserializers[fieldName](srcInfo[j]);
 				}
 
 				// Apply changes if differences exist

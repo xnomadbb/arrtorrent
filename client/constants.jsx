@@ -1,3 +1,6 @@
+const url = require('url');
+const sha1 = require('sha1');
+
 // Constant data tables/lookups used throughout
 const constants = {
 	torrent: {
@@ -145,6 +148,34 @@ const constants = {
 					};
 				});
 			},
+		},
+	},
+	tracker: {
+		identifiers: {
+			// alias: sha1(domain)
+			'ab': '8ce0ca19cc0791e13565b6944fa1e96d1cdd050e',
+			'bib': '77086adc5e0099593036cc6b3e68a62a1fcc7b36',
+			'btn': '504acdd183fa55c53727dc2e14c6c5ab92b1f908',
+			'btn_tracker_alt': 'd02eea1e0fec17017b36b43e0c38f701c07315f4',
+			'ggn': '3b9fa6054c7fafccf42e9b7c9cc1e229725c7e7b',
+			'ptp': '404021fe4c0f72574716d215c4c1f745e6e92220',
+			'ptp_tracker': '7cfaf434e2285fc21d59a9c6021c1a48ec8cdbe5',
+			'scc': 'ecccbc83fa602195676a05c400af7395c2ad51da',
+			'scc_tracker': '032c4669bddcbe997886eece95b1e1d7b0706e44',
+			'stp': '5f816fa403cdd8fc20ebe15c7c14c2b4d91b08b0',
+			'wcd': '057187c66532a5bf6c8b54ced70666ebce32875f',
+			'wfm': '4c1a70add824a8642e527fd95066666b6304e547', //XXX Is this a common alias?
+		},
+		urlToDomain: inUrl => {
+			let trackerHost = url.parse(inUrl).hostname;
+			trackerHost = trackerHost.replace(/^tracker\./i, ''); // Remove any leading "tracker."
+
+			let trackerHash = sha1(trackerHost);
+			if (trackerHash === constants.tracker.identifiers.ptp_tracker) {
+				trackerHost = trackerHost.split('.').splice(1).join('.') // Chop witty subdomain
+			}
+
+			return trackerHost;
 		},
 	},
 };

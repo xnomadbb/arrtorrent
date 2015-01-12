@@ -1,6 +1,6 @@
 const EventEmitter = require('events').EventEmitter;
-const ArrRpc = require('./rpc');
-const Constants = require('./constants');
+const ArrRpc = require('../rpc');
+const Constants = require('../constants');
 
 class TorrentStore extends EventEmitter {
 	constructor() {
@@ -82,7 +82,7 @@ class TorrentStore extends EventEmitter {
 		if (removeUnlisted) {
 			// Remove anything not in infoList, as infoList contains everything
 			let oldHashes = Object.keys(this.torrents);
-			let newHashes = new Set([for (t of infoList) t[hashIndex]]);
+			let newHashes = new Set(infoList.map(t => { return t[hashIndex]; }));
 			// ES6 has sets but no proper set operations ~.~
 			for (let i=0; i < oldHashes.length; i++) {
 				if (!newHashes.has(oldHashes[i])) {

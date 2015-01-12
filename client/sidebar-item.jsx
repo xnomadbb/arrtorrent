@@ -3,7 +3,7 @@ const ToReactClass = require('./to-react-class');
 
 class SidebarItem {
 	handleClick() {
-		this.props.onChange(this.props.viewId);
+		this.props.onChoose(this.props.viewId);
 	}
 	render() {
 		let classes = React.addons.classSet({

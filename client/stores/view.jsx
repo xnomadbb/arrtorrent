@@ -1,7 +1,7 @@
 const EventEmitter = require('events').EventEmitter;
 const sha1 = require('sha1');
-const ArrRpc = require('./rpc');
-const TorrentStore = require('./store-torrent');
+const ArrRpc = require('../rpc');
+const TorrentStore = require('./torrent');
 
 // There are currently views for states, labels, and trackers. rutorrent does searches and feeds as well.
 class ViewStore extends EventEmitter {
@@ -116,6 +116,7 @@ class ViewStore extends EventEmitter {
 		// Process state views
 		//TODO Check that these are correct and that they correlate 1:1 with builtin view names, they
 		//     need to be exactly equivalent or we risk affecting unwanted torrents on batch operations
+		this.viewContents.state_all[torrent.hash] = torrent;
 		if (torrent.is_complete === '1') {
 			this.viewContents.state_complete[torrent.hash] = torrent;
 		} else {

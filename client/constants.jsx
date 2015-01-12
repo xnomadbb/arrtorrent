@@ -164,7 +164,7 @@ const constants = {
 			'scc_tracker': '032c4669bddcbe997886eece95b1e1d7b0706e44',
 			'stp': '5f816fa403cdd8fc20ebe15c7c14c2b4d91b08b0',
 			'wcd': '057187c66532a5bf6c8b54ced70666ebce32875f',
-			'wfm': '4c1a70add824a8642e527fd95066666b6304e547', //XXX Is this a common alias?
+			'wfl': '4c1a70add824a8642e527fd95066666b6304e547',
 		},
 		urlToDomain: inUrl => {
 			let trackerHost = url.parse(inUrl).hostname;

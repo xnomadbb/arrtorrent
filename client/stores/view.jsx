@@ -96,19 +96,11 @@ class ViewStore extends EventEmitter {
 
 	_addTorrentToViews(torrent) {
 		// Process user-defined label views
-		let anyLabels = false;
-		for (let i=1; i < 6; i++) {
-			let input = torrent['custom' + i];
-			if (input.length === 0) {
-				continue;
-			}
-			let label = 'label_' + sha1(input); // CSS-safe unique id
-			this._addView(label, input, 'label'); // Ensure view exists
-			this.viewContents[label][torrent.hash] = torrent;
-			anyLabels = true;
-		}
-
-		if (!anyLabels) {
+		if (torrent.label.length > 0) {
+			let viewId = 'label_' + sha1(torrent.label); // CSS-safe unique id
+			this._addView(viewId, torrent.label, 'label'); // Ensure view exists
+			this.viewContents[viewId][torrent.hash] = torrent;
+		} else {
 			// Add to no labels
 			this.viewContents.label_none[torrent.hash] = torrent;
 		}

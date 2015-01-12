@@ -113,7 +113,7 @@ const constants = {
 			'd.get_peers_complete': 'peers_complete',
 			'd.get_peers_connected': 'peers_connected',
 			'd.get_peers_not_connected': 'peers_not_connected',
-			'd.get_custom1': 'custom1',
+			'd.get_custom1': 'label', // rutorrent-compatible
 			'd.get_custom2': 'custom2',
 			'd.get_custom3': 'custom3',
 			'd.get_custom4': 'custom4',

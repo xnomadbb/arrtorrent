@@ -14,14 +14,16 @@ class TorrentStore extends EventEmitter {
 		} else {
 			ArrRpc.once('configLoaded', this.loadInit.bind(this));
 		}
+
 	}
 
 	loadInit() {
-		//TODO cache torrents in localstorage so we can start displaying immediately?
-
 		// Load all torrent data
 		let fieldList = [].concat(Constants.torrent.commands.immutable, Constants.torrent.commands.mutable, Constants.torrent.commands.dynamic);
 		this.queryTorrentInfo('main', fieldList);
+
+		// Load from localStorage so we have a functional UI until the initial sync completes
+		this._localStorageRestore();
 	}
 
 	// Fetch given fields of given torrents
@@ -92,8 +94,32 @@ class TorrentStore extends EventEmitter {
 			}
 		}
 
+		// Save results
+		this._localStoragePersist();
+
 		// Tell the world
 		this.emit('change', changes);
+	}
+
+	//TODO per-user caches, detect stale caches older than some threshold, etc. This is a hack atm
+	_localStoragePersist() {
+		localStorage.arr_torrent_cache = JSON.stringify(this.torrents);
+	}
+	_localStorageRestore() {
+		if (localStorage.arr_torrent_cache) {
+			let newTorrents = JSON.parse(localStorage.arr_torrent_cache);
+			for (let prop in this.torrents) {
+				delete this.torrents[prop];
+			}
+			for (let prop in newTorrents) {
+				this.torrents[prop] = newTorrents[prop];
+			}
+			this.emit('change', {
+				added: this.torrents,
+				removed: {},
+				modified: this.torrents,
+			});
+		}
 	}
 }
 

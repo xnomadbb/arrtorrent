@@ -178,5 +178,14 @@ const util = {
 			return trackerHost;
 		},
 	},
+	format: {
+		bytesToHtml: bytes => {
+			bytes = parseInt(bytes, 10) || 0;
+			let exp = Math.floor(Math.log(bytes || 1) / Math.log(1024));
+			// 1023 YiB ought to be enough for anybody
+			let suffix = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'][exp];
+			return (bytes / Math.pow(1024, exp)).toFixed(2) + ' ' + suffix;
+		},
+	},
 };
 module.exports = util;

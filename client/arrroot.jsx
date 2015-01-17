@@ -1,11 +1,12 @@
 const React = require('react');
 const Sidebar = require('./sidebar');
+const TorrentTable = require('./tables/torrent');
 
 module.exports = React.createClass({
 	displayName: 'ArrRoot',
 	getInitialState: function() {
 		return {
-			activeView: 'main'
+			activeView: 'state_all'
 		};
 	},
 	changeView: function(viewId) {
@@ -17,6 +18,7 @@ module.exports = React.createClass({
 			<div>
 				<h1>Login Successful</h1>
 				<Sidebar activeView={this.state.activeView} onChoose={this.changeView} />
+				<TorrentTable activeView={this.state.activeView} />
 			</div>
 		);
 	},

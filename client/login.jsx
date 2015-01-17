@@ -1,23 +1,23 @@
 const React = require('react');
-const util = require('./util');
 const ArrRpc = require('./rpc');
 
-class Login {
-	handleSubmit() {
+module.exports = React.createClass({
+	displayName: 'Login',
+	handleSubmit: function() {
 		let username = this.refs.username.getDOMNode().value;
 		let password = this.refs.password.getDOMNode().value;
 		ArrRpc.configure({username, password});
 		ArrRpc.once('wsError', this.authDidFail);
 		ArrRpc.connect(ArrRpc.createUrl());
-	}
-	authDidFail() {
+	},
+	authDidFail: function() {
 		//TODO Report to user
 		console.log('auth failed');
-	}
-	componentWillUnmount() {
+	},
+	componentWillUnmount: function() {
 		ArrRpc.removeListener('wsError', this.authDidFail);
-	}
-	render() {
+	},
+	render: function() {
 		return (
 			<div className="login-container">
 				<input type="text" placeholder="Username" ref="username" className="login-username" />
@@ -25,7 +25,5 @@ class Login {
 				<button onClick={this.handleSubmit} className="login-submit">Login</button>
 			</div>
 		);
-	}
-}
-
-module.exports = util.toReactClass(Login);
+	},
+});

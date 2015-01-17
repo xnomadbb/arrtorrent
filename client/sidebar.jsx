@@ -1,31 +1,31 @@
 const React = require('react');
-const util = require('./util');
 const SidebarItem = require('./sidebar-item');
 const ViewStore = require('./stores/view');
 
-class SidebarViews {
-	getInitialState() {
+module.exports = React.createClass({
+	displayName: 'SidebarViews',
+	getInitialState: function() {
 		return {
 			viewIds: [],
 			viewHashes: {},
 			viewNames: {}
 		};
-	}
-	componentWillMount() {
+	},
+	componentWillMount: function() {
 		ViewStore.on('change', this.viewDidChange);
-	}
-	componentWillUnmount() {
+	},
+	componentWillUnmount: function() {
 		ViewStore.removeListener('change', this.viewDidChange);
-	}
-	viewDidChange() {
+	},
+	viewDidChange: function() {
 		this.setState({
 			viewGroups: ViewStore.viewGroups,
 			groupNames: ViewStore.groupNames,
 			viewNames: ViewStore.viewNames,
 			viewContents: ViewStore.viewContents,
 		});
-	}
-	render() {
+	},
+	render: function() {
 		let groupNodes = [];
 
 		for (let groupId in this.state.groupNames) {
@@ -54,7 +54,5 @@ class SidebarViews {
 				{groupNodes}
 			</div>
 		);
-	}
-}
-
-module.exports = util.toReactClass(SidebarViews);
+	},
+});

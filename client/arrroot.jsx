@@ -1,25 +1,23 @@
 const React = require('react');
-const util = require('./util');
 const Sidebar = require('./sidebar');
 
-class ArrRoot {
-	getInitialState() {
+module.exports = React.createClass({
+	displayName: 'ArrRoot',
+	getInitialState: function() {
 		return {
 			activeView: 'main'
 		};
-	}
-	changeView(viewId) {
+	},
+	changeView: function(viewId) {
 		console.log('changed view:', viewId);
 		this.setState({activeView: viewId});
-	}
-	render() {
+	},
+	render: function() {
 		return (
 			<div>
 				<h1>Login Successful</h1>
 				<Sidebar activeView={this.state.activeView} onChoose={this.changeView} />
 			</div>
 		);
-	}
-}
-
-module.exports = util.toReactClass(ArrRoot);
+	},
+});

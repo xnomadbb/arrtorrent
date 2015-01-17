@@ -1,34 +1,32 @@
 const React = require('react');
-const util = require('./util');
 const Login = require('./login');
 const ArrRoot = require('./arrroot');
 const ArrRpc = require('./rpc');
 
-class ArrTorrent {
-	getInitialState() {
+module.exports = React.createClass({
+	displayName: 'ArrTorrent',
+	getInitialState: function() {
 		return {
 			isAuthenticated: false,
 		};
-	}
-	componentWillMount() {
+	},
+	componentWillMount: function() {
 		ArrRpc.on('wsOpen', this.rpcDidOpen);
-	}
-	componentWillUnmount() {
+	},
+	componentWillUnmount: function() {
 		ArrRpc.removeListener('wsOpen', this.rpcDidOpen);
-	}
-	rpcDidOpen() {
+	},
+	rpcDidOpen: function() {
 		// We don't account for credential changes here; once authenticated, we assume it stays that way.
 		this.setState({
 			isAuthenticated: true,
 		});
-	}
-	render() {
+	},
+	render: function() {
 		if (this.state.isAuthenticated) {
 			return <ArrRoot />;
 		} else {
 			return <Login />;
 		}
-	}
-}
-
-module.exports = util.toReactClass(ArrTorrent);
+	},
+});

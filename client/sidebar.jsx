@@ -50,7 +50,7 @@ module.exports = React.createClass({
 		}
 
 		return (
-			<div className="sidebar">
+			<div className="ArrSidebar">
 				{groupNodes}
 			</div>
 		);

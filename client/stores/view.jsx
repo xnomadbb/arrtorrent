@@ -9,7 +9,7 @@ let ViewStore = function() {
 	TorrentStore.on('change', this.torrentsDidChange.bind(this));
 	this.viewGroups = {
 		// {group id: [view id]}
-		'state': ['state_all', 'state_downloading', 'state_complete', 'state_active', 'state_inactive', 'state_error'],
+		'state': ['state_all', 'state_seeding', 'state_leeching', 'state_active', 'state_stopped', 'state_hashing', 'state_error'],
 		'label': ['label_none'],
 		'tracker': [],
 	};
@@ -22,10 +22,11 @@ let ViewStore = function() {
 	this.viewNames = {
 		// {view id: view name}
 		'state_all': 'All',
-		'state_downloading': 'Downloading',
-		'state_complete': 'Complete',
+		'state_seeding': 'Seeding',
+		'state_leeching': 'Leeching',
 		'state_active': 'Active',
-		'state_inactive': 'Inactive',
+		'state_stopped': 'Stopped',
+		'state_hashing': 'Hashing',
 		'state_error': 'Error',
 		'label_none': 'None',
 	};
@@ -33,12 +34,24 @@ let ViewStore = function() {
 		// {view id: {hash: torrent}}
 		// These are all references, shouldn't be too bad on memory
 		'state_all': {},
-		'state_downloading': {},
-		'state_complete': {},
+		'state_seeding': {},
+		'state_leeching': {},
 		'state_active': {},
-		'state_inactive': {},
+		'state_stopped': {},
+		'state_hashing': {},
 		'state_error': {},
 		'label_none': {},
+	};
+	this.viewTooltips = {
+		// {view id: help text}
+		'state_all': 'All torrents',
+		'state_seeding': 'Currently seeding (available to upload)',
+		'state_leeching': 'Currently leeching (attempting to download)',
+		'state_active': 'Currently having upload/download traffic',
+		'state_stopped': 'Stopped/finished/paused (closed+incomplete/closed+complete/open but paused)',
+		'state_hashing': 'Currently hashing torrent contenst or checking hash',
+		'state_error': 'Having any error status (not an exclusive state)',
+		'label_none': 'Torrents having no label',
 	};
 	this.viewRtorrentViews = {
 		// {view id: rtorrent view name} when applicable
@@ -46,10 +59,11 @@ let ViewStore = function() {
 		// Generally these are only state views, we'd have to maintain other views manually
 		//TODO check all of these, correlate with _addTorrentToViews below
 		'state_all': 'main',
-		'state_downloading': 'leeching',
-		'state_complete': 'complete',
-		'state_active': 'active',
-		//'state_inactive': does this exist?
+		//'state_seeding': 'seeding',
+		//'state_leeching': 'leeching',
+		//'state_active': does this exist?
+		//'state_stopped': 'stopped',
+		//'state_hashing': 'hashing?',
 		//'state_error': does this exist?
 		//this.builtinViewIds = ['main', 'default', 'name', 'active', 'started', 'stopped', 'complete', 'incomplete', 'hashing', 'seeding', 'leeching'];
 		// Useless?  'default', 'name',
@@ -99,19 +113,29 @@ ViewStore.prototype._addTorrentToViews = function(torrent) {
 	// Process state views
 	//TODO Check that these are correct and that they correlate 1:1 with builtin view names, they
 	//     need to be exactly equivalent or we risk affecting unwanted torrents on batch operations
+	let [status, error] = util.torrent.getStatusFromTorrent(torrent);
 	this.viewContents.state_all[torrent.hash] = torrent;
-	if (torrent.is_complete === '1') {
-		this.viewContents.state_complete[torrent.hash] = torrent;
-	} else {
-		this.viewContents.state_downloading[torrent.hash] = torrent;
-	}
-	if (torrent.is_active === '1') {
+	if (parseInt(torrent.up_rate) || parseInt(torrent.down_rate)) {
 		this.viewContents.state_active[torrent.hash] = torrent;
-	} else {
-		this.viewContents.state_inactive[torrent.hash] = torrent;
 	}
-	if (torrent.is_hashing_failed === '1' || torrent.message !== '') {
+	if (error) {
 		this.viewContents.state_error[torrent.hash] = torrent;
+	}
+	switch(status) {
+		case 'seeding':
+			this.viewContents.state_seeding[torrent.hash] = torrent;
+			break;
+		case 'leeching':
+			this.viewContents.state_leeching[torrent.hash] = torrent;
+			break;
+		case 'stopped':
+		case 'finished':
+		case 'paused':
+			this.viewContents.state_stopped[torrent.hash] = torrent;
+			break;
+		case 'hashing':
+			this.viewContents.state_hashing[torrent.hash] = torrent;
+			break;
 	}
 
 	// Process tracker views
@@ -133,9 +157,35 @@ ViewStore.prototype._addView = function(viewId, viewName, groupId) {
 		return;
 	}
 
-	this.viewGroups[groupId].push(viewId); //TODO order by viewName or ?
+	this.viewGroups[groupId].push(viewId);
 	this.viewNames[viewId] = viewName;
 	this.viewContents[viewId] = {};
+	this._sortViewGroup(groupId);
+};
+
+ViewStore.prototype._sortViewGroup = function(groupId) {
+	// Only handle label and tracker views, built-in states are presorted as desired
+	if (groupId !== 'label' || groupId !== 'tracker') {
+		return;
+	}
+
+	this.viewGroups[groupId].sort(function(a, b) {
+		let aName = this.viewNames[a], bName = this.viewNames[b];
+
+		// No labels is always first
+		if (aName === 'label_none') {
+			return -1;
+		}
+		if (bName === 'label_none') {
+			return 1;
+		}
+
+		// Otherwise sort by name
+		if (aName === bName) {
+			return 0;
+		}
+		return (aName > bName) ? 1 : -1;
+	});
 };
 
 ViewStore.prototype._pruneEmptyViews = function() {

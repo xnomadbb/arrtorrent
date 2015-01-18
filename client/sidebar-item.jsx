@@ -9,7 +9,11 @@ module.exports = React.createClass({
 		let classes = React.addons.classSet({
 			'active': this.props.isActive
 		});
-		return <li className={classes} onClick={this.handleClick}>
+		var attrs = {};
+		if (this.props.tooltip) {
+			attrs.title = this.props.tooltip;
+		}
+		return <li className={classes} onClick={this.handleClick} {...attrs}>
 			{this.props.name} ({this.props.count})
 		</li>;
 	},

@@ -162,9 +162,8 @@ const util = {
 			},
 		},
 		statusNames: {
-			'checking': 'Checking',
-			'queued': 'Queued',
-			'pausing': 'Pausing',
+			'hashing': 'Hashing',
+			'paused': 'Paused',
 			'seeding': 'Seeding',
 			'leeching': 'Leeching',
 			'finished': 'Finished',
@@ -174,18 +173,15 @@ const util = {
 		getStatusFromTorrent(torrent) {
 			let started = torrent.is_open != '0';
 			let paused = (started && (torrent.mystery_state == '0' || torrent.is_active == '0'));
-			let hashing = torrent.is_hashing != '0';
-			let checking = torrent.is_hash_checking != '0';
+			let hashing = (torrent.is_hashing != '0' || torrent.is_hash_checking != '0');
 			//XXX Stolen from rutorrent, why's this message important?
-			let error = (torrent.message.length && torrent.message !== 'Tracker: [Tried all trackers.]');
+			let error = (torrent.message.length && torrent.message !== 'Tracker: [Tried all trackers.]' || torrent.is_hashing_failed === '1');
 			let complete = torrent.size_bytes == torrent.bytes_done; // rut uses different vars here
 
-			if (checking) {
-				return ['checking', error];
-			} else if (hashing) {
-				return ['queued', error];
-			} else if (started && paused) {
-				return ['pausing', error];
+			if (hashing) {
+				return ['hashing', error];
+			} else if (paused) {
+				return ['paused', error];
 			} else if (started && complete) {
 				return ['seeding', error];
 			} else if (started && !complete) {
@@ -195,7 +191,7 @@ const util = {
 			} else if (!complete) {
 				return ['stopped', error];
 			} else {
-				return ['unknown', error];
+				return ['unknown', true];
 				console.error('getStatusFromTorrent: impossible status detected'); //XXX log
 			}
 		},

@@ -15,3 +15,22 @@ body {
 	float: left;
 	margin-left: 3em;
 }
+
+.ProgressBarContainer {
+	height: 1em;
+	width: 100%;
+	min-width: 100px;
+	border: 1px solid #ddd;
+}
+
+.ProgressBarProgress {
+	height: 100%;
+	background: #ddd;
+}
+
+/* width: attr(data-completed) won't work */
+@for $i from 0 through 100 {
+    .ProgressBarProgress[data-completed="#{$i}"] {
+      width: #{percentage($i/100)};
+    }
+}

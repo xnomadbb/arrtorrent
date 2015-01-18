@@ -53,7 +53,10 @@ const util = {
 				'd.get_peers_connected',
 				'd.get_peers_not_connected',
 
-				't.multicall=,t.get_url=',
+				'd.get_custom=addtime',
+
+				'd.get_tracker_focus',
+				't.multicall=,t.get_url=,t.get_scrape_complete=,t.get_scrape_incomplete=',
 			],
 			mutable: [ // Normally static but can be changed by infrequent actions
 				// Options, mutable via user input
@@ -76,6 +79,8 @@ const util = {
 				'd.get_directory_base',
 				'd.get_loaded_file',
 				'd.get_tied_to_file',
+
+				'd.get_custom=seedingtime',
 			],
 		},
 		commandToField: {
@@ -137,14 +142,19 @@ const util = {
 			'd.get_loaded_file': 'torrent_file_session',
 			'd.get_tied_to_file': 'torrent_file_watch',
 
-			't.multicall=,t.get_url=': 'trackers',
+			'd.get_custom=addtime': 'add_date',
+			'd.get_custom=seedingtime': 'finish_date',
+
+			'd.get_tracker_focus': 'tracker_focus',
+			't.multicall=,t.get_url=,t.get_scrape_complete=,t.get_scrape_incomplete=': 'trackers',
 		},
 		complexFieldDeserializers: {
 			'trackers': rawResponse => {
 				return rawResponse.map(rawTracker => {
 					return {
 						'url': rawTracker[0],
-						//'url': rawTracker[1],
+						'scrape_complete': rawTracker[1],
+						'scrape_incomplete': rawTracker[2],
 					};
 				});
 			},
@@ -179,12 +189,56 @@ const util = {
 		},
 	},
 	format: {
-		bytesToHtml: bytes => {
+		bytesToHtml: (bytes, showZero) => {
 			bytes = parseInt(bytes, 10) || 0;
+			if (bytes === 0 && !showZero) {
+				return '';
+			}
 			let exp = Math.floor(Math.log(bytes || 1) / Math.log(1024));
 			// 1023 YiB ought to be enough for anybody
 			let suffix = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'][exp];
 			return (bytes / Math.pow(1024, exp)).toFixed(2) + ' ' + suffix;
+		},
+		bytesPerSecondToHtml: (bytes, showZero) => {
+			bytes = parseInt(bytes, 10) || 0;
+			if (bytes === 0 && !showZero) {
+				return '';
+			}
+			return util.format.bytesToHtml(bytes) + '/s';
+		},
+		secondsToHtml: (seconds, showZero, maxUnits) => {
+			if (!isFinite(seconds) && !isNaN(seconds)) {
+				return String.fromCharCode(8734); // Infinity symbol
+			}
+			seconds = parseInt(seconds, 10) || 0;
+			if (seconds === 0 && !showZero) {
+				return '';
+			}
+			maxUnits = maxUnits || 3;
+
+			let years = Math.floor(seconds / 31536000);
+			seconds %= 31536000;
+
+			// Each unit below is a multiple of the unit below it
+			let months = Math.floor(seconds / 2592000);
+			let days = Math.floor((seconds % 2592000) / 86400);
+			let hours = Math.floor((seconds % 86400) / 3600);
+			let minutes = Math.floor((seconds % 3600) / 60);
+			seconds %= 60;
+
+			let suffixes = ['y', 'M', 'd', 'h', 'm', 's'];
+			let units = [years, months, days, hours, minutes, seconds];
+
+			// Display the first maxUnits worth of non-zero units
+			// TODO output as HTML and style with CSS, too much string manipulation here
+			let output = [];
+			for (let i=0; i < units.length && maxUnits; i++) {
+				if (units[i]) {
+					output.push(units[i] + suffixes[i]);
+					maxUnits--;
+				}
+			}
+			return output.join(' ');
 		},
 	},
 };

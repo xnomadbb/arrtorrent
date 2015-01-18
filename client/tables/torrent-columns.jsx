@@ -1,4 +1,4 @@
-const React = require('react');
+const React = require('react/addons');
 const ProgressBar = require('../progress-bar');
 const util = require('../util');
 
@@ -6,6 +6,7 @@ const util = require('../util');
 
 // key: CSS/HTML/etc-safe internal id of column
 // name: Name to display in column header
+// tooltip: Text to display on column header hover
 // getSortKey: sortKey function(rowData), return a sortable value for the cell
 // renderCellContents: content function(rowData), return the contents of the cell
 
@@ -21,8 +22,21 @@ module.exports = [
 		key: 'status',
 		name: 'Status',
 		tooltip: 'Current status of torrent.',
-		getSortKey: row => { return 'TODO'; }, //TODO
-		renderCellContents: row => { return 'TODO'; },
+		getSortKey: row => {
+			let [status, error] = util.torrent.getStatusFromTorrent(row);
+			return (error ? '1_' : '0_') + status;
+		},
+		renderCellContents: row => {
+			let [status, error] = util.torrent.getStatusFromTorrent(row);
+			let statusName = util.torrent.statusNames[status];
+
+			let classes = {};
+			classes.error = error;
+			classes['status_' + status] = true;
+			classes = React.addons.classSet(classes);
+
+			return (<span className={classes}>{statusName}</span>);
+		},
 	},
 	{
 		key: 'size',

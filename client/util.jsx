@@ -39,6 +39,7 @@ const util = {
 				'd.is_hash_checking',
 				'd.is_multi_file',
 				'd.is_open',
+				'd.get_state',
 
 				'd.get_hashing',
 				'd.get_hashing_failed',
@@ -141,6 +142,7 @@ const util = {
 			'd.get_directory_base': 'directory_base',
 			'd.get_loaded_file': 'torrent_file_session',
 			'd.get_tied_to_file': 'torrent_file_watch',
+			'd.get_state': 'mystery_state',
 
 			'd.get_custom=addtime': 'add_date',
 			'd.get_custom=seedingtime': 'finish_date',
@@ -158,6 +160,44 @@ const util = {
 					};
 				});
 			},
+		},
+		statusNames: {
+			'checking': 'Checking',
+			'queued': 'Queued',
+			'pausing': 'Pausing',
+			'seeding': 'Seeding',
+			'leeching': 'Leeching',
+			'finished': 'Finished',
+			'stopped': 'Stopped',
+			'unknown': 'Unknown',
+		},
+		getStatusFromTorrent(torrent) {
+			let started = torrent.is_open != '0';
+			let paused = (started && (torrent.mystery_state == '0' || torrent.is_active == '0'));
+			let hashing = torrent.is_hashing != '0';
+			let checking = torrent.is_hash_checking != '0';
+			//XXX Stolen from rutorrent, why's this message important?
+			let error = (torrent.message.length && torrent.message !== 'Tracker: [Tried all trackers.]');
+			let complete = torrent.size_bytes == torrent.bytes_done; // rut uses different vars here
+
+			if (checking) {
+				return ['checking', error];
+			} else if (hashing) {
+				return ['queued', error];
+			} else if (started && paused) {
+				return ['pausing', error];
+			} else if (started && complete) {
+				return ['seeding', error];
+			} else if (started && !complete) {
+				return ['leeching', error];
+			} else if (complete) {
+				return ['finished', error];
+			} else if (!complete) {
+				return ['stopped', error];
+			} else {
+				return ['unknown', error];
+				console.error('getStatusFromTorrent: impossible status detected'); //XXX log
+			}
 		},
 	},
 	tracker: {

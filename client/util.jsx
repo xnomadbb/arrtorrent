@@ -230,17 +230,28 @@ const util = {
 			if (bytes === 0 && !showZero) {
 				return '';
 			}
-			let exp = Math.floor(Math.log(bytes || 1) / Math.log(1024));
+
 			// 1023 YiB ought to be enough for anybody
-			let suffix = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'][exp];
-			return (bytes / Math.pow(1024, exp)).toFixed(2) + ' ' + suffix;
+			let expIEC = Math.floor(Math.log(bytes || 1) / Math.log(1024));
+			let suffixIEC = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'][expIEC];
+			let outputIEC = (bytes / Math.pow(1024, expIEC)).toFixed(2) + ' ' + suffixIEC;
+
+			// Don't show SI at all under 1KB
+			let outputSI = '';
+			if (bytes > 999) {
+				let expSI  = Math.floor(Math.log(bytes || 1) / Math.log(1000));
+				let suffixSI  = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][expSI];
+				outputSI  = (bytes / Math.pow(1000, expSI )).toFixed(2) + ' ' + suffixSI;
+			}
+
+			return <span className="byteSize" title={outputSI}>{outputIEC}</span>;
 		},
 		bytesPerSecondToHtml: (bytes, showZero) => {
 			bytes = parseInt(bytes, 10) || 0;
 			if (bytes === 0 && !showZero) {
 				return '';
 			}
-			return util.format.bytesToHtml(bytes) + '/s';
+			return <span>{util.format.bytesToHtml(bytes)}/s</span>
 		},
 		secondsToHtml: (seconds, showZero, maxUnits) => {
 			if (!isFinite(seconds) && !isNaN(seconds)) {
@@ -276,6 +287,28 @@ const util = {
 			}
 			return output.join(' ');
 		},
+		unixTimeToDate: unix => {
+			if (!unix) {
+				return false;
+			}
+			return new Date(parseInt(unix + '000', 10));
+		},
+		dateToHtml: (date, showEmpty) => {
+			if (!date){
+				if (showEmpty) {
+					return 'None';
+				} else {
+					return '';
+				}
+			}
+			//TODO A library with custom output would be ideal
+			let dateString = date.toLocaleDateString();
+			let fullString = date.toLocaleString();
+			return <span className="datetime" title={fullString}>{dateString}</span>;
+		},
+		unixTimeToHtml: (unix, showEmpty) => {
+			return util.format.dateToHtml(util.format.unixTimeToDate(unix), showEmpty);
+		}
 	},
 };
 module.exports = util;

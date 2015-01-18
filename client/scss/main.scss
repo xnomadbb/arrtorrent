@@ -14,7 +14,9 @@ body {
 .ArrTable.TorrentTable {
 	float: left;
 	margin-left: 3em;
+	width: 80%;
 }
+
 
 .ProgressBarContainer {
 	height: 1em;
@@ -33,4 +35,13 @@ body {
     .ProgressBarProgress[data-completed="#{$i}"] {
       width: #{percentage($i/100)};
     }
+}
+
+.TorrentTable {
+	.seeds .total:before, .peers .total:before { content: ' ('; }
+	.seeds .total:after,  .peers .total:after  { content:  ')'; }
+
+	td.priority {
+		text-transform: capitalize;
+	}
 }

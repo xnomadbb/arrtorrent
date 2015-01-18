@@ -41,7 +41,7 @@ module.exports = [
 	{
 		key: 'size',
 		name: 'Size',
-		tooltip: 'Total size of torrent content in IEC (binary) units.',
+		tooltip: 'Total size of torrent content.',
 		getSortKey: row => { return row.size_bytes; },
 		renderCellContents: row => { return util.format.bytesToHtml(row.size_bytes, true); },
 	},
@@ -58,28 +58,28 @@ module.exports = [
 	{
 		key: 'download_size',
 		name: 'Downloaded',
-		tooltip: 'Size of torrent content snatched in IEC (binary) units. Not the total traffic leeched.',
+		tooltip: 'Size of torrent content snatched. Not the total traffic leeched.',
 		getSortKey: row => { return row.bytes_done; },
 		renderCellContents: row => { return util.format.bytesToHtml(row.bytes_done, true); },
 	},
 	{
 		key: 'upload_size',
 		name: 'Uploaded',
-		tooltip: 'Total torrent traffic seeded in IEC (binary) units.',
+		tooltip: 'Total torrent traffic seeded.',
 		getSortKey: row => { return row.bytes_done; },
 		renderCellContents: row => { return util.format.bytesToHtml(row.bytes_done, true); },
 	},
 	{
 		key: 'download_rate',
 		name: 'DL',
-		tooltip: 'Current traffic rate of leeching in IEC (binary) units.',
+		tooltip: 'Current traffic rate of leeching.',
 		getSortKey: row => { return row.down_rate; },
 		renderCellContents: row => { return util.format.bytesPerSecondToHtml(row.down_rate, false); },
 	},
 	{
 		key: 'upload_rate',
 		name: 'UL',
-		tooltip: 'Current traffic rate of seeding in IEC (binary) units.',
+		tooltip: 'Current traffic rate of seeding.',
 		getSortKey: row => { return row.up_rate; },
 		renderCellContents: row => { return util.format.bytesPerSecondToHtml(row.up_rate, false); },
 	},
@@ -88,7 +88,12 @@ module.exports = [
 		name: 'Ratio',
 		tooltip: 'Ratio of traffic uploaded/downloaded.',
 		getSortKey: row => { return row.ratio; },
-		renderCellContents: row => { return row.ratio; }, //TODO formatting
+		renderCellContents: row => {
+			// Arrives as thousandths of ratio because dildos, eg. 2500 = 2.500 ratio, 50 = 0.050 ratio
+			let r = ('0000' + row.ratio).substr(-4); // Grab right 4 digits, zero-padded on left
+			r = r[0] + '.' + r.substr(1); // Add the decimal point
+			return r;
+		},
 	},
 	{
 		key: 'eta',
@@ -117,7 +122,12 @@ module.exports = [
 			for (let i=0; i < row.trackers.length; i++) {
 				totalPeers += (parseInt(row.trackers[i].scrape_incomplete, 10) || 0);
 			}
-			return `${row.peers_accounted} (${totalPeers})`; //TODO html formatting
+			return (
+				<div>
+					<span className="connected">{row.peers_accounted}</span>
+					<span className="total">{totalPeers}</span>
+				</div>
+			);
 		},
 	},
 	{
@@ -130,20 +140,25 @@ module.exports = [
 			for (let i=0; i < row.trackers.length; i++) {
 				totalSeeds += (parseInt(row.trackers[i].scrape_complete, 10) || 0);
 			}
-			return `${row.peers_complete} (${totalSeeds})`; //TODO html formatting
+			return (
+				<div>
+					<span className="connected">{row.peers_complete}</span>
+					<span className="total">{totalSeeds}</span>
+				</div>
+			);
 		},
 	},
 	{
 		key: 'priority',
 		name: 'Priority',
-		tooltip: 'Priority of the torrent.', //FIXME this explanation sucks
+		tooltip: 'Priority of the torrent.',
 		getSortKey: row => { return row.priority; },
 		renderCellContents: row => { return row.priority_string; },
 	},
 	{
 		key: 'remaining',
 		name: 'Remaining',
-		tooltip: 'Size of torrent content remaining to be snatched in IEC (binary) units.',
+		tooltip: 'Size of torrent content remaining to be snatched.',
 		getSortKey: row => { return row.left_bytes; },
 		renderCellContents: row => { return util.format.bytesToHtml(row.left_bytes, true); },
 	},
@@ -152,7 +167,7 @@ module.exports = [
 		name: 'Created On',
 		tooltip: 'Date and time at which torrent file was created.',
 		getSortKey: row => { return row.creation_date; },
-		renderCellContents: row => { return row.creation_date; }, //TODO formatting
+		renderCellContents: row => { return util.format.unixTimeToHtml(row.creation_date, false); },
 	},
 	//TODO Finished and Added backend: https://github.com/Novik/ruTorrent/blob/master/plugins/seedingtime/init.php
 	//     compatibility with rutorrent is very important here, we need to (maybe conditionally)
@@ -162,14 +177,14 @@ module.exports = [
 		name: 'Added On',
 		tooltip: 'Date and time at which torrent was added to rtorrent.',
 		getSortKey: row => { return row.add_date; },
-		renderCellContents: row => { return row.add_date; }, //TODO formatting
+		renderCellContents: row => { return util.format.unixTimeToHtml(row.add_date, false); },
 	},
 	{
 		key: 'finished',
 		name: 'Finished On',
 		tooltip: 'Date and time at which torrent contents finished downloading.',
 		getSortKey: row => { return row.finish_date; },
-		renderCellContents: row => { return row.finish_date; }, //TODO formatting
+		renderCellContents: row => { return util.format.unixTimeToHtml(row.finish_date, false); },
 	},
 	//TODO ratio groups: https://github.com/Novik/ruTorrent/tree/master/plugins/ratio
 	//     This uses actual views, so compat seems reasonable here too

@@ -4,13 +4,13 @@ module.exports = React.createClass({
 	displayName: 'BaseTableBody',
 
 	renderCol: function(columnDescription) {
-		return <col key={columnDescription.key} />;
+		return <col key={columnDescription.key} className={columnDescription.key} />;
 	},
 
 	renderCell: function(columnDescription, rowData) {
 		let contents = columnDescription.renderCellContents(rowData);
 		return (
-			<td key={columnDescription.key}>
+			<td key={columnDescription.key} className={columnDescription.key}>
 				{ contents }
 			</td>
 		);

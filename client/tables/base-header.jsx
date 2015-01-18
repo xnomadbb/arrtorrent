@@ -5,7 +5,7 @@ module.exports = React.createClass({
 
 	renderCell: function(columnDescription) {
 		return (
-			<th key={columnDescription.key} title={columnDescription.tooltip}>{columnDescription.name}</th>
+			<th key={columnDescription.key} className={columnDescription.key} title={columnDescription.tooltip}>{columnDescription.name}</th>
 		);
 	},
 

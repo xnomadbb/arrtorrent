@@ -16,7 +16,6 @@ module.exports = React.createClass({
 	render: function() {
 		return (
 			<div>
-				<h1>Login Successful</h1>
 				<Sidebar activeView={this.state.activeView} onChoose={this.changeView} />
 				<TorrentTable activeView={this.state.activeView} />
 			</div>

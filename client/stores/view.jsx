@@ -49,9 +49,9 @@ let ViewStore = function() {
 		'state_leeching': 'Currently leeching (attempting to download)',
 		'state_active': 'Currently having upload/download traffic',
 		'state_stopped': 'Stopped/finished/paused (closed+incomplete/closed+complete/open but paused)',
-		'state_hashing': 'Currently hashing torrent contenst or checking hash',
+		'state_hashing': 'Currently hashing torrent contents or checking hash',
 		'state_error': 'Having any error status (not an exclusive state)',
-		'label_none': 'Torrents having no label',
+		'label_none': 'Torrents with no label',
 	};
 	this.viewRtorrentViews = {
 		// {view id: rtorrent view name} when applicable

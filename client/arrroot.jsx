@@ -1,9 +1,11 @@
 const React = require('react');
 const Sidebar = require('./sidebar');
-const TorrentTable = require('./tables/torrent');
+const MainPane = require('./pane-main');
+const FlexResizerMixin = require('./mixins/flex-resizer');
 
 module.exports = React.createClass({
 	displayName: 'ArrRoot',
+	mixins: [FlexResizerMixin],
 	getInitialState: function() {
 		return {
 			activeView: 'state_all'
@@ -18,13 +20,9 @@ module.exports = React.createClass({
 			<div className="ArrRoot">
 				<div className="HeaderPane">Header stuff</div>
 				<div className="CenterPane">
-					<Sidebar activeView={this.state.activeView} onChoose={this.changeView} />
-					<div className="FlexResizer"></div>
-					<div className="MainPane">
-						<TorrentTable activeView={this.state.activeView} />
-						<div className="FlexResizer"></div>
-						<div className="DetailsPane">Details stuff</div>
-					</div>
+					<Sidebar ref="flexResizerTarget" flexResizerAxis="x+" activeView={this.state.activeView} onChoose={this.changeView} />
+					<div className="FlexResizer" draggable="true" onDragStart={this.flexResizerHandleDragStart} onDrag={this.flexResizerHandleDrag} onDragEnd={this.flexResizerHandleDragEnd} />
+					<MainPane activeView={this.state.activeView} />
 				</div>
 				<div className="FooterPane">Footer stuff</div>
 			</div>

@@ -13,6 +13,7 @@ Colors/borders/padding/margins/etc do not normally belong here.
 html, body, #arr, .ArrRoot {
 	height: 100%;
 	margin: 0;
+	box-sizing: border-box;
 }
 
 .ProgressBarContainer {
@@ -35,11 +36,13 @@ html, body, #arr, .ArrRoot {
 	// Contains entire app
 	display: flex;
 	flex-direction: column;
+	box-sizing: border-box;
 }
 
 .HeaderPane, .FooterPane {
 	// Extreme top and bottom panes
 	flex: 0 0 32px;
+	box-sizing: border-box;
 }
 
 .CenterPane {
@@ -47,11 +50,13 @@ html, body, #arr, .ArrRoot {
 	flex: 1 1 auto;
 	display: flex;
 	flex-direction: row;
+	box-sizing: border-box;
 }
 
 .Sidebar {
 	// Contains filter/etc links, resizable
 	flex: 0 0 auto;
+	box-sizing: border-box;
 }
 
 .MainPane {
@@ -59,20 +64,24 @@ html, body, #arr, .ArrRoot {
 	flex: 1 1 auto;
 	display: flex;
 	flex-direction: column;
+	box-sizing: border-box;
 }
 
 .ArrTable {
 	// Complex table with resizable headers, eg. torrent table
 	flex: 1 1 auto;
 	overflow: auto;
+	box-sizing: border-box;
 }
 
 .DetailsPane {
 	// Contains details on an individual torrent, sits below torrent table, resizable
 	flex: 0 0 300px;
+	box-sizing: border-box;
 }
 
 .FlexResizer {
 	// Little bar to resize resizable things!
 	flex: 0 0 5px;
+	box-sizing: border-box;
 }

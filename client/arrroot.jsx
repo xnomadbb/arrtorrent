@@ -15,9 +15,18 @@ module.exports = React.createClass({
 	},
 	render: function() {
 		return (
-			<div>
-				<Sidebar activeView={this.state.activeView} onChoose={this.changeView} />
-				<TorrentTable activeView={this.state.activeView} />
+			<div className="ArrRoot">
+				<div className="HeaderPane">Header stuff</div>
+				<div className="CenterPane">
+					<Sidebar activeView={this.state.activeView} onChoose={this.changeView} />
+					<div className="FlexResizer"></div>
+					<div className="MainPane">
+						<TorrentTable activeView={this.state.activeView} />
+						<div className="FlexResizer"></div>
+						<div className="DetailsPane">Details stuff</div>
+					</div>
+				</div>
+				<div className="FooterPane">Footer stuff</div>
 			</div>
 		);
 	},

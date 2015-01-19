@@ -1,0 +1,32 @@
+$offwhite: #ddd;
+
+.ProgressBarContainer {
+	border: 1px solid $offwhite;
+}
+
+.ProgressBarProgress {
+	background: $offwhite;
+}
+
+.ArrTable {
+}
+
+.HeaderPane, .FooterPane {
+	background: $offwhite;
+	flex-basis: 32px; // Height of header and footer bars
+}
+.Sidebar {
+	padding-right: 2rem;
+	.viewList > .active {
+		font-weight: bold;
+	}
+}
+
+.DetailsPane {
+	flex-basis: 300px; // Initial height of details
+}
+
+.FlexResizer {
+	background: $offwhite;
+	flex-basis: 2px; // Thickness of resizers
+}

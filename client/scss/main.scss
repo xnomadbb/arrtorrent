@@ -1,47 +1,8 @@
-body {
-	font-family: sans-serif;
-}
+@import 'normalize';
+@import 'layout';
+@import 'type';
 
-.ArrSidebar {
-	float: left;
-	padding-right: 3rem;
-	border-right: 1px solid #ddd;
-	.viewList > .active {
-		font-weight: bold;
-	}
-}
-
-.ArrTable.TorrentTable {
-	float: left;
-	margin-left: 3em;
-	width: 80%;
-}
-
-
-.ProgressBarContainer {
-	height: 1em;
-	width: 100%;
-	min-width: 100px;
-	border: 1px solid #ddd;
-}
-
-.ProgressBarProgress {
-	height: 100%;
-	background: #ddd;
-}
-
-/* width: attr(data-completed) won't work */
-@for $i from 0 through 100 {
-    .ProgressBarProgress[data-completed="#{$i}"] {
-      width: #{percentage($i/100)};
-    }
-}
-
-.TorrentTable {
-	.seeds .total:before, .peers .total:before { content: ' ('; }
-	.seeds .total:after,  .peers .total:after  { content:  ')'; }
-
-	td.priority {
-		text-transform: capitalize;
-	}
-}
+//TODO figure out how multiple themes will work
+//     - compile the whole thing once per theme?
+//     - compile all the base stuff once and then themes separately?
+@import 'themes/wireframe';

@@ -1,0 +1,13 @@
+/*
+For pretty much global rules on type and text formatting.
+Not for colors/backgrounds/etc.
+*/
+
+.TorrentTable {
+	.seeds .total:before, .peers .total:before { content: ' ('; }
+	.seeds .total:after,  .peers .total:after  { content:  ')'; }
+
+	td.priority {
+		text-transform: capitalize;
+	}
+}

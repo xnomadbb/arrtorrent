@@ -1,0 +1,78 @@
+/*
+Common rules for how to layout things.
+
+Any pixel values defined here are just so there's *something* because
+something is needed. They can and SHOULD be overridden by themes.
+
+Any other units are probably intended to stay where they are unless a
+theme CHOOSES to override them.
+
+Colors/borders/padding/margins/etc do not normally belong here.
+*/
+
+html, body, #arr, .ArrRoot {
+	height: 100%;
+	margin: 0;
+}
+
+.ProgressBarContainer {
+	height: 14px;
+	width: 100%;
+	min-width: 100px;
+	.ProgressBarProgress {
+		height: 100%;
+	}
+}
+
+/* width: attr(data-completed) won't work */
+@for $i from 0 through 100 {
+    .ProgressBarProgress[data-completed="#{$i}"] {
+      width: #{percentage($i/100)};
+    }
+}
+
+.ArrRoot {
+	// Contains entire app
+	display: flex;
+	flex-direction: column;
+}
+
+.HeaderPane, .FooterPane {
+	// Extreme top and bottom panes
+	flex: 0 0 32px;
+}
+
+.CenterPane {
+	// Big horizontal pane sandwiched between header and footer, contains sidebar and main
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: row;
+}
+
+.Sidebar {
+	// Contains filter/etc links, resizable
+	flex: 0 0 auto;
+}
+
+.MainPane {
+	// Contains torrent table and details pane
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.ArrTable {
+	// Complex table with resizable headers, eg. torrent table
+	flex: 1 1 auto;
+	overflow: auto;
+}
+
+.DetailsPane {
+	// Contains details on an individual torrent, sits below torrent table, resizable
+	flex: 0 0 300px;
+}
+
+.FlexResizer {
+	// Little bar to resize resizable things!
+	flex: 0 0 5px;
+}

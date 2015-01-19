@@ -3,10 +3,6 @@ const React = require('react');
 module.exports = React.createClass({
 	displayName: 'BaseTableBody',
 
-	renderCol: function(columnDescription) {
-		return <col key={columnDescription.key} className={columnDescription.key} />;
-	},
-
 	renderCell: function(columnDescription, rowData) {
 		let contents = columnDescription.renderCellContents(rowData);
 		return (
@@ -28,7 +24,6 @@ module.exports = React.createClass({
 	},
 
 	render: function() {
-		let cols = this.props.columnDescriptions.map(this.renderCol);
 		let rows = [];
 		for (let key in this.props.rowData) {
 			rows.push(this.renderRow(key, this.props.rowData[key]));
@@ -39,9 +34,6 @@ module.exports = React.createClass({
 				<tbody>
 					{ rows }
 				</tbody>
-				<colgroup>
-					{ cols }
-				</colgroup>
 			</table>
 		)
 	},

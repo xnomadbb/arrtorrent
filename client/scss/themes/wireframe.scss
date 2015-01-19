@@ -50,13 +50,30 @@ General details
 	background: $offwhite;
 }
 
-.byteSize {
-	@extend %mono;
+.byteSize, .ratioSize {
+	.sizeWhole, .sizeFraction, .sizeUnit {
+		@extend %mono;
+	}
+}
+
+.byteSize .sizeUnit[data-exponent="0"]:before {
+	// Add extra space before unit so that B aligns with KB/MB/GB/etc
+	content: ' ';
 }
 
 /*
-Torrent table details
+Table details
 */
+
+.BaseTable {
+	th {
+		font-weight: 400;
+	}
+	td, th {
+		box-sizing: border-box;
+		padding: 0 5px;
+	}
+}
 
 .TorrentTable {
 	// Initial widths need to be set so things look okay initially.
@@ -81,14 +98,4 @@ Torrent table details
 	.added         { width: 100px; text-align: right; }
 	.finished      { width: 100px; text-align: right; }
 	.tracker       { width: 120px; text-align:  left; }
-
-	// Data cells to set mono, not set above because the headers look bad in mono
-	td.ratio { @extend %mono; }
-	td.peers { @extend %mono; }
-	td.seeds { @extend %mono; }
-
-	td, th {
-		box-sizing: border-box;
-		padding: 0 5px;
-	}
 }

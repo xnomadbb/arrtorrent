@@ -86,7 +86,7 @@ html, body, #arr, .ArrRoot {
 	box-sizing: border-box;
 }
 
-.BaseTableHeader, .BaseTableBody {
+.BaseTable table {
 	table-layout: fixed;
 	width: 0;
 	td, th {

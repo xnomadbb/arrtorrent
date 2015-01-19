@@ -88,12 +88,7 @@ module.exports = [
 		name: 'Ratio',
 		tooltip: 'Ratio of traffic uploaded/downloaded.',
 		getSortKey: row => { return row.ratio; },
-		renderCellContents: row => {
-			// Arrives as thousandths of ratio because dildos, eg. 2500 = 2.500 ratio, 50 = 0.050 ratio
-			let r = ('0000' + row.ratio).substr(-4); // Grab right 4 digits, zero-padded on left
-			r = r[0] + '.' + r.substr(1); // Add the decimal point
-			return r;
-		},
+		renderCellContents: row => { return util.format.ratioToHtml(row.ratio, true); },
 	},
 	{
 		key: 'eta',

@@ -225,6 +225,19 @@ const util = {
 		},
 	},
 	format: {
+		ratioToHtml: (ratio, showZero) => {
+			// Arrives as thousandths of ratio because dildos, eg. 2500 = 2.500 ratio, 50 = 0.050 ratio
+			let r= ('0000' + ratio); // Pad out so we'll always have something + 3 decimal places
+			let whole = parseInt(r.slice(0, -3), 10); // Discard leading 0s
+			let fraction = r.slice(-3); // Preserve trailing 0s
+			return (
+				<span className="ratioSize">
+					<span className="sizeWhole">{ whole }</span>
+					<span className="sizeDecimal">.</span>
+					<span className="sizeFraction">{ fraction }</span>
+				</span>
+			);
+		},
 		bytesToHtml: (bytes, showZero) => {
 			bytes = parseInt(bytes, 10) || 0;
 			if (bytes === 0 && !showZero) {
@@ -232,19 +245,35 @@ const util = {
 			}
 
 			// 1023 YiB ought to be enough for anybody
+			let suffixIEC = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+			let suffixSI  = ['B', 'KB',  'MB',  'GB',  'TB',  'PB',  'EB',  'ZB',  'YB' ];
 			let expIEC = Math.floor(Math.log(bytes || 1) / Math.log(1024));
-			let suffixIEC = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'][expIEC];
-			let outputIEC = (bytes / Math.pow(1024, expIEC)).toFixed(2) + ' ' + suffixIEC;
+			let coefficientIEC = (bytes / Math.pow(1024, expIEC)).toFixed(2);
 
-			// Don't show SI at all under 1KB
-			let outputSI = '';
+			// Don't show/explain SI at all under 1000B
+			let title = '';
 			if (bytes > 999) {
 				let expSI  = Math.floor(Math.log(bytes || 1) / Math.log(1000));
-				let suffixSI  = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][expSI];
-				outputSI  = (bytes / Math.pow(1000, expSI )).toFixed(2) + ' ' + suffixSI;
+				let coefficientSI  = (bytes / Math.pow(1000, expSI )).toFixed(2);
+				title = (
+					coefficientIEC + ' ' + suffixIEC[expIEC] + ' (IEC, binary) or ' +
+					coefficientSI  + ' ' + suffixSI[expSI] + ' (SI, metric)'
+				);
 			}
 
-			return <span className="byteSize" title={outputSI}>{outputIEC}</span>;
+			// IEC units are formatted without the i because it looks bad and confuses people
+			// The tooltip text contains proper units with a better explanation when needed
+			let coefficientParts = coefficientIEC.split('.');
+			let suffix = suffixSI[expIEC];
+
+			return (
+				<span className="byteSize" title={title}>
+					<span className="sizeWhole">{ coefficientParts[0] }</span>
+					<span className="sizeDecimal">.</span>
+					<span className="sizeFraction">{ coefficientParts[1] }</span>
+					<span className="sizeUnit" data-exponent={expIEC}>{ suffix }</span>
+				</span>
+			);
 		},
 		bytesPerSecondToHtml: (bytes, showZero) => {
 			bytes = parseInt(bytes, 10) || 0;

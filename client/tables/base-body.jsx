@@ -30,11 +30,13 @@ module.exports = React.createClass({
 		}
 
 		return (
-			<table className="BaseTableBody">
-				<tbody>
-					{ rows }
-				</tbody>
-			</table>
+			<div className="BaseTableBodyContainer">
+				<table className="BaseTableBody">
+					<tbody>
+						{ rows }
+					</tbody>
+				</table>
+			</div>
 		)
 	},
 });

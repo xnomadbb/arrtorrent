@@ -82,8 +82,17 @@ html, body, #arr, .ArrRoot {
 .BaseTable {
 	// Complex table with resizable headers, eg. torrent table
 	flex: 1 1 auto;
-	overflow: auto;
 	box-sizing: border-box;
+	overflow-x: auto;
+	overflow-y: hidden;
+	position: relative;
+}
+
+.BaseTableBodyContainer {
+	overflow-x: hidden;
+	overflow-y: auto;
+	position: absolute;
+	height: 100%;
 }
 
 .BaseTable table {

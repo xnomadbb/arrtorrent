@@ -67,12 +67,18 @@ Table details
 
 .BaseTable {
 	th {
+		box-sizing: border-box;
 		font-weight: 400;
+		padding: 2px 5px;
 	}
-	td, th {
+	td {
 		box-sizing: border-box;
 		padding: 0 5px;
 	}
+}
+
+.BaseTableHeader {
+	border-bottom: 1px solid $offwhite;
 }
 
 .TorrentTable {

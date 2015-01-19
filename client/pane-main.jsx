@@ -9,8 +9,8 @@ module.exports = React.createClass({
 		return (
 			<div className="MainPane">
 				<TorrentTable activeView={this.props.activeView} />
-				<div className="FlexResizer" draggable="true" onDragStart={this.flexResizerHandleDragStart} onDrag={this.flexResizerHandleDrag} onDragEnd={this.flexResizerHandleDragEnd} />
-				<div ref="flexResizerTarget" flexResizerAxis="y-" className="DetailsPane">Details stuff</div>
+				{ this.flexResizerRenderHandle('y', 'neg') }
+				<div ref="flexResizerTarget" className="DetailsPane">Details stuff</div>
 			</div>
 		);
 	},

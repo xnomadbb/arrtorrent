@@ -20,8 +20,8 @@ module.exports = React.createClass({
 			<div className="ArrRoot">
 				<div className="HeaderPane">Header stuff</div>
 				<div className="CenterPane">
-					<Sidebar ref="flexResizerTarget" flexResizerAxis="x+" activeView={this.state.activeView} onChoose={this.changeView} />
-					<div className="FlexResizer" draggable="true" onDragStart={this.flexResizerHandleDragStart} onDrag={this.flexResizerHandleDrag} onDragEnd={this.flexResizerHandleDragEnd} />
+					<Sidebar ref="flexResizerTarget" activeView={this.state.activeView} onChoose={this.changeView} />
+					{ this.flexResizerRenderHandle('x', 'pos') }
 					<MainPane activeView={this.state.activeView} />
 				</div>
 				<div className="FooterPane">Footer stuff</div>

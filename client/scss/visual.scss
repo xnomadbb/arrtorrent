@@ -1,0 +1,11 @@
+/*
+For pretty much global visual effects
+*/
+
+.TorrentTable {
+	.seeds .total:before, .peers .total:before { content: ' ('; }
+	.seeds .total:after,  .peers .total:after  { content:  ')'; }
+}
+
+.FlexResizer[data-axis=x] { cursor: col-resize; }
+.FlexResizer[data-axis=y] { cursor: row-resize; }

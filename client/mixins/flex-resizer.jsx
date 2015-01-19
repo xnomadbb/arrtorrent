@@ -1,14 +1,20 @@
+const React = require('react');
+
 let FlexResizerMixin = module.exports = {
 	// Requires:
-	// - flexResizerTarget ref
-	// - flexResizerAxis prop on the target ref, one of 'x+' 'x-' 'y+' 'y-', indicating axis and direction of growth
-	// - draggable="true" attribute on .FlexResizer
-	// - onDrag, onDragStart, onDragEnd bound from .FlexResizer to mixin methods
+	// - flexResizerTarget ref on element to be resized
+	// - render handle with flexResizerRenderHandle, suppling the axis ('x' or 'y') and sign ('pos' or 'neg') of growth
+	flexResizerRenderHandle: function(axis, sign) {
+		this.flexAxis = axis;
+		this.flexSign = (sign === 'pos') ? 1 : -1;
+		return (
+			<div ref="flexResizerHandle" className="FlexResizer" data-axis={axis} draggable="true"
+			onDragStart={this.flexResizerHandleDragStart} onDrag={this.flexResizerHandleDrag} onDragEnd={this.flexResizerHandleDragEnd} />
+		);
+	},
+
 	flexResizerHandleDragStart: function(e) {
 		//console.log('start', e.clientX, e.clientY);
-		//this.refs.flexResizerTarget.getDOMNode().style.backgroundColor = '#F00';
-		this.flexAxis = this.refs.flexResizerTarget.props.flexResizerAxis[0];
-		this.flexSign = (this.refs.flexResizerTarget.props.flexResizerAxis[1] === '+') ? 1 : -1;
 		this.flexSize = this.refs.flexResizerTarget.getDOMNode().getBoundingClientRect();
 		this.flexSize = Math.ceil((this.flexAxis === 'x') ? this.flexSize.width : this.flexSize.height);
 		this.flexLastPos = (this.flexAxis === 'x') ? e.clientX : e.clientY;
@@ -26,6 +32,6 @@ let FlexResizerMixin = module.exports = {
 	flexResizerHandleDragEnd: function(e) {
 		// Not aware of any actual issue from not clearing these, but it makes me nervous
 		//console.log('end ', e.clientX, e.clientY);
-		this.flexAxis = this.flexSign = this.flexSize = this.flexLastPos = undefined;
+		this.flexSize = this.flexLastPos = undefined;
 	},
 };

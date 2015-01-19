@@ -65,6 +65,7 @@ html, body, #arr, .ArrRoot {
 	display: flex;
 	flex-direction: column;
 	box-sizing: border-box;
+	overflow-x: auto; // Needed in Firefox to maintain correct width
 }
 
 .DetailsPane {

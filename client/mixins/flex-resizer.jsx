@@ -13,8 +13,17 @@ let FlexResizerMixin = module.exports = {
 		);
 	},
 
+	// These are only necessary for Firefox which doesn't provide clientX/Y on drag events, only dragover
+	componentDidMount: function() {
+		this.refs.flexResizerHandle.getDOMNode().parentNode.addEventListener('dragover', this.flexResizerHandleDrag);
+	},
+	componentWillUnmount: function() {
+		this.refs.flexResizerHandle.getDOMNode().parentNode.removeEventListener('dragover', this.flexResizerHandleDrag);
+	},
+
 	flexResizerHandleDragStart: function(e) {
 		//console.log('start', e.clientX, e.clientY);
+		e.dataTransfer.setData('text/plain', 'dummy'); // Firefox dumbfuckery
 		this.flexSize = this.refs.flexResizerTarget.getDOMNode().getBoundingClientRect();
 		this.flexSize = Math.ceil((this.flexAxis === 'x') ? this.flexSize.width : this.flexSize.height);
 		this.flexStartPos = this.flexLastPos = (this.flexAxis === 'x') ? e.clientX : e.clientY;

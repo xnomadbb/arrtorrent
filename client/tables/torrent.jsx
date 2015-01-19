@@ -18,7 +18,7 @@ module.exports = React.createClass({
 	render: function() {
 		let rowData = ViewStore.viewContents[this.props.activeView];
 		return (
-			<div className="ArrTable TorrentTable">
+			<div className="BaseTable TorrentTable">
 				<BaseTableHeader columnDescriptions={TorrentColumns} />
 				<BaseTableBody   columnDescriptions={TorrentColumns} rowData={rowData} />
 			</div>

@@ -67,13 +67,6 @@ html, body, #arr, .ArrRoot {
 	box-sizing: border-box;
 }
 
-.ArrTable {
-	// Complex table with resizable headers, eg. torrent table
-	flex: 1 1 auto;
-	overflow: auto;
-	box-sizing: border-box;
-}
-
 .DetailsPane {
 	// Contains details on an individual torrent, sits below torrent table, resizable
 	flex: 0 0 300px;
@@ -84,4 +77,21 @@ html, body, #arr, .ArrRoot {
 	// Little bar to resize resizable things!
 	flex: 0 0 5px;
 	box-sizing: border-box;
+}
+
+.BaseTable {
+	// Complex table with resizable headers, eg. torrent table
+	flex: 1 1 auto;
+	overflow: auto;
+	box-sizing: border-box;
+}
+
+.BaseTableHeader, .BaseTableBody {
+	table-layout: fixed;
+	width: 0;
+	td, th {
+		overflow: hidden;
+		white-space: nowrap;
+		width: 100px; // Override this per-column, everything will mash together without this
+	}
 }

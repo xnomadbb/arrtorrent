@@ -162,13 +162,13 @@ const util = {
 			},
 		},
 		statusNames: {
-			'hashing': 'Hashing',
-			'paused': 'Paused',
-			'seeding': 'Seeding',
+			'hashing':  'Hashing',
+			'paused':   'Paused',
+			'seeding':  'Seeding',
 			'leeching': 'Leeching',
 			'finished': 'Finished',
-			'stopped': 'Stopped',
-			'unknown': 'Unknown',
+			'stopped':  'Stopped',
+			'unknown':  'Unknown',
 		},
 		getStatusFromTorrent(torrent) {
 			let started = torrent.is_open != '0';

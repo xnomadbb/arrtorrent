@@ -56,6 +56,13 @@ module.exports = [
 		},
 	},
 	{
+		key: 'upload_size',
+		name: 'Uploaded',
+		tooltip: 'Total torrent traffic seeded.',
+		getSortKey: row => { return row.up_total; },
+		renderCellContents: row => { return util.format.bytesToHtml(row.up_total, true); },
+	},
+	{
 		key: 'download_size',
 		name: 'Downloaded',
 		tooltip: 'Size of torrent content snatched. Not the total traffic leeched.',
@@ -63,11 +70,11 @@ module.exports = [
 		renderCellContents: row => { return util.format.bytesToHtml(row.bytes_done, true); },
 	},
 	{
-		key: 'upload_size',
-		name: 'Uploaded',
-		tooltip: 'Total torrent traffic seeded.',
-		getSortKey: row => { return row.bytes_done; },
-		renderCellContents: row => { return util.format.bytesToHtml(row.bytes_done, true); },
+		key: 'upload_rate',
+		name: 'UL',
+		tooltip: 'Current traffic rate of seeding.',
+		getSortKey: row => { return row.up_rate; },
+		renderCellContents: row => { return util.format.bytesPerSecondToHtml(row.up_rate, false); },
 	},
 	{
 		key: 'download_rate',
@@ -75,13 +82,6 @@ module.exports = [
 		tooltip: 'Current traffic rate of leeching.',
 		getSortKey: row => { return row.down_rate; },
 		renderCellContents: row => { return util.format.bytesPerSecondToHtml(row.down_rate, false); },
-	},
-	{
-		key: 'upload_rate',
-		name: 'UL',
-		tooltip: 'Current traffic rate of seeding.',
-		getSortKey: row => { return row.up_rate; },
-		renderCellContents: row => { return util.format.bytesPerSecondToHtml(row.up_rate, false); },
 	},
 	{
 		key: 'ratio',

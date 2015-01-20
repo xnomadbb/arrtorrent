@@ -16,6 +16,6 @@ module.exports = React.createClass({
 	},
 	render: function() {
 		let rowData = ViewStore.viewContents[this.props.activeView];
-		return <BaseTable columnDescriptions={TorrentColumns} rowData={rowData} />;
+		return <BaseTable tableKey="torrent" columnDescriptions={TorrentColumns.columns} initialColumnOrder={TorrentColumns.initialOrder} rowData={rowData} />;
 	},
 });

@@ -1,8 +1,7 @@
 const React = require('react');
 const ViewStore = require('../stores/view');
 const TorrentColumns = require('./torrent-columns');
-const BaseTableHeader = require('./base-header');
-const BaseTableBody = require('./base-body');
+const BaseTable = require('./base-table');
 
 module.exports = React.createClass({
 	displayName: 'TorrentTable',
@@ -17,11 +16,6 @@ module.exports = React.createClass({
 	},
 	render: function() {
 		let rowData = ViewStore.viewContents[this.props.activeView];
-		return (
-			<div className="BaseTable TorrentTable">
-				<BaseTableHeader columnDescriptions={TorrentColumns} />
-				<BaseTableBody   columnDescriptions={TorrentColumns} rowData={rowData} />
-			</div>
-		);
+		return <BaseTable columnDescriptions={TorrentColumns} rowData={rowData} />;
 	},
 });

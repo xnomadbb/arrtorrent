@@ -5,7 +5,7 @@ const util = require('../util');
 //TODO Figure out if we can omit downloading some columns/data from rtorrent
 
 // object property: must be identical to key
-// key: CSS/HTML/etc-safe internal id of column
+// key: CSS/HTML/etc-safe lowercase internal id of column
 // name: Name to display in column header
 // tooltip: Text to display on column header hover
 // getSortKey: sortKey function(rowData), return a sortable value for the cell

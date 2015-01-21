@@ -16,19 +16,21 @@ module.exports = React.createClass({
 	// we're actively circumventing a security measure because the
 	// DnD spec is awful. (Firefox enforces same-origin policy on
 	// the data during this event, which is a much saner idea.)
+	// We can sneak JSON-encoded text through here, but beware that it
+	// gets converted to lowercase in the process.
 	headerReorderHandleDragStart: function(columnKey, e) {
-		e.dataTransfer.setData('arr/table/header/reorder/' + this.props.tableKey + '/' + columnKey, 'arr');
+		e.dataTransfer.setData(JSON.stringify({
+			'action': 'header_reorder',
+			'table_key': this.props.tableKey,
+			'column_key': columnKey,
+		}), 'arr');
 	},
 	headerReorderHandleDragOver: function(columnKey, e) {
-		let data = e.dataTransfer.types[0].split('/');
-		if ( data.length !== 6
-			|| data[0] !== 'arr'
-			|| data[1] !== 'table'
-			|| data[2] !== 'header'
-			|| data[3] !== 'reorder'
-			|| data[4] !== this.props.tableKey // Wrong table
-			|| data[5] === columnKey // Same column
-			|| this.state.columnOrder.indexOf(data[5]) === -1 // Invalid column
+		let data = JSON.parse(e.dataTransfer.types[0]);
+		if ( data.action !== 'header_reorder' // Wrong action
+			|| data.table_key !== this.props.tableKey // Wrong table
+			|| data.column_key === columnKey // Same column
+			|| this.state.columnOrder.indexOf(data.column_key) === -1 // Invalid column
 		) {
 			console.debug('Rejected reorder event:', data); //XXX log
 			return;
@@ -39,8 +41,8 @@ module.exports = React.createClass({
 	},
 	headerReorderHandleDrop: function(toColumnKey, e) {
 		// data already validated on dragover
-		let data = e.dataTransfer.types[0].split('/');
-		let fromColumnKey = data[5];
+		let data = JSON.parse(e.dataTransfer.types[0]);
+		let fromColumnKey = data.column_key;
 		console.log('reorder (from to)', fromColumnKey, toColumnKey); //XXX log
 
 		// Swap columns

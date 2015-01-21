@@ -1,5 +1,20 @@
 const React = require('react');
 
+let TableBodyCell = React.createClass({
+	displayName: 'TableBodyCell',
+	shouldComponentUpdate: function(nextProps, nextState) {
+		return this.props.columnDescription.shouldCellUpdate(this.props.rowData, nextProps.rowData);
+	},
+	render: function() {
+		let contents = this.props.columnDescription.renderCellContents(this.props.rowData);
+		return (
+			<td key={this.props.columnDescription.key} className={this.props.columnDescription.key}>
+				{ contents }
+			</td>
+		);
+	},
+});
+
 module.exports = React.createClass({
 	displayName: 'BaseTable',
 	getInitialState: function() {
@@ -8,6 +23,11 @@ module.exports = React.createClass({
 		};
 	},
 
+
+	//FIXME don't swap the column orders, move the FROM column before/after the TO column.
+	//FIXME Preferably base before/after on whether drop is on left/right of the TO column.
+	//FIXME display column separators on drag/hover.
+	//FIXME display destination separator darker/thicker on drag/hover.
 
 	// Non-Firefox browsers can't get at the data on dragover.
 	// For any complicated checking this is a huge pain in the ass.
@@ -71,23 +91,15 @@ module.exports = React.createClass({
 
 	renderBodyRow: function(rowKey, rowData) {
 		let cells = this.state.columnOrder.map(columnKey => {
-			return this.renderBodyCell(columnKey, rowData);
+			return (
+				<TableBodyCell key={columnKey} rowData={rowData} columnDescription={this.props.columnDescriptions[columnKey]} />
+			);
 		});
 
 		return (
 			<tr key={rowKey}>
 				{ cells }
 			</tr>
-		);
-	},
-
-	renderBodyCell: function(columnKey, rowData) {
-		let columnDescription = this.props.columnDescriptions[columnKey];
-		let contents = columnDescription.renderCellContents(rowData);
-		return (
-			<td key={columnDescription.key} className={columnDescription.key}>
-				{ contents }
-			</td>
 		);
 	},
 

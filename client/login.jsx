@@ -37,8 +37,8 @@ module.exports = React.createClass({
 		return (
 			<div className="login-container" onKeyPress={this.handleKeyPress}>
 				<div className="welcome">arr</div>
-				<input type="text" placeholder="Username" ref="username" className="login-username" />
-				<input type="password" placeholder="Password" ref="password" className="login-password" />
+				<input type="text" name="user" placeholder="Username" ref="username" className="login-username" />
+				<input type="password" name="password" placeholder="Password" ref="password" className="login-password" />
 				<button onClick={this.handleSubmit} className="login-submit">Login</button>
 				{authFail}
 			</div>

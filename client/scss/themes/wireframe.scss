@@ -7,12 +7,53 @@
 }
 
 $offwhite: #ddd;
+$errtextcolor: #C82A2A;
 
 body {
 	font-size: 0.9rem;
 	@extend %sans;
 }
 
+/*
+Login
+*/
+
+.login-container {
+	background: $offwhite;
+	width: 100%;
+	position: absolute;
+	top: calc(50% - 8.5rem);
+	height: 8.5rem;
+	text-align: center;
+
+	input, button {
+		display: block;
+		box-sizing: border-box;
+		text-align: center;
+		margin: 1rem auto;
+		width: 10rem;
+		height: 1.5rem;
+	}
+
+	.welcome, .authFail {
+		margin: 0;
+		padding: 0;
+		@extend %mono;
+		font-weight: 400;
+	}
+
+	.welcome {
+		font-size: 6rem;
+		height: 8rem;
+		margin-top: -8rem;
+	}
+
+	.authFail {
+		font-size: 1.5rem;
+		margin-top: 2.5rem;
+		color: $errtextcolor;
+	}
+}
 
 /*
 Large top-level components

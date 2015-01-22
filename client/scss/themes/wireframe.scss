@@ -7,6 +7,7 @@
 }
 
 $offwhite: #ddd;
+$grey50: #888;
 $errtextcolor: #C82A2A;
 
 body {
@@ -111,11 +112,19 @@ Table details
 		box-sizing: border-box;
 		font-weight: 400;
 		padding: 2px 5px;
+		&.sort_ASC.align_left:after    { content: "\25B4"; }
+		&.sort_ASC.align_right:before  { content: "\25B4"; }
+		&.sort_DESC.align_left:after   { content: "\25BE"; }
+		&.sort_DESC.align_right:before { content: "\25BE"; }
+		&:before { margin-right: 5px; color: $grey50; }
+		&:after  { margin-left:  5px; color: $grey50; }
 	}
 	td {
 		box-sizing: border-box;
 		padding: 0 5px;
 	}
+	.align_left  { text-align:  left; }
+	.align_right { text-align: right; }
 }
 
 .BaseTableHeader {
@@ -126,23 +135,23 @@ Table details
 	// Initial widths need to be set so things look okay initially.
 	// The user is free to resize these, and the less important details
 	// can scroll off to the right.
-	.name          { width: 400px; text-align:  left; }
-	.status        { width:  60px; text-align:  left; }
-	.size          { width: 100px; text-align: right; }
-	.progress      { width: 150px; text-align:  left; }
-	.download_size { width: 100px; text-align: right; }
-	.upload_size   { width: 100px; text-align: right; }
-	.download_rate { width: 100px; text-align: right; }
-	.upload_rate   { width: 100px; text-align: right; }
-	.ratio         { width:  60px; text-align: right; }
-	.eta           { width:  60px; text-align:  left; }
-	.label         { width: 120px; text-align:  left; }
-	.peers         { width:  80px; text-align: right; }
-	.seeds         { width:  80px; text-align: right; }
-	.priority      { width:  70px; text-align:  left; }
-	.remaining     { width: 100px; text-align: right; }
-	.created       { width: 100px; text-align: right; }
-	.added         { width: 100px; text-align: right; }
-	.finished      { width: 100px; text-align: right; }
-	.tracker       { width: 120px; text-align:  left; }
+	.name          { width: 400px; }
+	.status        { width:  60px; }
+	.size          { width: 100px; }
+	.progress      { width: 150px; }
+	.download_size { width: 100px; }
+	.upload_size   { width: 100px; }
+	.download_rate { width: 100px; }
+	.upload_rate   { width: 100px; }
+	.ratio         { width:  60px; }
+	.eta           { width:  60px; }
+	.label         { width: 120px; }
+	.peers         { width:  80px; }
+	.seeds         { width:  80px; }
+	.priority      { width:  70px; }
+	.remaining     { width: 100px; }
+	.created       { width: 100px; }
+	.added         { width: 100px; }
+	.finished      { width: 100px; }
+	.tracker       { width: 120px; }
 }

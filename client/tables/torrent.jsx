@@ -12,10 +12,14 @@ module.exports = React.createClass({
 		ViewStore.removeListener('change', this.viewDidChange);
 	},
 	viewDidChange: function() {
+		this.refs.BaseTable.updateSorting();
 		this.forceUpdate();
 	},
 	render: function() {
 		let rowData = ViewStore.viewContents[this.props.activeView];
-		return <BaseTable tableKey="torrent" columnDescriptions={TorrentColumns.columns} initialColumnOrder={TorrentColumns.initialOrder} rowData={rowData} />;
+		return (
+			<BaseTable ref="BaseTable" tableKey="torrent" columnDescriptions={TorrentColumns.columns}
+			initialColumnOrder={TorrentColumns.initialOrder} initialSort={['name', 'ASC']} rowData={rowData} />
+		);
 	},
 });

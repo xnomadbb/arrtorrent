@@ -2,8 +2,8 @@ const React = require('react');
 
 let TableBodyCell = React.createClass({
 	displayName: 'TableBodyCell',
-	shouldComponentUpdate: function(nextProps, nextState) {
-		return this.props.columnDescription.shouldCellUpdate(this.props.rowData, nextProps.rowData);
+	shouldComponentUpdate: function(nextProps) {
+		return !('renderHash' in nextProps) || this.props.renderHash !== nextProps.renderHash;
 	},
 	render: function() {
 		let contents = this.props.columnDescription.renderCellContents(this.props.rowData);
@@ -14,6 +14,35 @@ let TableBodyCell = React.createClass({
 		);
 	},
 });
+
+let TableBodyRow = React.createClass({
+	displayName: 'TableBodyRow',
+	shouldComponentUpdate: function(nextProps) {
+		// columnDescriptions are constant
+		return (
+			JSON.stringify(this.props.columnOrder) !== JSON.stringify(nextProps.columnOrder) ||
+			!('renderHash' in nextProps) ||
+			this.props.renderHash !== nextProps.renderHash
+		);
+	},
+	render: function() {
+		let cells = this.props.columnOrder.map(columnKey => {
+			return (
+				<TableBodyCell key={columnKey} rowData={this.props.rowData} columnDescription={this.props.columnDescriptions[columnKey]} renderHash={this.props.renderHash} />
+			);
+		});
+
+		return (
+			<tr>
+				{ cells }
+			</tr>
+		);
+	},
+});
+
+
+
+
 
 module.exports = React.createClass({
 	displayName: 'BaseTable',
@@ -66,7 +95,7 @@ module.exports = React.createClass({
 		console.log('reorder (from to)', fromColumnKey, toColumnKey); //XXX log
 
 		// Swap columns
-		let columnOrder = this.state.columnOrder;
+		let columnOrder = this.state.columnOrder.slice(); // New instance
 		let fromIndex = columnOrder.indexOf(fromColumnKey);
 		let toIndex   = columnOrder.indexOf(  toColumnKey);
 		columnOrder[fromIndex] =   toColumnKey;
@@ -89,25 +118,12 @@ module.exports = React.createClass({
 		);
 	},
 
-	renderBodyRow: function(rowKey, rowData) {
-		let cells = this.state.columnOrder.map(columnKey => {
-			return (
-				<TableBodyCell key={columnKey} rowData={rowData} columnDescription={this.props.columnDescriptions[columnKey]} />
-			);
-		});
-
-		return (
-			<tr key={rowKey}>
-				{ cells }
-			</tr>
-		);
-	},
-
 	render: function() {
 		let headerCells = this.state.columnOrder.map(this.renderHeaderCell);
 		let bodyRows = [];
 		for (let key in this.props.rowData) {
-			bodyRows.push(this.renderBodyRow(key, this.props.rowData[key]));
+			let rowData = this.props.rowData[key];
+			bodyRows.push(<TableBodyRow key={key} columnOrder={this.state.columnOrder} columnDescriptions={this.props.columnDescriptions} rowData={rowData} renderHash={rowData.renderHash} />);
 		}
 
 		return (

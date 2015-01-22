@@ -10,10 +10,6 @@ const util = require('../util');
 // tooltip: Text to display on column header hover
 // getSortKey: sortKey function(rowData), return a sortable value for the cell
 // renderCellContents: content function(rowData), return the contents of the cell
-// shouldCellUpdate: bool function(oldRowData, newRowData)
-
-let returnTrue  = function() { return  true; }; // To always update
-let returnFalse = function() { return false; }; // To never update (except initial render)
 
 const columns = {
 	'name': {
@@ -22,7 +18,6 @@ const columns = {
 		tooltip: 'Name of torrent.',
 		getSortKey: row => { return row.name; },
 		renderCellContents: row => { return row.name; },
-		shouldCellUpdate: returnFalse,
 	},
 	'status': {
 		key: 'status',
@@ -43,7 +38,6 @@ const columns = {
 
 			return (<span className={classes}>{statusName}</span>);
 		},
-		shouldCellUpdate: returnTrue,
 	},
 	'size': {
 		key: 'size',
@@ -51,7 +45,6 @@ const columns = {
 		tooltip: 'Total size of torrent content.',
 		getSortKey: row => { return row.size_bytes; },
 		renderCellContents: row => { return util.format.bytesToHtml(row.size_bytes, true); },
-		shouldCellUpdate: returnFalse,
 	},
 	'progress': {
 		key: 'progress',
@@ -62,7 +55,6 @@ const columns = {
 			let completed = row.bytes_done / row.size_bytes * 100;
 			return <ProgressBar completed={completed} />;
 		},
-		shouldCellUpdate: (old, next) => { return old.bytes_done != next.bytes_done; },
 	},
 	'upload_size': {
 		key: 'upload_size',
@@ -70,7 +62,6 @@ const columns = {
 		tooltip: 'Total torrent traffic seeded.',
 		getSortKey: row => { return row.up_total; },
 		renderCellContents: row => { return util.format.bytesToHtml(row.up_total, true); },
-		shouldCellUpdate: (old, next) => { return old.up_total !== next.up_total; },
 	},
 	'download_size': {
 		key: 'download_size',
@@ -78,7 +69,6 @@ const columns = {
 		tooltip: 'Size of torrent content snatched. Not the total traffic leeched.',
 		getSortKey: row => { return row.bytes_done; },
 		renderCellContents: row => { return util.format.bytesToHtml(row.bytes_done, true); },
-		shouldCellUpdate: (old, next) => { return old.bytes_done !== next.bytes_done; },
 	},
 	'upload_rate': {
 		key: 'upload_rate',
@@ -86,7 +76,6 @@ const columns = {
 		tooltip: 'Current traffic rate of seeding.',
 		getSortKey: row => { return row.up_rate; },
 		renderCellContents: row => { return util.format.bytesPerSecondToHtml(row.up_rate, false); },
-		shouldCellUpdate: (old, next) => { return old.up_rate !== next.up_rate; },
 	},
 	'download_rate': {
 		key: 'download_rate',
@@ -94,7 +83,6 @@ const columns = {
 		tooltip: 'Current traffic rate of leeching.',
 		getSortKey: row => { return row.down_rate; },
 		renderCellContents: row => { return util.format.bytesPerSecondToHtml(row.down_rate, false); },
-		shouldCellUpdate: (old, next) => { return old.down_rate !== next.down_rate; },
 	},
 	'ratio': {
 		key: 'ratio',
@@ -102,7 +90,6 @@ const columns = {
 		tooltip: 'Ratio of traffic uploaded/downloaded.',
 		getSortKey: row => { return row.ratio; },
 		renderCellContents: row => { return util.format.ratioToHtml(row.ratio, true); },
-		shouldCellUpdate: (old, next) => { return old.ratio !== next.ratio; },
 	},
 	'eta': {
 		key: 'eta',
@@ -113,7 +100,6 @@ const columns = {
 			let remaining = row.left_bytes / row.down_rate || 0;
 			return util.format.secondsToHtml(remaining, false, 3);
 		},
-		shouldCellUpdate: (old, next) => { return (old.left_bytes !== next.left_bytes) || (old.down_rate !== next.down_rate) ; },
 	},
 	'label': {
 		key: 'label',
@@ -121,7 +107,6 @@ const columns = {
 		tooltip: 'Label assigned to torrent for manual categorization.',
 		getSortKey: row => { return row.label; },
 		renderCellContents: row => { return row.label; },
-		shouldCellUpdate: (old, next) => { return old.label !== next.label; },
 	},
 	'peers': {
 		key: 'peers',
@@ -140,7 +125,6 @@ const columns = {
 				</div>
 			);
 		},
-		shouldCellUpdate: (old, next) => { return JSON.stringify(old.trackers) !== JSON.stringify(next.trackers); },
 	},
 	'seeds': {
 		key: 'seeds',
@@ -159,7 +143,6 @@ const columns = {
 				</div>
 			);
 		},
-		shouldCellUpdate: (old, next) => { return JSON.stringify(old.trackers) !== JSON.stringify(next.trackers); },
 	},
 	'priority': {
 		key: 'priority',
@@ -167,7 +150,6 @@ const columns = {
 		tooltip: 'Priority of the torrent.',
 		getSortKey: row => { return row.priority; },
 		renderCellContents: row => { return row.priority_string; },
-		shouldCellUpdate: (old, next) => { return old.priority !== next.priority; },
 	},
 	'remaining': {
 		key: 'remaining',
@@ -175,7 +157,6 @@ const columns = {
 		tooltip: 'Size of torrent content remaining to be snatched.',
 		getSortKey: row => { return row.left_bytes; },
 		renderCellContents: row => { return util.format.bytesToHtml(row.left_bytes, true); },
-		shouldCellUpdate: (old, next) => { return old.left_bytes !== next.left_bytes; },
 	},
 	'created': {
 		key: 'created',
@@ -183,7 +164,6 @@ const columns = {
 		tooltip: 'Date and time at which torrent file was created.',
 		getSortKey: row => { return row.creation_date; },
 		renderCellContents: row => { return util.format.unixTimeToHtml(row.creation_date, false); },
-		shouldCellUpdate: returnFalse,
 	},
 	//TODO Finished and Added backend: https://github.com/Novik/ruTorrent/blob/master/plugins/seedingtime/init.php
 	//     compatibility with rutorrent is very important here, we need to (maybe conditionally)
@@ -194,7 +174,6 @@ const columns = {
 		tooltip: 'Date and time at which torrent was added to rtorrent.',
 		getSortKey: row => { return row.add_date; },
 		renderCellContents: row => { return util.format.unixTimeToHtml(row.add_date, false); },
-		shouldCellUpdate: (old, next) => { return old.add_date !== next.add_date; },
 	},
 	'finished': {
 		key: 'finished',
@@ -202,7 +181,6 @@ const columns = {
 		tooltip: 'Date and time at which torrent contents finished downloading.',
 		getSortKey: row => { return row.finish_date; },
 		renderCellContents: row => { return util.format.unixTimeToHtml(row.finish_date, false); },
-		shouldCellUpdate: (old, next) => { return old.finish_date !== next.finish_date; },
 	},
 	//TODO ratio groups: https://github.com/Novik/ruTorrent/tree/master/plugins/ratio
 	//     This uses actual views, so compat seems reasonable here too
@@ -222,7 +200,6 @@ const columns = {
 			let url = row.trackers[row.tracker_focus - 1].url;
 			return util.tracker.urlToDomain(url);
 		},
-		shouldCellUpdate: (old, next) => { return JSON.stringify(old.trackers) !== JSON.stringify(next.trackers); },
 	},
 };
 

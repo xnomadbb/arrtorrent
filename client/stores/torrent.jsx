@@ -1,4 +1,5 @@
 const inherits = require('util').inherits;
+const sha1 = require('sha1');
 const EventEmitter = require('events').EventEmitter;
 const zlib = require('zlib');
 const ArrRpc = require('../rpc');
@@ -93,6 +94,11 @@ TorrentStore.prototype.mergeTorrentInfo = function(infoList, fieldList, removeUn
 		}
 		if (isModified) {
 			changes.modified[hash] = dstInfo;
+			// XXX WARNING XXX
+			// JSON output depends on the order in which properties are created (this is implementation-specific, not standard)
+			// We need to ensure propertoes are always created in the same order or else we'll get false negatives for render caching.
+			// Always grabbing all fields of all torrents on the first query should avoid any issues here.
+			dstInfo.renderHash = sha1(JSON.stringify(dstInfo));
 		}
 	}
 

@@ -62,84 +62,55 @@ module.exports = React.createClass({
 		};
 	},
 
-	updateSorting: function(key, sortDirection) {
+	updateSorting: function(key, sortDirection, newProps) {
 		// sortDirection isn't used in updating sortData, but it's still important
 		// to save to the state for rendering.
 		key = key || this.state.sortKey;
 		sortDirection = sortDirection || this.state.sortDirection;
 		let sortData = this.state.sortData; // Mutating in-place
-		let getSortKey = this.props.columnDescriptions[key].getSortKey; // Gets the value to sort with
 
-		if (key === this.state.sortKey) {
-			// Double-check sortKey based on renderHash, add/remove entries as needed, then
-			// resort with insertion sort to take advantage of things being mostly presorted.
-			if (sortDirection === 'toggle') {
-				sortDirection = this.state.sortDirection === 'ASC' ? 'DESC' : 'ASC';
+		if (key === this.state.sortKey && !newProps) {
+			// Flip direction if needed
+			let newDirection = this.state.sortDirection;
+			if (newDirection === 'ASC' && sortDirection !== 'ASC') {
+				newDirection = 'DESC';
+			} else if (newDirection === 'DESC' && sortDirection !== 'DESC') {
+				newDirection = 'ASC';
 			}
 
-			let processedRowKeys = new Set();
-			for (let i=sortData.length; i--;) {
-				let record = sortData[i];
-				let rowData = this.props.rowData[record.rowKey];
-				if (!rowData) {
-					// Row gone, remove from sortData
-					sortData.splice(i, 1);
-					continue;
-				}
-				processedRowKeys.add(record.rowKey);
-				if (record.renderHash === rowData.renderHash) {
-					// No change
-					continue;
-				}
-				// Needs updating
-				record.sortKey = getSortKey(rowData);
-				record.renderHash = rowData.renderHash;
-			}
+			this.setState({
+				sortKey: key,
+				sortDirection: newDirection,
+				sortData: sortData,
+			});
+			return;
+		}
 
-			// Insert missing rows
-			for (rowKey in this.props.rowData) {
-				if (!processedRowKeys.has(rowKey)) {
-					sortData.push({
-						rowKey: rowKey,
-						sortKey: getSortKey(this.props.rowData[rowKey]),
-						renderHash: this.props.rowData[rowKey].renderHash,
-					});
-				}
-			}
+		if (sortDirection === 'toggle') {
+			sortDirection = 'ASC'; // Changing sorted key, ignore toggle request and init to ASC
+		}
 
-			// Insertion sort, because anything that hasn't changed is pre-sorted
-			for (let i=0; i < sortData.length; ++i) {
-				let tmp = sortData[i];
-				for (let j=i-1; j >= 0 && sortData[j].sortKey > tmp.sortKey; --j) {
-					sortData[j+1] = sortData[j];
-				}
-				sortData[j+1] = tmp;
-			}
-		} else {
-			if (sortDirection === 'toggle') {
-				sortDirection = 'ASC'; // Changing sorted key, ignore toggle request and init to ASC
-			}
+		// Remove everything, grab new keys and sort from scratch
+		while (sortData.length > 0) sortData.pop(); // Empty and preserve the array
 
-			// Remove everything, grab new keys and sort from scratch
-			while (sortData.length > 0) sortData.pop(); // Empty and preserve the array
-
-			// Insert new data
-			for (let rowKey in this.props.rowData) {
-				let rowData = this.props.rowData[rowKey];
-				let sortKey = getSortKey(rowData);
-				sortData.push({
-					rowKey: rowKey,
-					sortKey: sortKey,
-					renderHash: rowData.renderHash,
-				});
-			}
-
-			// Sort by sortKey
-			sortData.sort(function(a, b) {
-				let av = a.sortKey, bv = b.sortKey;
-				return ((av > bv) - (av < bv));
+		// Insert new data
+		let useProps = newProps || this.props; // componentWillReceiveProps makes this horribly clumsy
+		let getSortKey = useProps.columnDescriptions[key].getSortKey; // Gets the value to sort with
+		for (let rowKey in useProps.rowData) {
+			let rowData = useProps.rowData[rowKey];
+			let sortKey = getSortKey(rowData);
+			sortData.push({
+				rowKey: rowKey,
+				sortKey: sortKey,
+				renderHash: rowData.renderHash,
 			});
 		}
+
+		// Sort by sortKey
+		sortData.sort(function(a, b) {
+			let av = a.sortKey, bv = b.sortKey;
+			return ((av > bv) - (av < bv));
+		});
 
 		// Make sure a render is eventually triggered
 		this.setState({
@@ -204,7 +175,10 @@ module.exports = React.createClass({
 
 	componentWillMount: function() {
 		window.updateSorting = this.updateSorting; //XXX
-		this.updateSorting(this.props.initialSort[0], this.props.initialSort[1]);
+		this.updateSorting(this.props.initialSort[0], this.props.initialSort[1], this.props);
+	},
+	componentWillReceiveProps: function(nextProps) {
+		this.updateSorting(undefined, undefined, nextProps);
 	},
 
 
@@ -224,7 +198,7 @@ module.exports = React.createClass({
 			onDragStart={this.headerReorderHandleDragStart.bind(this, columnKey)}
 			onDragOver={this.headerReorderHandleDragOver.bind(this, columnKey)}
 			onDrop={this.headerReorderHandleDrop.bind(this, columnKey)}
-			onClick={this.updateSorting.bind(this, columnKey, 'toggle')} >
+			onClick={this.updateSorting.bind(this, columnKey, 'toggle', false)} >
 				{columnDescription.name}
 			</th>
 		);

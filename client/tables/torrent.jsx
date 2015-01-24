@@ -12,7 +12,6 @@ module.exports = React.createClass({
 		ViewStore.removeListener('change', this.viewDidChange);
 	},
 	viewDidChange: function() {
-		this.refs.BaseTable.updateSorting();
 		this.forceUpdate();
 	},
 	render: function() {

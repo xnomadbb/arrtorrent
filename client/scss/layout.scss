@@ -57,6 +57,7 @@ html, body, #arr, .ArrRoot {
 	// Contains filter/etc links, resizable
 	flex: 0 0 auto;
 	box-sizing: border-box;
+	overflow: auto;
 }
 
 .MainPane {

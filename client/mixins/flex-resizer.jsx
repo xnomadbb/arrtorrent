@@ -16,9 +16,23 @@ let FlexResizerMixin = module.exports = {
 	// These are only necessary for Firefox which doesn't provide clientX/Y on drag events, only dragover
 	componentDidMount: function() {
 		this.refs.flexResizerHandle.getDOMNode().parentNode.addEventListener('dragover', this.flexResizerHandleDrag);
+		window.addEventListener('resize', this.handleWindowResize);
 	},
 	componentWillUnmount: function() {
 		this.refs.flexResizerHandle.getDOMNode().parentNode.removeEventListener('dragover', this.flexResizerHandleDrag);
+		window.removeEventListener('resize', this.handleWindowResize);
+	},
+
+	handleWindowResize: function() {
+		clearTimeout(this.windowResizeDebounce);
+		this.windowResizeDebounce = setTimeout(this.handleWindowResizeAction, 5);
+	},
+	handleWindowResizeAction: function() {
+		// Send resize events
+		this.flexResizerPropogateNotification(this.refs.flexResizerTarget);
+		if (this.refs.flexResizerPassive) {
+			this.flexResizerPropogateNotification(this.refs.flexResizerPassive);
+		}
 	},
 
 	flexResizerHandleDragStart: function(e) {
@@ -42,5 +56,25 @@ let FlexResizerMixin = module.exports = {
 		this.refs.flexResizerTarget.getDOMNode().style.flexBasis = this.flexSize + 'px';
 		// Not aware of any actual issue from not clearing these, but it makes me nervous
 		this.flexSize = this.flexLastPos = this.flexStartPos = undefined;
+		// Send resize events
+		this.flexResizerPropogateNotification(this.refs.flexResizerTarget);
+		if (this.refs.flexResizerPassive) {
+			this.flexResizerPropogateNotification(this.refs.flexResizerPassive);
+		}
+	},
+	flexResizerPropogateNotification: function(component) {
+		// Call a handleFlexResize method on given component and
+		// propogate to any flexResizerNotifyProxy refs recursively.
+		while (true) {
+			if (component.handleFlexResize) {
+				component.handleFlexResize();
+			}
+			if (component.refs && component.refs.flexResizerNotifyProxy) {
+				// Try the next ref in the chain if it exists
+				component = component.refs.flexResizerNotifyProxy;
+			} else {
+				break;
+			}
+		}
 	},
 };

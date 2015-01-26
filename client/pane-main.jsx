@@ -8,7 +8,7 @@ module.exports = React.createClass({
 	render: function() {
 		return (
 			<div className="MainPane">
-				<TorrentTable activeView={this.props.activeView} />
+				<TorrentTable ref="flexResizerPassive" activeView={this.props.activeView} />
 				{ this.flexResizerRenderHandle('y', 'neg') }
 				<div ref="flexResizerTarget" className="DetailsPane">Details stuff</div>
 			</div>

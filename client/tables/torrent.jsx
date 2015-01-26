@@ -17,7 +17,7 @@ module.exports = React.createClass({
 	render: function() {
 		let rowData = ViewStore.viewContents[this.props.activeView];
 		return (
-			<BaseTable ref="BaseTable" tableKey="torrent" columnDescriptions={TorrentColumns.columns}
+			<BaseTable ref="flexResizerNotifyProxy" tableKey="torrent" columnDescriptions={TorrentColumns.columns}
 			initialColumnOrder={TorrentColumns.initialOrder} initialSort={['name', 'ASC']} rowData={rowData} />
 		);
 	},

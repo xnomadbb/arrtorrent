@@ -58,65 +58,78 @@ module.exports = React.createClass({
 			// Sort initialized in componentWillMount
 			sortKey: null,
 			sortDirection: 'ASC',
-			sortData: [],
+			// Scrolling data
+			rowHeight: 16, // pixel height of one row, this is just an initial approximation, better low than high so we render enough rows
+			headerRowHeight: 16, // pixel height of table header, this is just an initial approximation
+			tableHeight: 50, // pixel height of table viewport, this is just an initial approximation
+			tableTopOffset: 0, // pixel height we've scrolled down
 		};
 	},
 
-	updateSorting: function(key, sortDirection, newProps) {
-		// sortDirection isn't used in updating sortData, but it's still important
-		// to save to the state for rendering.
+	updateSortOrder: function(key, sortDirection) {
 		key = key || this.state.sortKey;
 		sortDirection = sortDirection || this.state.sortDirection;
-		let sortData = this.state.sortData; // Mutating in-place
-
-		if (key === this.state.sortKey && !newProps) {
-			// Flip direction if needed
-			let newDirection = this.state.sortDirection;
-			if (newDirection === 'ASC' && sortDirection !== 'ASC') {
-				newDirection = 'DESC';
-			} else if (newDirection === 'DESC' && sortDirection !== 'DESC') {
-				newDirection = 'ASC';
+		if (sortDirection === 'toggle') {
+			if (key === this.state.sortKey) {
+				sortDirection = (this.state.sortDirection === 'ASC') ? 'DESC' : 'ASC';
+			} else {
+				sortDirection = 'ASC';
 			}
+		}
 
+		if (key !== this.state.sortKey || sortDirection !== this.state.sortDirection) {
 			this.setState({
 				sortKey: key,
-				sortDirection: newDirection,
-				sortData: sortData,
+				sortDirection: sortDirection,
 			});
-			return;
 		}
-
-		if (sortDirection === 'toggle') {
-			sortDirection = 'ASC'; // Changing sorted key, ignore toggle request and init to ASC
-		}
-
-		// Remove everything, grab new keys and sort from scratch
-		while (sortData.length > 0) sortData.pop(); // Empty and preserve the array
+	},
+	getSortedKeys: function() {
+		let sortData = [];
+		let getSortKey = this.props.columnDescriptions[this.state.sortKey].getSortKey; // Gets the value to sort with
 
 		// Insert new data
-		let useProps = newProps || this.props; // componentWillReceiveProps makes this horribly clumsy
-		let getSortKey = useProps.columnDescriptions[key].getSortKey; // Gets the value to sort with
-		for (let rowKey in useProps.rowData) {
-			let rowData = useProps.rowData[rowKey];
+		for (let rowKey in this.props.rowData) {
+			let rowData = this.props.rowData[rowKey];
 			let sortKey = getSortKey(rowData);
 			sortData.push({
 				rowKey: rowKey,
 				sortKey: sortKey,
-				renderHash: rowData.renderHash,
 			});
 		}
 
 		// Sort by sortKey
+		let sortSign = (this.state.sortDirection === 'DESC') ? -1 : 1;
 		sortData.sort(function(a, b) {
 			let av = a.sortKey, bv = b.sortKey;
-			return ((av > bv) - (av < bv));
+			return ((av > bv) - (av < bv)) * sortSign;
 		});
 
-		// Make sure a render is eventually triggered
-		this.setState({
-			sortKey: key,
-			sortDirection: sortDirection,
-			sortData: sortData,
+		return sortData.map(x => { return x.rowKey; });
+	},
+
+	getRenderInfo: function() {
+		// Ordered list of row keys for entire dataset
+		let sortedKeys = this.getSortedKeys();
+		// Highest number of rows to be rendered
+		let maxLength = sortedKeys.length;
+		// Index of the topmost rendered (visible) row
+		let topRenderIndex = Math.floor(this.state.tableTopOffset / this.state.rowHeight);
+		// Max number of rows the current table view can hold
+		let maxRowsRenderCount = Math.ceil(this.state.tableHeight / this.state.rowHeight);
+		// Number of rows remaining in the list or number the table will hold, whichever is lower
+		let actualRowsRenderCount = Math.min(maxRowsRenderCount, maxLength - topRenderIndex);
+
+		let topPadding = Math.min(this.state.tableTopOffset, this.state.rowHeight * (maxLength - maxRowsRenderCount));
+		topPadding = Math.max(0, topPadding);
+		let bottomPadding = (maxLength * this.state.rowHeight) - topPadding - (actualRowsRenderCount * this.state.rowHeight);
+		bottomPadding = Math.max(0, bottomPadding);
+		let rowKeys = sortedKeys.slice(topRenderIndex, topRenderIndex + actualRowsRenderCount);
+
+		return ({
+			topPadding: topPadding,
+			bottomPadding: bottomPadding,
+			rowKeys: rowKeys,
 		});
 	},
 
@@ -172,13 +185,42 @@ module.exports = React.createClass({
 		e.preventDefault(); // Prevent browser from handling drop also
 	},
 
+	tableScroll: function(e) {
+		clearTimeout(this.tableScrollDebounce);
+		this.tableScrollDebounce = setTimeout(this.updateScrollInfo, 5);
+	},
+	handleFlexResize: function() {
+		this.updateScrollInfo();
+	},
+	updateScrollInfo: function() {
+		let scrollContainer = this.refs.scrollContainer.getDOMNode();
+		let firstRow = scrollContainer.querySelector('tr');
+		if (firstRow) {
+			this.setState({
+				tableHeight: scrollContainer.getBoundingClientRect().height,
+				tableTopOffset: scrollContainer.scrollTop,
+				headerRowHeight: this.refs.tableHeader.getDOMNode().getBoundingClientRect().height,
+				rowHeight: firstRow.getBoundingClientRect().height,
+			});
+		} else {
+			this.setState({
+				tableHeight: scrollContainer.getBoundingClientRect().height,
+				tableTopOffset: scrollContainer.scrollTop,
+				headerRowHeight: this.refs.tableHeader.getDOMNode().getBoundingClientRect().height,
+			});
+		}
+	},
 
 	componentWillMount: function() {
-		window.updateSorting = this.updateSorting; //XXX
-		this.updateSorting(this.props.initialSort[0], this.props.initialSort[1], this.props);
+		this.updateSortOrder(this.props.initialSort[0], this.props.initialSort[1]);
+	},
+	componentDidMount: function() {
+		// We need an extra render cycle to gather heights/etc that are done on-the-fly
+		this.updateScrollInfo();
+		this.forceUpdate();
 	},
 	componentWillReceiveProps: function(nextProps) {
-		this.updateSorting(undefined, undefined, nextProps);
+		this.updateScrollInfo();
 	},
 
 
@@ -198,45 +240,41 @@ module.exports = React.createClass({
 			onDragStart={this.headerReorderHandleDragStart.bind(this, columnKey)}
 			onDragOver={this.headerReorderHandleDragOver.bind(this, columnKey)}
 			onDrop={this.headerReorderHandleDrop.bind(this, columnKey)}
-			onClick={this.updateSorting.bind(this, columnKey, 'toggle', false)} >
+			onClick={this.updateSortOrder.bind(this, columnKey, 'toggle')} >
 				{columnDescription.name}
 			</th>
 		);
 	},
-
 	render: function() {
 		let headerCells = this.state.columnOrder.map(this.renderHeaderCell);
 		let bodyRows = [];
+		let renderInfo = this.getRenderInfo();
+		let renderRowKeys = renderInfo.rowKeys;
 
-		if (this.state.sortDirection === 'DESC') {
-			for (let i=this.state.sortData.length; i--;) {
-				let rowKey = this.state.sortData[i].rowKey;
-				let rowData = this.props.rowData[rowKey];
-				bodyRows.push(<TableBodyRow key={rowKey} columnOrder={this.state.columnOrder} columnDescriptions={this.props.columnDescriptions} rowData={rowData} renderHash={rowData.renderHash} />);
-			}
-		} else {
-			for (let i=0; i < this.state.sortData.length; i++) {
-				let rowKey = this.state.sortData[i].rowKey;
-				let rowData = this.props.rowData[rowKey];
-				bodyRows.push(<TableBodyRow key={rowKey} columnOrder={this.state.columnOrder} columnDescriptions={this.props.columnDescriptions} rowData={rowData} renderHash={rowData.renderHash} />);
-			}
+		for (let i=0; i < renderRowKeys.length; i++) {
+			let rowKey = renderRowKeys[i];
+			let rowData = this.props.rowData[rowKey];
+			bodyRows.push(<TableBodyRow key={rowKey} columnOrder={this.state.columnOrder} columnDescriptions={this.props.columnDescriptions} rowData={rowData} renderHash={rowData.renderHash} />);
 		}
 
 		return (
 			<div className="BaseTable TorrentTable">
-				<table className="BaseTableHeader">
+				<table ref="tableHeader" className="BaseTableHeader">
 					<tbody>
 						<tr>
 							{ headerCells }
 						</tr>
 					</tbody>
 				</table>
-				<div className="BaseTableBodyContainer">
+				<div ref="scrollContainer" className="BaseTableBodyContainer" onScroll={this.tableScroll}
+				style={{height: 'calc(100% - '+ this.state.headerRowHeight +'px)'}} >
+					<div ref="scrollPadTop" className="ScrollPadding" style={{height: renderInfo.topPadding}} />
 					<table className="BaseTableBody">
 						<tbody>
 							{ bodyRows }
 						</tbody>
 					</table>
+					<div ref="scrollPadBottom" className="ScrollPadding" style={{height: renderInfo.bottomPadding}} />
 				</div>
 			</div>
 		);

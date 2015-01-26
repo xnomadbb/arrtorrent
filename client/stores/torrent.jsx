@@ -1,7 +1,7 @@
 const inherits = require('util').inherits;
 const sha1 = require('sha1');
 const EventEmitter = require('events').EventEmitter;
-const zlib = require('zlib');
+const LZString = require('lz-string');
 const ArrRpc = require('../rpc');
 const util = require('../util');
 
@@ -124,28 +124,23 @@ TorrentStore.prototype.mergeTorrentInfo = function(infoList, fieldList, removeUn
 
 //TODO per-user caches, detect stale caches older than some threshold, don't attempt >5MB, etc. This is a hack atm
 TorrentStore.prototype._localStoragePersist = function() {
-	zlib.deflate(JSON.stringify(this.torrents), function(err, result) {
-		localStorage.arr_torrent_cache = result.toString('binary');
-	});
+	localStorage.arr_torrent_cache = LZString.compressToUTF16(JSON.stringify(this.torrents));
 };
 
 TorrentStore.prototype._localStorageRestore = function() {
 	if (localStorage.arr_torrent_cache) {
-		let buff = new Buffer(localStorage.arr_torrent_cache, 'binary');
-		zlib.inflate(buff, function(err, result) {
-			let newTorrents = JSON.parse(result.toString());
-			for (let prop in this.torrents) {
-				delete this.torrents[prop];
-			}
-			for (let prop in newTorrents) {
-				this.torrents[prop] = newTorrents[prop];
-			}
-			this.emit('change', {
-				added: this.torrents,
-				removed: {},
-				modified: this.torrents,
-			});
-		}.bind(this));
+		let newTorrents = JSON.parse(LZString.decompressFromUTF16(localStorage.arr_torrent_cache));
+		for (let prop in this.torrents) {
+			delete this.torrents[prop];
+		}
+		for (let prop in newTorrents) {
+			this.torrents[prop] = newTorrents[prop];
+		}
+		this.emit('change', {
+			added: this.torrents,
+			removed: {},
+			modified: this.torrents,
+		});
 	}
 };
 

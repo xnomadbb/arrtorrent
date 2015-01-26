@@ -78,6 +78,7 @@ module.exports = React.createClass({
 		}
 
 		if (key !== this.state.sortKey || sortDirection !== this.state.sortDirection) {
+			this.resetScroll();
 			this.setState({
 				sortKey: key,
 				sortDirection: sortDirection,
@@ -210,6 +211,13 @@ module.exports = React.createClass({
 			});
 		}
 	},
+	resetScroll: function() {
+		let scrollContainer = this.refs.scrollContainer;
+		if (scrollContainer) {
+			scrollContainer.getDOMNode().scrollTop = 0;
+			this.setState({tableTopOffset: 0});
+		}
+	},
 
 	componentWillMount: function() {
 		this.updateSortOrder(this.props.initialSort[0], this.props.initialSort[1]);
@@ -220,6 +228,13 @@ module.exports = React.createClass({
 		this.forceUpdate();
 	},
 	componentWillReceiveProps: function(nextProps) {
+		if (this.props.rowData !== nextProps.rowData) {
+			// Nothing ever truly changes except rowData when the view changes.
+			// When contents are mutated rowData is changed in-place and forceUpdate
+			// is called, so rowData is the same object. So we only reset scrolling
+			// when we're viewing a different object, not when it merely mutates.
+			this.resetScroll();
+		}
 		this.updateScrollInfo();
 	},
 

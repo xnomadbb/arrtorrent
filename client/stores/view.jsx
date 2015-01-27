@@ -75,8 +75,8 @@ inherits(ViewStore, EventEmitter);
 
 ViewStore.prototype.torrentsDidChange = function(changes) {
 	// Remove records for removed and modified torrents (we'll re-add modified)
-	for (let i=0; i < this.viewContents.length; i++) {
-		let viewTorrents = this.viewContents[i];
+	for (let viewId in this.viewContents) {
+		let viewTorrents = this.viewContents[viewId];
 		for (let hash in changes.removed) {
 			delete viewTorrents[hash];
 		}

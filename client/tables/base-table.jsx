@@ -1,4 +1,5 @@
 const React = require('react/addons');
+const _ = require('lodash');
 
 let TableBodyCell = React.createClass({
 	displayName: 'TableBodyCell',
@@ -186,10 +187,6 @@ module.exports = React.createClass({
 		e.preventDefault(); // Prevent browser from handling drop also
 	},
 
-	tableScroll: function(e) {
-		clearTimeout(this.tableScrollDebounce);
-		this.tableScrollDebounce = setTimeout(this.updateScrollInfo, 5);
-	},
 	handleFlexResize: function() {
 		this.updateScrollInfo();
 	},
@@ -281,7 +278,7 @@ module.exports = React.createClass({
 						</tr>
 					</tbody>
 				</table>
-				<div ref="scrollContainer" className="BaseTableBodyContainer" onScroll={this.tableScroll}
+				<div ref="scrollContainer" className="BaseTableBodyContainer" onScroll={ _.throttle(this.updateScrollInfo, 16) }
 				style={{height: 'calc(100% - '+ this.state.headerRowHeight +'px)'}} >
 					<div ref="scrollPadTop" className="ScrollPadding" style={{height: renderInfo.topPadding}} />
 					<table className="BaseTableBody">

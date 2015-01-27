@@ -47,8 +47,9 @@ ArrRpc.prototype.wsDidOpen = function() {
 	this.once('wsError', cancelAuth);
 
 	// After wait (if we haven't had an error), proceed and stop listening for errors
+	var router = this.routeRequests.bind(this);
 	authTimer = setTimeout(() => {
-		this.jsonrpc = new jsonrpc(this.ws, this.routeRequests);
+		this.jsonrpc = new jsonrpc(this.ws, router);
 		this.sendRequest = this.jsonrpc.sendRequest.bind(this.jsonrpc);
 		this.sendRequest('arr.get_config', [], this.configLoad.bind(this));
 		this.removeListener('wsError', cancelAuth);
@@ -80,6 +81,7 @@ ArrRpc.prototype.configLoad = function(message) {
 ArrRpc.prototype.routeRequests = function(message) {
 	// We shouldn't get much here except for rtorrent events
 	console.log(message);
+	this.emit(message.method, message);
 };
 
 // We're gonna use this everywhere and it's not "stateful" in the same sense

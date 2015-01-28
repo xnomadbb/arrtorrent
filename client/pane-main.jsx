@@ -1,6 +1,6 @@
-const React = require('react');
-const TorrentTable = require('./tables/torrent');
-const FlexResizerMixin = require('./mixins/flex-resizer');
+var React = require('react');
+var TorrentTable = require('./tables/torrent');
+var FlexResizerMixin = require('./mixins/flex-resizer');
 
 module.exports = React.createClass({
 	displayName: 'MainPane',

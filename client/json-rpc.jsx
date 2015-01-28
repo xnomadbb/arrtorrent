@@ -7,7 +7,6 @@
 function JsonRpc(transport, routeRequest) {
 	// transport: must support onmessage property and send method
 	// routeRequest(jsonRpcRequest, JsonRpc): must handle given request and call JsonRpc.sendResultResponse or JsonRpc.sendErrorResponse
-	"use strict";
 	var self = this;
 	var nextOutgoingRequestId = 1;
 	var pendingRequestCallbacks = {};

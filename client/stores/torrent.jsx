@@ -1,12 +1,12 @@
-const inherits = require('util').inherits;
-const sha1 = require('sha1');
-const _ = require('lodash');
-const EventEmitter = require('events').EventEmitter;
-const LZString = require('lz-string');
-const ArrRpc = require('../rpc');
-const util = require('../util');
+var inherits = require('util').inherits;
+var sha1 = require('sha1');
+var _ = require('lodash');
+var EventEmitter = require('events').EventEmitter;
+var LZString = require('lz-string');
+var ArrRpc = require('../rpc');
+var util = require('../util');
 
-let TorrentStore = function() {
+var TorrentStore = function() {
 		//this.builtinViewIds = ['main', 'default', 'name', 'active', 'started', 'stopped', 'complete', 'incomplete', 'hashing', 'seeding', 'leeching'];
 		// Useless?  'default', 'name',
 		// rutorrent ratio groups (not sure)?  'rat_0', 'rat_1', 'rat_2', 'rat_3', 'rat_4', 'rat_5', 'rat_6', 'rat_7'
@@ -25,7 +25,7 @@ inherits(TorrentStore, EventEmitter);
 TorrentStore.prototype.loadInit = function() {
 	// Load all torrent data
 	this.allFields = [].concat(util.torrent.commands.immutable, util.torrent.commands.mutable, util.torrent.commands.dynamic);
-	let fieldList = this.allFields;
+	var fieldList = this.allFields;
 	this.queryViewInfo('main', fieldList);
 
 	// Load from localStorage so we have a functional UI until the initial sync completes
@@ -39,8 +39,8 @@ TorrentStore.prototype.loadInit = function() {
 // Fetch given fields of torrents in given view
 TorrentStore.prototype.queryViewInfo = function(view, fieldList) {
 	// Format multicall
-	let multicall_args = [view];
-	for (let i=0; i < fieldList.length; i++) {
+	var multicall_args = [view];
+	for (var i=0; i < fieldList.length; i++) {
 		if (fieldList[i].indexOf('=') === -1) {
 			multicall_args.push(fieldList[i] + '=');
 		} else {
@@ -48,21 +48,21 @@ TorrentStore.prototype.queryViewInfo = function(view, fieldList) {
 		}
 	}
 
-	ArrRpc.sendRequest('d.multicall', multicall_args, response => {
+	ArrRpc.sendRequest('d.multicall', multicall_args, function(response) {
 		// Save results, remove everything not listed if we queried all torrents (main)
-		let removeUnlisted = (view === 'main');
+		var removeUnlisted = (view === 'main');
 		this.mergeTorrentInfo(response.result, fieldList, removeUnlisted);
-	});
+	}.bind(this));
 };
 
 // Fetch all fields of torrents in given hash list
 TorrentStore.prototype.queryHashListInfo = function(hashList) {
-	let multicalls = [];
+	var multicalls = [];
 
-	for (let i=0; i < hashList.length; i++) {
-		let hash = hashList[i];
-		for (let j=0; j < this.allFields.length; j++) {
-			let field = this.allFields[j];
+	for (var i=0; i < hashList.length; i++) {
+		var hash = hashList[i];
+		for (var j=0; j < this.allFields.length; j++) {
+			var field = this.allFields[j];
 			//FIXME Too hacky, we need to handle single/multicall syntax more cleanly
 			if (field === 't.multicall=,t.get_url=,t.get_scrape_complete=,t.get_scrape_incomplete=') {
 				multicalls.push(['t.multicall', [hash, 'ignored', 't.get_url=', 't.get_scrape_complete=', 't.get_scrape_incomplete=']]);
@@ -72,32 +72,32 @@ TorrentStore.prototype.queryHashListInfo = function(hashList) {
 		}
 	}
 
-	ArrRpc.sendRequest('arr.multicall', multicalls, response => {
-		let results = _.chunk(response.result, this.allFields.length);
-		this.mergeTorrentInfo(results, this.allFields);
-	});
+	ArrRpc.sendRequest('arr.multicall', multicalls, function(response) {
+		var results = _.chunk(response.result, this.allFields.length);
+		this.mergeTorrentInfo(results, this.allFields, false);
+	}.bind(this));
 };
 
 // Merge given torrent info into store and emit change events
-TorrentStore.prototype.mergeTorrentInfo = function(infoList, fieldList, removeUnlisted=false) {
-	let hashIndex = fieldList.indexOf('d.get_hash');
+TorrentStore.prototype.mergeTorrentInfo = function(infoList, fieldList, removeUnlisted) {
+	var hashIndex = fieldList.indexOf('d.get_hash');
 	if (hashIndex === -1) {
 		console.error('Cannot find hash in torrent fieldList', infoList, fieldList); //XXX logging
 	}
 
 	// {hash: torrent} of changes
-	let changes = {
+	var changes = {
 		added: {},
 		removed: {},
 		modified: {},
 	};
 
 	// Merge info for each torrent
-	for (let i=0; i < infoList.length; i++) {
+	for (var i=0; i < infoList.length; i++) {
 		// Prepare source and dest locations
-		let srcInfo = infoList[i];
-		let hash = srcInfo[hashIndex];
-		let dstInfo = this.torrents[hash];
+		var srcInfo = infoList[i];
+		var hash = srcInfo[hashIndex];
+		var dstInfo = this.torrents[hash];
 		if (dstInfo === undefined) {
 			// Save reference to new object
 			// Note that modified will contain everything in added
@@ -105,10 +105,10 @@ TorrentStore.prototype.mergeTorrentInfo = function(infoList, fieldList, removeUn
 		}
 
 		// Copy each source field over
-		let isModified = false;
-		for (let j=0; j < fieldList.length; j++) {
-			let command = fieldList[j];
-			let fieldName = util.torrent.commandToField[command];
+		var isModified = false;
+		for (var j=0; j < fieldList.length; j++) {
+			var command = fieldList[j];
+			var fieldName = util.torrent.commandToField[command];
 
 			// Transform results of nested commands
 			if (fieldName in util.torrent.complexFieldDeserializers) {
@@ -133,10 +133,10 @@ TorrentStore.prototype.mergeTorrentInfo = function(infoList, fieldList, removeUn
 
 	if (removeUnlisted) {
 		// Remove anything not in infoList, as infoList contains everything
-		let oldHashes = Object.keys(this.torrents);
-		let newHashes = new Set(infoList.map(t => { return t[hashIndex]; }));
+		var oldHashes = Object.keys(this.torrents);
+		var newHashes = new Set(infoList.map(function(t) { return t[hashIndex]; }));
 		// ES6 has sets but no proper set operations ~.~
-		for (let i=0; i < oldHashes.length; i++) {
+		for (var i=0; i < oldHashes.length; i++) {
 			if (!newHashes.has(oldHashes[i])) {
 				changes.removed[oldHashes[i]] = this.torrents[oldHashes[i]];
 				delete this.torrents[oldHashes[i]];
@@ -162,8 +162,8 @@ TorrentStore.prototype._handleRtEvent = function(message) {
 	}
 
 	// Queue event processing
-	let eventName = message.params[0];
-	let hash = message.params[1];
+	var eventName = message.params[0];
+	var hash = message.params[1];
 	if (eventName === 'inserted') {
 		this._pendingRtEventHashes.added.push(hash);
 	} else if (eventName === 'erased') {
@@ -176,13 +176,13 @@ TorrentStore.prototype._handleRtEvent = function(message) {
 };
 TorrentStore.prototype._handleRtEventAct = function() {
 	// Grab our hashes and kill the pending object
-	let removedHashes = _.uniq(this._pendingRtEventHashes.removed);
-	let addedHashes = _.uniq(this._pendingRtEventHashes.added);
-	let modifiedHashes = _.difference(_.uniq(this._pendingRtEventHashes.modified), removedHashes, addedHashes);
+	var removedHashes = _.uniq(this._pendingRtEventHashes.removed);
+	var addedHashes = _.uniq(this._pendingRtEventHashes.added);
+	var modifiedHashes = _.difference(_.uniq(this._pendingRtEventHashes.modified), removedHashes, addedHashes);
 	delete this._pendingRtEventHashes;
 
 	// Request updates for added/modified
-	let rpcHashes = [].concat(addedHashes, modifiedHashes);
+	var rpcHashes = [].concat(addedHashes, modifiedHashes);
 	if (rpcHashes.length) {
 		this.queryHashListInfo([].concat(addedHashes, modifiedHashes));
 	}
@@ -190,14 +190,14 @@ TorrentStore.prototype._handleRtEventAct = function() {
 	// Send removal event
 	if (removedHashes.length) {
 		// {hash: torrent} of changes
-		let emitChanges = {
+		var emitChanges = {
 			added: {},
 			removed: {}, // We'll only be using removed here
 			modified: {},
 		};
 
 		// Remove torrents and gather changes to emit
-		for (let i=0; i < removedHashes.length; i++) {
+		for (var i=0; i < removedHashes.length; i++) {
 			emitChanges.removed[removedHashes[i]] = this.torrents[removedHashes[i]];
 			delete this.torrents[removedHashes[i]];
 		}
@@ -215,11 +215,11 @@ TorrentStore.prototype._localStoragePersist = function() {
 
 TorrentStore.prototype._localStorageRestore = function() {
 	if (localStorage.arr_torrent_cache) {
-		let newTorrents = JSON.parse(LZString.decompressFromUTF16(localStorage.arr_torrent_cache));
-		for (let prop in this.torrents) {
+		var newTorrents = JSON.parse(LZString.decompressFromUTF16(localStorage.arr_torrent_cache));
+		for (var prop in this.torrents) {
 			delete this.torrents[prop];
 		}
-		for (let prop in newTorrents) {
+		for (var prop in newTorrents) {
 			this.torrents[prop] = newTorrents[prop];
 		}
 		this.emit('change', {

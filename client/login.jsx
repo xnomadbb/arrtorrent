@@ -1,5 +1,5 @@
-const React = require('react');
-const ArrRpc = require('./rpc');
+var React = require('react');
+var ArrRpc = require('./rpc');
 
 module.exports = React.createClass({
 	displayName: 'Login',
@@ -9,9 +9,9 @@ module.exports = React.createClass({
 		};
 	},
 	handleSubmit: function() {
-		let username = this.refs.username.getDOMNode().value;
-		let password = this.refs.password.getDOMNode().value;
-		ArrRpc.configure({username, password});
+		var username = this.refs.username.getDOMNode().value;
+		var password = this.refs.password.getDOMNode().value;
+		ArrRpc.configure({username: username, password: password});
 		ArrRpc.once('wsError', this.authDidFail);
 		ArrRpc.connect(ArrRpc.createUrl());
 		this.setState({didAuthFail: null});
@@ -33,7 +33,7 @@ module.exports = React.createClass({
 		this.refs.username.getDOMNode().focus();
 	},
 	render: function() {
-		let authFail = this.state.didAuthFail ? (<div className="authFail">Authentication failed</div>) : '';
+		var authFail = this.state.didAuthFail ? (<div className="authFail">Authentication failed</div>) : '';
 		return (
 			<div className="login-container" onKeyPress={this.handleKeyPress}>
 				<div className="welcome">arr</div>

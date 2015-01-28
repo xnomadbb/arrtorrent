@@ -1,14 +1,14 @@
-const React = require('react');
-const Sidebar = require('./sidebar');
-const MainPane = require('./pane-main');
-const FlexResizerMixin = require('./mixins/flex-resizer');
+var React = require('react');
+var Sidebar = require('./sidebar');
+var MainPane = require('./pane-main');
+var FlexResizerMixin = require('./mixins/flex-resizer');
 
 module.exports = React.createClass({
 	displayName: 'ArrRoot',
 	mixins: [FlexResizerMixin],
 	getInitialState: function() {
 		return {
-			activeView: 'state_all'
+			activeView: 'state_all',
 		};
 	},
 	changeView: function(viewId) {

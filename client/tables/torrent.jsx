@@ -1,7 +1,7 @@
-const React = require('react');
-const ViewStore = require('../stores/view');
-const TorrentColumns = require('./torrent-columns');
-const BaseTable = require('./base-table');
+var React = require('react');
+var ViewStore = require('../stores/view');
+var TorrentColumns = require('./torrent-columns');
+var BaseTable = require('./base-table');
 
 module.exports = React.createClass({
 	displayName: 'TorrentTable',
@@ -15,7 +15,7 @@ module.exports = React.createClass({
 		this.forceUpdate();
 	},
 	render: function() {
-		let rowData = ViewStore.viewContents[this.props.activeView];
+		var rowData = ViewStore.viewContents[this.props.activeView];
 		return (
 			<BaseTable ref="flexResizerNotifyProxy" tableKey="torrent" columnDescriptions={TorrentColumns.columns}
 			initialColumnOrder={TorrentColumns.initialOrder} initialSort={['name', 'ASC']} rowData={rowData} />

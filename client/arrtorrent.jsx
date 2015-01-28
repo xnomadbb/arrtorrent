@@ -1,7 +1,7 @@
-const React = require('react');
-const Login = require('./login');
-const ArrRoot = require('./arrroot');
-const ArrRpc = require('./rpc');
+var React = require('react');
+var Login = require('./login');
+var ArrRoot = require('./arrroot');
+var ArrRpc = require('./rpc');
 
 module.exports = React.createClass({
 	displayName: 'ArrTorrent',

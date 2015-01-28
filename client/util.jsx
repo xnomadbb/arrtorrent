@@ -1,8 +1,8 @@
-const React = require('react');
-const url = require('url');
-const sha1 = require('sha1');
+var React = require('react');
+var url = require('url');
+var sha1 = require('sha1');
 
-const util = {
+var util = {
 	torrent: {
 		commands: {
 			// Categorized dict of {category: [...d.commands]}
@@ -151,8 +151,8 @@ const util = {
 			't.multicall=,t.get_url=,t.get_scrape_complete=,t.get_scrape_incomplete=': 'trackers',
 		},
 		complexFieldDeserializers: {
-			'trackers': rawResponse => {
-				return rawResponse.map(rawTracker => {
+			'trackers': function(rawResponse) {
+				return rawResponse.map(function(rawTracker) {
 					return {
 						'url': rawTracker[0],
 						'scrape_complete': rawTracker[1],
@@ -170,13 +170,13 @@ const util = {
 			'stopped':  'Stopped',
 			'unknown':  'Unknown',
 		},
-		getStatusFromTorrent(torrent) {
-			let started = torrent.is_open != '0';
-			let paused = (started && (torrent.mystery_state == '0' || torrent.is_active == '0'));
-			let hashing = (torrent.is_hashing != '0' || torrent.is_hash_checking != '0');
+		getStatusFromTorrent: function(torrent) {
+			var started = torrent.is_open != '0';
+			var paused = (started && (torrent.mystery_state == '0' || torrent.is_active == '0'));
+			var hashing = (torrent.is_hashing != '0' || torrent.is_hash_checking != '0');
 			//XXX Stolen from rutorrent, why's this message important?
-			let error = (torrent.message.length && torrent.message !== 'Tracker: [Tried all trackers.]' || torrent.is_hashing_failed === '1');
-			let complete = torrent.size_bytes == torrent.bytes_done; // rut uses different vars here
+			var error = (torrent.message.length && torrent.message !== 'Tracker: [Tried all trackers.]' || torrent.is_hashing_failed === '1');
+			var complete = torrent.size_bytes == torrent.bytes_done; // rut uses different vars here
 
 			if (hashing) {
 				return ['hashing', error];
@@ -212,11 +212,11 @@ const util = {
 			'wcd': '057187c66532a5bf6c8b54ced70666ebce32875f',
 			'wfl': '4c1a70add824a8642e527fd95066666b6304e547',
 		},
-		urlToDomain: inUrl => {
-			let trackerHost = url.parse(inUrl).hostname;
+		urlToDomain: function(inUrl) {
+			var trackerHost = url.parse(inUrl).hostname;
 			trackerHost = trackerHost.replace(/^tracker\./i, ''); // Remove any leading "tracker."
 
-			let trackerHash = sha1(trackerHost);
+			var trackerHash = sha1(trackerHost);
 			if (trackerHash === util.tracker.identifiers.ptp_tracker) {
 				trackerHost = trackerHost.split('.').splice(1).join('.') // Chop witty subdomain
 			}
@@ -225,11 +225,11 @@ const util = {
 		},
 	},
 	format: {
-		ratioToHtml: (ratio, showZero) => {
+		ratioToHtml: function(ratio, showZero) {
 			// Arrives as thousandths of ratio because dildos, eg. 2500 = 2.500 ratio, 50 = 0.050 ratio
-			let r= ('0000' + ratio); // Pad out so we'll always have something + 3 decimal places
-			let whole = parseInt(r.slice(0, -3), 10); // Discard leading 0s
-			let fraction = r.slice(-3); // Preserve trailing 0s
+			var r = ('0000' + ratio); // Pad out so we'll always have something + 3 decimal places
+			var whole = parseInt(r.slice(0, -3), 10); // Discard leading 0s
+			var fraction = r.slice(-3); // Preserve trailing 0s
 			return (
 				<span className="ratioSize">
 					<span className="sizeWhole">{ whole }</span>
@@ -238,23 +238,23 @@ const util = {
 				</span>
 			);
 		},
-		bytesToHtml: (bytes, showZero) => {
+		bytesToHtml: function(bytes, showZero) {
 			bytes = parseInt(bytes, 10) || 0;
 			if (bytes === 0 && !showZero) {
 				return '';
 			}
 
 			// 1023 YiB ought to be enough for anybody
-			let suffixIEC = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-			let suffixSI  = ['B', 'KB',  'MB',  'GB',  'TB',  'PB',  'EB',  'ZB',  'YB' ];
-			let expIEC = Math.floor(Math.log(bytes || 1) / Math.log(1024));
-			let coefficientIEC = (bytes / Math.pow(1024, expIEC)).toFixed(2);
+			var suffixIEC = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+			var suffixSI  = ['B', 'KB',  'MB',  'GB',  'TB',  'PB',  'EB',  'ZB',  'YB' ];
+			var expIEC = Math.floor(Math.log(bytes || 1) / Math.log(1024));
+			var coefficientIEC = (bytes / Math.pow(1024, expIEC)).toFixed(2);
 
 			// Don't show/explain SI at all under 1000B
-			let title = '';
+			var title = '';
 			if (bytes > 999) {
-				let expSI  = Math.floor(Math.log(bytes || 1) / Math.log(1000));
-				let coefficientSI  = (bytes / Math.pow(1000, expSI )).toFixed(2);
+				var expSI  = Math.floor(Math.log(bytes || 1) / Math.log(1000));
+				var coefficientSI  = (bytes / Math.pow(1000, expSI )).toFixed(2);
 				title = (
 					coefficientIEC + ' ' + suffixIEC[expIEC] + ' (IEC, binary) or ' +
 					coefficientSI  + ' ' + suffixSI[expSI] + ' (SI, metric)'
@@ -263,8 +263,8 @@ const util = {
 
 			// IEC units are formatted without the i because it looks bad and confuses people
 			// The tooltip text contains proper units with a better explanation when needed
-			let coefficientParts = coefficientIEC.split('.');
-			let suffix = suffixSI[expIEC];
+			var coefficientParts = coefficientIEC.split('.');
+			var suffix = suffixSI[expIEC];
 
 			return (
 				<span className="byteSize" title={title}>
@@ -275,14 +275,14 @@ const util = {
 				</span>
 			);
 		},
-		bytesPerSecondToHtml: (bytes, showZero) => {
+		bytesPerSecondToHtml: function(bytes, showZero) {
 			bytes = parseInt(bytes, 10) || 0;
 			if (bytes === 0 && !showZero) {
 				return '';
 			}
 			return <span>{util.format.bytesToHtml(bytes)}/s</span>
 		},
-		secondsToHtml: (seconds, showZero, maxUnits) => {
+		secondsToHtml: function(seconds, showZero, maxUnits) {
 			if (!isFinite(seconds) && !isNaN(seconds)) {
 				return String.fromCharCode(8734); // Infinity symbol
 			}
@@ -292,23 +292,23 @@ const util = {
 			}
 			maxUnits = maxUnits || 3;
 
-			let years = Math.floor(seconds / 31536000);
+			var years = Math.floor(seconds / 31536000);
 			seconds %= 31536000;
 
 			// Each unit below is a multiple of the unit below it
-			let months = Math.floor(seconds / 2592000);
-			let days = Math.floor((seconds % 2592000) / 86400);
-			let hours = Math.floor((seconds % 86400) / 3600);
-			let minutes = Math.floor((seconds % 3600) / 60);
+			var months = Math.floor(seconds / 2592000);
+			var days = Math.floor((seconds % 2592000) / 86400);
+			var hours = Math.floor((seconds % 86400) / 3600);
+			var minutes = Math.floor((seconds % 3600) / 60);
 			seconds %= 60;
 
-			let suffixes = ['y', 'M', 'd', 'h', 'm', 's'];
-			let units = [years, months, days, hours, minutes, seconds];
+			var suffixes = ['y', 'M', 'd', 'h', 'm', 's'];
+			var units = [years, months, days, hours, minutes, seconds];
 
 			// Display the first maxUnits worth of non-zero units
 			// TODO output as HTML and style with CSS, too much string manipulation here
-			let output = [];
-			for (let i=0; i < units.length && maxUnits; i++) {
+			var output = [];
+			for (var i=0; i < units.length && maxUnits; i++) {
 				if (units[i]) {
 					output.push(units[i] + suffixes[i]);
 					maxUnits--;
@@ -316,13 +316,13 @@ const util = {
 			}
 			return output.join(' ');
 		},
-		unixTimeToDate: unix => {
+		unixTimeToDate: function(unix) {
 			if (!unix) {
 				return false;
 			}
 			return new Date(parseInt(unix + '000', 10));
 		},
-		dateToHtml: (date, showEmpty) => {
+		dateToHtml: function(date, showEmpty) {
 			if (!date){
 				if (showEmpty) {
 					return 'None';
@@ -331,11 +331,11 @@ const util = {
 				}
 			}
 			//TODO A library with custom output would be ideal
-			let dateString = date.toLocaleDateString();
-			let fullString = date.toLocaleString();
+			var dateString = date.toLocaleDateString();
+			var fullString = date.toLocaleString();
 			return <span className="datetime" title={fullString}>{dateString}</span>;
 		},
-		unixTimeToHtml: (unix, showEmpty) => {
+		unixTimeToHtml: function(unix, showEmpty) {
 			return util.format.dateToHtml(util.format.unixTimeToDate(unix), showEmpty);
 		}
 	},

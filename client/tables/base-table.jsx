@@ -1,15 +1,15 @@
-const React = require('react/addons');
-const _ = require('lodash');
+var React = require('react/addons');
+var _ = require('lodash');
 
-let TableBodyCell = React.createClass({
+var TableBodyCell = React.createClass({
 	displayName: 'TableBodyCell',
 	shouldComponentUpdate: function(nextProps) {
 		return !('renderHash' in nextProps) || this.props.renderHash !== nextProps.renderHash;
 	},
 	render: function() {
-		let contents = this.props.columnDescription.renderCellContents(this.props.rowData);
+		var contents = this.props.columnDescription.renderCellContents(this.props.rowData);
 
-		let classes = {};
+		var classes = {};
 		classes['align_' + this.props.columnDescription.align] = true;
 		classes[this.props.columnDescription.key] = true;
 		classes = React.addons.classSet(classes);
@@ -22,10 +22,10 @@ let TableBodyCell = React.createClass({
 	},
 });
 
-let TableBodyRow = React.createClass({
+var TableBodyRow = React.createClass({
 	displayName: 'TableBodyRow',
 	shouldComponentUpdate: function(nextProps) {
-		// columnDescriptions are constant
+		// columnDescriptions are varant
 		return (
 			JSON.stringify(this.props.columnOrder) !== JSON.stringify(nextProps.columnOrder) ||
 			!('renderHash' in nextProps) ||
@@ -33,11 +33,15 @@ let TableBodyRow = React.createClass({
 		);
 	},
 	render: function() {
-		let cells = this.props.columnOrder.map(columnKey => {
-			return (
-				<TableBodyCell key={columnKey} rowData={this.props.rowData} columnDescription={this.props.columnDescriptions[columnKey]} renderHash={this.props.renderHash} />
+		var cells = [];
+		var columnOrder = this.props.columnOrder;
+		var columnDescriptions = this.props.columnDescriptions;
+		for (var i=0; i < columnOrder.length; i++) {
+			cells.push(
+				<TableBodyCell key={columnOrder[i]} rowData={this.props.rowData}
+				columnDescription={columnDescriptions[columnOrder[i]]} renderHash={this.props.renderHash} />
 			);
-		});
+		}
 
 		return (
 			<tr>
@@ -87,13 +91,13 @@ module.exports = React.createClass({
 		}
 	},
 	getSortedKeys: function() {
-		let sortData = [];
-		let getSortKey = this.props.columnDescriptions[this.state.sortKey].getSortKey; // Gets the value to sort with
+		var sortData = [];
+		var getSortKey = this.props.columnDescriptions[this.state.sortKey].getSortKey; // Gets the value to sort with
 
 		// Insert new data
-		for (let rowKey in this.props.rowData) {
-			let rowData = this.props.rowData[rowKey];
-			let sortKey = getSortKey(rowData);
+		for (var rowKey in this.props.rowData) {
+			var rowData = this.props.rowData[rowKey];
+			var sortKey = getSortKey(rowData);
 			sortData.push({
 				rowKey: rowKey,
 				sortKey: sortKey,
@@ -101,32 +105,32 @@ module.exports = React.createClass({
 		}
 
 		// Sort by sortKey
-		let sortSign = (this.state.sortDirection === 'DESC') ? -1 : 1;
+		var sortSign = (this.state.sortDirection === 'DESC') ? -1 : 1;
 		sortData.sort(function(a, b) {
-			let av = a.sortKey, bv = b.sortKey;
+			var av = a.sortKey, bv = b.sortKey;
 			return ((av > bv) - (av < bv)) * sortSign;
 		});
 
-		return sortData.map(x => { return x.rowKey; });
+		return sortData.map(function(x) { return x.rowKey; });
 	},
 
 	getRenderInfo: function() {
 		// Ordered list of row keys for entire dataset
-		let sortedKeys = this.getSortedKeys();
+		var sortedKeys = this.getSortedKeys();
 		// Highest number of rows to be rendered
-		let maxLength = sortedKeys.length;
+		var maxLength = sortedKeys.length;
 		// Index of the topmost rendered (visible) row
-		let topRenderIndex = Math.floor(this.state.tableTopOffset / this.state.rowHeight);
+		var topRenderIndex = Math.floor(this.state.tableTopOffset / this.state.rowHeight);
 		// Max number of rows the current table view can hold
-		let maxRowsRenderCount = Math.ceil(this.state.tableHeight / this.state.rowHeight);
+		var maxRowsRenderCount = Math.ceil(this.state.tableHeight / this.state.rowHeight);
 		// Number of rows remaining in the list or number the table will hold, whichever is lower
-		let actualRowsRenderCount = Math.min(maxRowsRenderCount, maxLength - topRenderIndex);
+		var actualRowsRenderCount = Math.min(maxRowsRenderCount, maxLength - topRenderIndex);
 
-		let topPadding = Math.min(this.state.tableTopOffset, this.state.rowHeight * (maxLength - maxRowsRenderCount));
+		var topPadding = Math.min(this.state.tableTopOffset, this.state.rowHeight * (maxLength - maxRowsRenderCount));
 		topPadding = Math.max(0, topPadding);
-		let bottomPadding = (maxLength * this.state.rowHeight) - topPadding - (actualRowsRenderCount * this.state.rowHeight);
+		var bottomPadding = (maxLength * this.state.rowHeight) - topPadding - (actualRowsRenderCount * this.state.rowHeight);
 		bottomPadding = Math.max(0, bottomPadding);
-		let rowKeys = sortedKeys.slice(topRenderIndex, topRenderIndex + actualRowsRenderCount);
+		var rowKeys = sortedKeys.slice(topRenderIndex, topRenderIndex + actualRowsRenderCount);
 
 		return ({
 			topPadding: topPadding,
@@ -157,7 +161,7 @@ module.exports = React.createClass({
 		}), 'arr');
 	},
 	headerReorderHandleDragOver: function(columnKey, e) {
-		let data = JSON.parse(e.dataTransfer.types[0]);
+		var data = JSON.parse(e.dataTransfer.types[0]);
 		if ( data.action !== 'header_reorder' // Wrong action
 			|| data.table_key !== this.props.tableKey // Wrong table
 			|| data.column_key === columnKey // Same column
@@ -172,14 +176,14 @@ module.exports = React.createClass({
 	},
 	headerReorderHandleDrop: function(toColumnKey, e) {
 		// data already validated on dragover
-		let data = JSON.parse(e.dataTransfer.types[0]);
-		let fromColumnKey = data.column_key;
+		var data = JSON.parse(e.dataTransfer.types[0]);
+		var fromColumnKey = data.column_key;
 		console.log('reorder (from to)', fromColumnKey, toColumnKey); //XXX log
 
 		// Swap columns
-		let columnOrder = this.state.columnOrder.slice(); // New instance
-		let fromIndex = columnOrder.indexOf(fromColumnKey);
-		let toIndex   = columnOrder.indexOf(  toColumnKey);
+		var columnOrder = this.state.columnOrder.slice(); // New instance
+		var fromIndex = columnOrder.indexOf(fromColumnKey);
+		var toIndex   = columnOrder.indexOf(  toColumnKey);
 		columnOrder[fromIndex] =   toColumnKey;
 		columnOrder[  toIndex] = fromColumnKey;
 		this.setState({columnOrder: columnOrder});
@@ -191,8 +195,8 @@ module.exports = React.createClass({
 		this.updateScrollInfo();
 	},
 	updateScrollInfo: function() {
-		let scrollContainer = this.refs.scrollContainer.getDOMNode();
-		let firstRow = scrollContainer.querySelector('tr');
+		var scrollContainer = this.refs.scrollContainer.getDOMNode();
+		var firstRow = scrollContainer.querySelector('tr');
 		if (firstRow) {
 			this.setState({
 				tableHeight: scrollContainer.getBoundingClientRect().height,
@@ -209,7 +213,7 @@ module.exports = React.createClass({
 		}
 	},
 	resetScroll: function() {
-		let scrollContainer = this.refs.scrollContainer;
+		var scrollContainer = this.refs.scrollContainer;
 		if (scrollContainer) {
 			scrollContainer.getDOMNode().scrollTop = 0;
 			this.setState({tableTopOffset: 0});
@@ -237,9 +241,9 @@ module.exports = React.createClass({
 
 
 	renderHeaderCell: function(columnKey) {
-		let columnDescription = this.props.columnDescriptions[columnKey];
+		var columnDescription = this.props.columnDescriptions[columnKey];
 
-		let classes = {};
+		var classes = {};
 		classes[columnKey] = true;
 		classes['align_' + columnDescription.align] = true;
 		if (this.state.sortKey === columnKey) {
@@ -258,14 +262,14 @@ module.exports = React.createClass({
 		);
 	},
 	render: function() {
-		let headerCells = this.state.columnOrder.map(this.renderHeaderCell);
-		let bodyRows = [];
-		let renderInfo = this.getRenderInfo();
-		let renderRowKeys = renderInfo.rowKeys;
+		var headerCells = this.state.columnOrder.map(this.renderHeaderCell);
+		var bodyRows = [];
+		var renderInfo = this.getRenderInfo();
+		var renderRowKeys = renderInfo.rowKeys;
 
-		for (let i=0; i < renderRowKeys.length; i++) {
-			let rowKey = renderRowKeys[i];
-			let rowData = this.props.rowData[rowKey];
+		for (var i=0; i < renderRowKeys.length; i++) {
+			var rowKey = renderRowKeys[i];
+			var rowData = this.props.rowData[rowKey];
 			bodyRows.push(<TableBodyRow key={rowKey} columnOrder={this.state.columnOrder} columnDescriptions={this.props.columnDescriptions} rowData={rowData} renderHash={rowData.renderHash} />);
 		}
 

@@ -1,11 +1,11 @@
-const inherits = require('util').inherits;
-const EventEmitter = require('events').EventEmitter;
-const sha1 = require('sha1');
-const TorrentStore = require('./torrent');
-const util = require('../util');
+var inherits = require('util').inherits;
+var EventEmitter = require('events').EventEmitter;
+var sha1 = require('sha1');
+var TorrentStore = require('./torrent');
+var util = require('../util');
 
 // There are currently views for states, labels, and trackers. rutorrent does searches and feeds as well.
-let ViewStore = function() {
+var ViewStore = function() {
 	TorrentStore.on('change', this.torrentsDidChange.bind(this));
 	this.viewGroups = {
 		// {group id: [view id]}
@@ -75,23 +75,23 @@ inherits(ViewStore, EventEmitter);
 
 ViewStore.prototype.torrentsDidChange = function(changes) {
 	// Remove records for removed and modified torrents (we'll re-add modified)
-	for (let viewId in this.viewContents) {
-		let viewTorrents = this.viewContents[viewId];
-		for (let hash in changes.removed) {
+	for (var viewId in this.viewContents) {
+		var viewTorrents = this.viewContents[viewId];
+		for (var hash in changes.removed) {
 			delete viewTorrents[hash];
 		}
-		for (let hash in changes.modified) {
+		for (var hash in changes.modified) {
 			delete viewTorrents[hash];
 		}
 	}
 
 	// Re-add modified torrents
-	for (let hash in changes.modified) {
+	for (var hash in changes.modified) {
 		this._addTorrentToViews(changes.modified[hash]);
 	}
 
 	// Add new torrents
-	for (let hash in changes.added) {
+	for (var hash in changes.added) {
 		this._addTorrentToViews(changes.added[hash]);
 	}
 
@@ -102,7 +102,7 @@ ViewStore.prototype.torrentsDidChange = function(changes) {
 ViewStore.prototype._addTorrentToViews = function(torrent) {
 	// Process user-defined label views
 	if (torrent.label.length > 0) {
-		let viewId = 'label_' + sha1(torrent.label); // CSS-safe unique id
+		var viewId = 'label_' + sha1(torrent.label); // CSS-safe unique id
 		this._addView(viewId, torrent.label, 'label'); // Ensure view exists
 		this.viewContents[viewId][torrent.hash] = torrent;
 	} else {
@@ -113,7 +113,10 @@ ViewStore.prototype._addTorrentToViews = function(torrent) {
 	// Process state views
 	//TODO Check that these are correct and that they correlate 1:1 with builtin view names, they
 	//     need to be exactly equivalent or we risk affecting unwanted torrents on batch operations
-	let [status, error] = util.torrent.getStatusFromTorrent(torrent);
+	var status_error = util.torrent.getStatusFromTorrent(torrent);
+	var status = status_error[0];
+	var error = status_error[1];
+
 	this.viewContents.state_all[torrent.hash] = torrent;
 	if (parseInt(torrent.up_rate) || parseInt(torrent.down_rate)) {
 		this.viewContents.state_active[torrent.hash] = torrent;
@@ -141,9 +144,9 @@ ViewStore.prototype._addTorrentToViews = function(torrent) {
 	// Process tracker views
 	// We group by domain, not announce URL.
 	if (torrent.trackers) {
-		for (let i=0; i < torrent.trackers.length; i++) {
-			let trackerHost = util.tracker.urlToDomain(torrent.trackers[i].url);
-			let viewId = 'tracker_' + sha1(trackerHost); // CSS-safe unique id
+		for (var i=0; i < torrent.trackers.length; i++) {
+			var trackerHost = util.tracker.urlToDomain(torrent.trackers[i].url);
+			var viewId = 'tracker_' + sha1(trackerHost); // CSS-safe unique id
 			this._addView(viewId, trackerHost, 'tracker'); // Ensure view exists
 			this.viewContents[viewId][torrent.hash] = torrent;
 		}
@@ -170,7 +173,7 @@ ViewStore.prototype._sortViewGroup = function(groupId) {
 	}
 
 	this.viewGroups[groupId].sort(function(a, b) {
-		let aName = this.viewNames[a], bName = this.viewNames[b];
+		var aName = this.viewNames[a], bName = this.viewNames[b];
 
 		// No labels is always first
 		if (aName === 'label_none') {
@@ -185,11 +188,11 @@ ViewStore.prototype._sortViewGroup = function(groupId) {
 			return 0;
 		}
 		return (aName > bName) ? 1 : -1;
-	});
+	}.bind(this));
 };
 
 ViewStore.prototype._pruneEmptyViews = function() {
-	for (let viewId in this.viewContents) {
+	for (var viewId in this.viewContents) {
 		if (viewId.indexOf('state_') === 0) {
 			continue; // State views are rt-builtin
 		}
@@ -206,8 +209,8 @@ ViewStore.prototype._pruneEmptyViews = function() {
 		delete this.viewNames[viewId];
 
 		// Remove from viewGroups
-		let groupId = viewId.split('_')[0];
-		let viewIndex = this.viewGroups[groupId].indexOf(viewId);
+		var groupId = viewId.split('_')[0];
+		var viewIndex = this.viewGroups[groupId].indexOf(viewId);
 		this.viewGroups[groupId].splice(viewIndex, 1);
 	}
 };

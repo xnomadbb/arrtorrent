@@ -1,8 +1,8 @@
-const inherits = require('util').inherits;
-const jsonrpc = require('./json-rpc');
-const EventEmitter = require('events').EventEmitter;
+var inherits = require('util').inherits;
+var jsonrpc = require('./json-rpc');
+var EventEmitter = require('events').EventEmitter;
 
-let ArrRpc = function() {};
+var ArrRpc = function() {};
 
 inherits(ArrRpc, EventEmitter);
 
@@ -12,11 +12,11 @@ ArrRpc.prototype.configure = function(options) {
 };
 
 ArrRpc.prototype.createUrl = function() {
-	let scheme = document.location.protocol === 'https:' ? 'wss:' : 'ws:';
-	let host = document.location.host;
-	let user = this.username;
-	let pass = btoa(this.password);
-	return `${scheme}//${host}/arr?username=${user}&password=${pass}`;
+	var scheme = document.location.protocol === 'https:' ? 'wss://' : 'ws://';
+	var host = document.location.host;
+	var user = this.username;
+	var pass = btoa(this.password);
+	return scheme + host + '/arr?username=' + user + '&password=' + pass;
 };
 
 ArrRpc.prototype.isAlive = function() {
@@ -48,13 +48,13 @@ ArrRpc.prototype.wsDidOpen = function() {
 
 	// After wait (if we haven't had an error), proceed and stop listening for errors
 	var router = this.routeRequests.bind(this);
-	authTimer = setTimeout(() => {
+	authTimer = setTimeout(function() {
 		this.jsonrpc = new jsonrpc(this.ws, router);
 		this.sendRequest = this.jsonrpc.sendRequest.bind(this.jsonrpc);
 		this.sendRequest('arr.get_config', [], this.configLoad.bind(this));
 		this.removeListener('wsError', cancelAuth);
 		this.emit('wsOpen');
-	}, 300);
+	}.bind(this), 300);
 };
 
 ArrRpc.prototype.wsDidError = function() {

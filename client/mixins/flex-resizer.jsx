@@ -1,6 +1,6 @@
-const React = require('react');
+var React = require('react');
 
-let FlexResizerMixin = module.exports = {
+var FlexResizerMixin = module.exports = {
 	// Requires:
 	// - flexResizerTarget ref on element to be resized
 	// - render handle with flexResizerRenderHandle, suppling the axis ('x' or 'y') and sign ('pos' or 'neg') of growth
@@ -44,7 +44,7 @@ let FlexResizerMixin = module.exports = {
 	},
 	flexResizerHandleDrag: function(e) {
 		//console.log('drag ', e.clientX, e.clientY);
-		let newPos = (this.flexAxis === 'x') ? e.clientX : e.clientY;
+		var newPos = (this.flexAxis === 'x') ? e.clientX : e.clientY;
 		if (!newPos) {
 			return; // Things like to falsely report 0 near the end of a drag
 		}

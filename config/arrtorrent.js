@@ -9,7 +9,7 @@ module.exports = {
 
 	auth: {
 		users: [
-			{username: 'user', password: '$2a$10$ZylnSq/PjolpiND1BEXKVepi.dE01kfQzVp8JubZ/WbdFUyxRVLdi'}, // password: hackme // Jfd80dFgfds08FDSNVds8fds79
+			{username: 'user', password: '$2a$10$ZylnSq/PjolpiND1BEXKVepi.dE01kfQzVp8JubZ/WbdFUyxRVLdi'}, // password: hackme
 		]
 	},
 

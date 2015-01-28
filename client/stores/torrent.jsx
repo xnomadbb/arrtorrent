@@ -134,13 +134,12 @@ TorrentStore.prototype.mergeTorrentInfo = function(infoList, fieldList, removeUn
 	if (removeUnlisted) {
 		// Remove anything not in infoList, as infoList contains everything
 		var oldHashes = Object.keys(this.torrents);
-		var newHashes = new Set(infoList.map(function(t) { return t[hashIndex]; }));
-		// ES6 has sets but no proper set operations ~.~
-		for (var i=0; i < oldHashes.length; i++) {
-			if (!newHashes.has(oldHashes[i])) {
-				changes.removed[oldHashes[i]] = this.torrents[oldHashes[i]];
-				delete this.torrents[oldHashes[i]];
-			}
+		var newHashes = _.pluck(infoList, hashIndex);
+		var rmHashes = _.difference(oldHashes, newHashes);
+		for (var i=0; i < rmHashes.length; i++) {
+			var rmHash = rmHashes[i];
+			changes.remove[rmHash] = this.torrents[rmHash];
+			delete this.torrents[rmHash];
 		}
 	}
 

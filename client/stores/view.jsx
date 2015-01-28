@@ -184,10 +184,7 @@ ViewStore.prototype._sortViewGroup = function(groupId) {
 		}
 
 		// Otherwise sort by name
-		if (aName === bName) {
-			return 0;
-		}
-		return (aName > bName) ? 1 : -1;
+		return ((aName > bName) - (aName < bName));
 	}.bind(this));
 };
 

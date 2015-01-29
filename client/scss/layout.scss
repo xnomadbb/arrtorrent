@@ -109,3 +109,13 @@ html, body, #arr, .ArrRoot {
 		width: 100px; // Override this per-column, everything will mash together without this
 	}
 }
+
+.BaseTableContainer {
+	min-width: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.BaseTableBefore {
+	flex: 0 0 auto;
+}

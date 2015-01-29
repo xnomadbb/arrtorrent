@@ -139,6 +139,14 @@ Table details
 	border-bottom: 1px solid $offwhite;
 }
 
+.BaseTableBefore + .BaseTable .BaseTableHeader {
+	border-top: 1px solid $offwhite;
+}
+
+.BaseTableBefore {
+	margin: 5px;
+}
+
 .TorrentTable {
 	// Initial widths need to be set so things look okay initially.
 	// The user is free to resize these, and the less important details
@@ -176,7 +184,10 @@ Table details
 	.module     { width:  5%; }
 	.event      { width: 10%; }
 	.message    { width: 70%; }
-	.logMessageFragment { margin-right: 10px; }
+	.logMessageFragment { margin-right: 1rem; }
 	.logMessageFragment:nth-child(2n) { background: #eee; }
 }
 
+.LogTableContainer .LogFilterLabel {
+	margin-left: 1rem;
+}

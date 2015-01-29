@@ -1,79 +1,89 @@
 var React = require('react');
 var BaseTable = require('./base-table');
 var LogStore = require('../stores/log');
-var util = require('../util');
+var LogColumns = require('./log-columns');
 
-var columns = {
-	'level': {
-		key: 'level',
-		name: 'Level',
-		tooltip: 'Severity level of log event',
-		getSortKey: function(row) { return row.levelNumber; },
-		renderCellContents: function(row) { return row.level; },
-		align: 'left',
-	},
-	'timestamp': {
-		key: 'timestamp',
-		name: 'Time',
-		tooltip: 'Date and time of log event',
-		getSortKey: function(row) { return row.timestamp; },
-		renderCellContents: function(row) { return util.format.unixTimeToHtmlDatetime(row.timestamp, true); },
-		align: 'right',
-	},
-	'module': {
-		key: 'module',
-		name: 'Module',
-		tooltip: 'Code module which generated log event',
-		getSortKey: function(row) { return row.module; },
-		renderCellContents: function(row) { return row.module; },
-		align: 'left',
-	},
-	'event': {
-		key: 'event',
-		name: 'Event',
-		tooltip: 'Abbreviated event code',
-		getSortKey: function(row) { return row.eventCode; },
-		renderCellContents: function(row) { return row.eventCode; },
-		align: 'left',
-	},
-	'message': {
-		key: 'message',
-		name: 'Message',
-		tooltip: 'Human-readable content of log event with full information',
-		getSortKey: function(row) { return row.message.join(' '); },
-		renderCellContents: function(row) {
-			var fragments = [];
-			for (var i=0; i < row.message.length; i++) {
-				fragments.push(
-					(['string', 'number'].indexOf(typeof row.message[i]) === -1) ?
-					(<span key={i} className="logMessageFragment">{ JSON.stringify(row.message[i]) }</span>) :
-					(<span key={i} className="logMessageFragment">{ row.message[i] }</span>)
-				);
-			}
-			return (<span>{ fragments }</span>);
-		},
-		align: 'left',
-	},
-};
-
-var initialOrder = ['level', 'timestamp', 'module', 'event', 'message'];
 
 module.exports = React.createClass({
 	displayName: 'LogTable',
+	getInitialState: function() {
+		return {
+			'levelFilter': LogStore.levels.user_info,
+			'rowData': {},
+		};
+	},
+
 	componentWillMount: function() {
 		LogStore.on('change', this.logsDidChange);
+		LogStore.on('empty', this.logsDidEmpty);
+		this.logsDidEmpty();
 	},
 	componentWillUnmount: function() {
 		LogStore.removeListener('change', this.logsDidChange);
+		LogStore.removeListener('empty', this.logsDidEmpty);
 	},
-	logsDidChange: function() {
-		this.forceUpdate();
+
+	logsDidChange: function(logEvent) {
+		// Logs are considered immutable once written, so we can get away with appending.
+		if (logEvent.levelNumber >= this.state.levelFilter) {
+			var rowData = this.state.rowData;
+			rowData[logEvent.id] = logEvent;
+			this.setState({rowData: rowData});
+		}
 	},
-	render: function() {
+	logsDidEmpty: function() {
+		this.rebuildRowData(this.state.levelFilter);
+	},
+
+	rebuildRowData: function(levelFilter) {
+		var rowData = {};
+		for (var id in LogStore.events) {
+			var logEvent = LogStore.events[id];
+			if (logEvent.levelNumber >= levelFilter) {
+				rowData[logEvent.id] = logEvent;
+			}
+		}
+		this.setState({rowData: rowData, levelFilter: levelFilter});
+	},
+
+	handleEmptyCommand: function() {
+		LogStore.empty();
+	},
+	handleFilterSelect: function(event) {
+		this.rebuildRowData(event.target.value);
+	},
+
+	renderFilterSelector: function() {
+		var filterOptions = [];
+		for (var levelName in LogStore.levels) {
+			var levelNumber = LogStore.levels[levelName];
+			filterOptions.push(
+				<option key={levelNumber} value={levelNumber}>{ levelName }</option>
+			);
+		}
+
 		return (
-			<BaseTable ref="flexResizerNotifyProxy" tableKey="log" className="LogTable"
-			columnDescriptions={columns} initialColumnOrder={initialOrder}
-			initialSort={['timestamp', 'DESC']} rowData={LogStore.events} />
+			<span>
+				<label className="LogFilterLabel" htmlFor="LogFilterSelector">Minimum log level: </label>
+				<select ref="LogFilterSelector" id="LogFilterSelector" value={this.state.levelFilter} onChange={this.handleFilterSelect}>
+					{ filterOptions }
+				</select>
+			</span>
+		);
+	},
+
+	render: function() {
+		var filterSelector = this.renderFilterSelector();
+		return (
+			<div className="BaseTableContainer LogTableContainer">
+				<div className="BaseTableBefore">
+					<button onClick={this.handleEmptyCommand}>Clear</button>
+					{ filterSelector }
+				</div>
+				<BaseTable ref="flexResizerNotifyProxy" tableKey="log" className="LogTable"
+				columnDescriptions={LogColumns.columns} initialColumnOrder={LogColumns.initialOrder}
+				initialSort={['timestamp', 'DESC']} rowData={this.state.rowData} />
+			</div>
 		);
 	},
 });

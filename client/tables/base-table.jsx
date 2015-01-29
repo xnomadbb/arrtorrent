@@ -164,7 +164,7 @@ module.exports = React.createClass({
 	headerReorderHandleDragOver: function(columnKey, e) {
 		var data = e.dataTransfer.types[0];
 		if (data.indexOf('{') !== 0) {
-			log.debug('RejectColumnDrag', 'Rejected non-JSON event', data);
+			log.debug('RejectColumnDragOver', 'Rejected non-JSON event', data);
 			return;
 		}
 		data = JSON.parse(data);

@@ -179,7 +179,7 @@ var columns = {
 		name: 'Created On',
 		tooltip: 'Date and time at which torrent file was created.',
 		getSortKey: function(row) { return parseInt(row.creation_date, 10); },
-		renderCellContents: function(row) { return util.format.unixTimeToHtml(row.creation_date, false); },
+		renderCellContents: function(row) { return util.format.unixTimeToHtmlDate(row.creation_date, false); },
 		align: 'right',
 	},
 	//TODO Finished and Added backend: https://github.com/Novik/ruTorrent/blob/master/plugins/seedingtime/init.php
@@ -190,7 +190,7 @@ var columns = {
 		name: 'Added On',
 		tooltip: 'Date and time at which torrent was added to rtorrent.',
 		getSortKey: function(row) { return parseInt(row.add_date, 10); },
-		renderCellContents: function(row) { return util.format.unixTimeToHtml(row.add_date, false); },
+		renderCellContents: function(row) { return util.format.unixTimeToHtmlDate(row.add_date, false); },
 		align: 'right',
 	},
 	'finished': {
@@ -198,7 +198,7 @@ var columns = {
 		name: 'Finished On',
 		tooltip: 'Date and time at which torrent contents finished downloading.',
 		getSortKey: function(row) { return parseInt(row.finish_date, 10); },
-		renderCellContents: function(row) { return util.format.unixTimeToHtml(row.finish_date, false); },
+		renderCellContents: function(row) { return util.format.unixTimeToHtmlDate(row.finish_date, false); },
 		align: 'right',
 	},
 	//TODO ratio groups: https://github.com/Novik/ruTorrent/tree/master/plugins/ratio

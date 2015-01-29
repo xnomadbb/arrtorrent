@@ -161,7 +161,12 @@ module.exports = React.createClass({
 		}), 'arr');
 	},
 	headerReorderHandleDragOver: function(columnKey, e) {
-		var data = JSON.parse(e.dataTransfer.types[0]);
+		var data = e.dataTransfer.types[0];
+		if (data.indexOf('{') !== 0) {
+			console.debug('Rejected non-JSON event:', data); //XXX log
+			return;
+		}
+		data = JSON.parse(data);
 		if ( data.action !== 'header_reorder' // Wrong action
 			|| data.table_key !== this.props.tableKey // Wrong table
 			|| data.column_key === columnKey // Same column

@@ -2,6 +2,7 @@ var React = require('react');
 var Login = require('./login');
 var ArrRoot = require('./arrroot');
 var ArrRpc = require('./rpc');
+var LogStore = require('./stores/log');
 
 module.exports = React.createClass({
 	displayName: 'ArrTorrent',

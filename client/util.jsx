@@ -316,13 +316,14 @@ var util = {
 			}
 			return output.join(' ');
 		},
-		unixTimeToDate: function(unix) {
+		//FIXME all this date shit is a mess
+		unixTimeToDateObj: function(unix) {
 			if (!unix) {
 				return false;
 			}
 			return new Date(parseInt(unix + '000', 10));
 		},
-		dateToHtml: function(date, showEmpty) {
+		htmlDate: function(date, showEmpty) {
 			if (!date){
 				if (showEmpty) {
 					return 'None';
@@ -335,9 +336,24 @@ var util = {
 			var fullString = date.toLocaleString();
 			return <span className="datetime" title={fullString}>{dateString}</span>;
 		},
-		unixTimeToHtml: function(unix, showEmpty) {
-			return util.format.dateToHtml(util.format.unixTimeToDate(unix), showEmpty);
-		}
+		htmlDatetime: function(date, showEmpty) {
+			if (!date){
+				if (showEmpty) {
+					return 'None';
+				} else {
+					return '';
+				}
+			}
+			//TODO A library with custom output would be ideal
+			var fullString = date.toLocaleString();
+			return <span className="datetime">{fullString}</span>;
+		},
+		unixTimeToHtmlDate: function(unix, showEmpty) {
+			return util.format.htmlDate(util.format.unixTimeToDateObj(unix), showEmpty);
+		},
+		unixTimeToHtmlDatetime: function(unix, showEmpty) {
+			return util.format.htmlDatetime(util.format.unixTimeToDateObj(unix), showEmpty);
+		},
 	},
 };
 module.exports = util;

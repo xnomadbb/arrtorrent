@@ -169,7 +169,12 @@ Table details
 }
 
 .LogTable {
-	.datetime { width: 15%; }
-	.message  { width: 85%; }
+	@extend %mono;
+	font-size: 0.75rem;
+	.level      { width:  5%;   }
+	.timestamp  { width: 10%;   }
+	.module     { width:  7.5%; }
+	.event      { width:  7.5%; }
+	.message    { width: 70%;   }
 }
 

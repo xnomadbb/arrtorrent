@@ -274,7 +274,7 @@ module.exports = React.createClass({
 		}
 
 		return (
-			<div className="BaseTable TorrentTable">
+			<div className={"BaseTable " + this.props.className}>
 				<table ref="tableHeader" className="BaseTableHeader">
 					<tbody>
 						<tr>

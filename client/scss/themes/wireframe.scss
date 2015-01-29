@@ -143,6 +143,10 @@ Table details
 	// Initial widths need to be set so things look okay initially.
 	// The user is free to resize these, and the less important details
 	// can scroll off to the right.
+	// Pixel values are minimums and may be inflated if all columns are
+	// <100% of the parent's width.
+	// Percentages are respected so long as they add up to 100%, although
+	// things might get weird upon column resize (untested/unimplemented)
 	.name          { width: 400px; }
 	.status        { width:  60px; }
 	.size          { width: 100px; }
@@ -163,3 +167,9 @@ Table details
 	.finished      { width: 100px; }
 	.tracker       { width: 120px; }
 }
+
+.LogTable {
+	.datetime { width: 15%; }
+	.message  { width: 85%; }
+}
+

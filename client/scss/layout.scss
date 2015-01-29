@@ -71,6 +71,7 @@ html, body, #arr, .ArrRoot {
 
 .DetailsPane {
 	// Contains details on an individual torrent, sits below torrent table, resizable
+	display: flex;
 	flex: 0 0 300px;
 	box-sizing: border-box;
 }
@@ -95,11 +96,13 @@ html, body, #arr, .ArrRoot {
 	overflow-y: auto;
 	position: absolute;
 	height: 100%;
+	min-width: 100%;
 }
 
 .BaseTable table {
 	table-layout: fixed;
 	width: 0;
+	min-width: 100%;
 	td, th {
 		overflow: hidden;
 		white-space: nowrap;

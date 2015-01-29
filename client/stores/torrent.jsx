@@ -5,6 +5,7 @@ var EventEmitter = require('events').EventEmitter;
 var LZString = require('lz-string');
 var ArrRpc = require('../rpc');
 var util = require('../util');
+var log = require('../stores/log').module('TorrentStore');
 
 var TorrentStore = function() {
 		//this.builtinViewIds = ['main', 'default', 'name', 'active', 'started', 'stopped', 'complete', 'incomplete', 'hashing', 'seeding', 'leeching'];
@@ -82,7 +83,8 @@ TorrentStore.prototype.queryHashListInfo = function(hashList) {
 TorrentStore.prototype.mergeTorrentInfo = function(infoList, fieldList, removeUnlisted) {
 	var hashIndex = fieldList.indexOf('d.get_hash');
 	if (hashIndex === -1) {
-		console.error('Cannot find hash in torrent fieldList', infoList, fieldList); //XXX logging
+		log.error('BadResponse', 'Cannot find hash in torrent fieldList', infoList, fieldList);
+		return;
 	}
 
 	// {hash: torrent} of changes

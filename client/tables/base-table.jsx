@@ -1,5 +1,6 @@
 var React = require('react/addons');
 var _ = require('lodash');
+var log = require('../stores/log').module('BaseTable');
 
 var TableBodyCell = React.createClass({
 	displayName: 'TableBodyCell',
@@ -163,7 +164,7 @@ module.exports = React.createClass({
 	headerReorderHandleDragOver: function(columnKey, e) {
 		var data = e.dataTransfer.types[0];
 		if (data.indexOf('{') !== 0) {
-			console.debug('Rejected non-JSON event:', data); //XXX log
+			log.debug('RejectColumnDrag', 'Rejected non-JSON event', data);
 			return;
 		}
 		data = JSON.parse(data);
@@ -172,7 +173,7 @@ module.exports = React.createClass({
 			|| data.column_key === columnKey // Same column
 			|| this.state.columnOrder.indexOf(data.column_key) === -1 // Invalid column
 		) {
-			console.debug('Rejected reorder event:', data); //XXX log
+			log.debug('RejectColumnDragOver', 'Rejected invalid event', data);
 			return;
 		}
 
@@ -183,7 +184,7 @@ module.exports = React.createClass({
 		// data already validated on dragover
 		var data = JSON.parse(e.dataTransfer.types[0]);
 		var fromColumnKey = data.column_key;
-		console.log('reorder (from to)', fromColumnKey, toColumnKey); //XXX log
+		log.debug('AcceptColumnDrop', 'Column reorder from', fromColumnKey, 'to', toColumnKey);
 
 		// Swap columns
 		var columnOrder = this.state.columnOrder.slice(); // New instance

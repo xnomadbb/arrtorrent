@@ -36,14 +36,12 @@ var FlexResizerMixin = module.exports = {
 	},
 
 	flexResizerHandleDragStart: function(e) {
-		//console.log('start', e.clientX, e.clientY);
 		e.dataTransfer.setData('arr/flexresizer', 'arr'); // Firefox dumbfuckery
 		this.flexSize = this.refs.flexResizerTarget.getDOMNode().getBoundingClientRect();
 		this.flexSize = Math.ceil((this.flexAxis === 'x') ? this.flexSize.width : this.flexSize.height);
 		this.flexStartPos = this.flexLastPos = (this.flexAxis === 'x') ? e.clientX : e.clientY;
 	},
 	flexResizerHandleDrag: function(e) {
-		//console.log('drag ', e.clientX, e.clientY);
 		var newPos = (this.flexAxis === 'x') ? e.clientX : e.clientY;
 		if (!newPos) {
 			return; // Things like to falsely report 0 near the end of a drag
@@ -51,7 +49,6 @@ var FlexResizerMixin = module.exports = {
 		this.flexLastPos = newPos;
 	},
 	flexResizerHandleDragEnd: function(e) {
-		//console.log('end ', e.clientX, e.clientY);
 		this.flexSize += this.flexSign * (this.flexLastPos - this.flexStartPos);
 		this.refs.flexResizerTarget.getDOMNode().style.flexBasis = this.flexSize + 'px';
 		// Not aware of any actual issue from not clearing these, but it makes me nervous

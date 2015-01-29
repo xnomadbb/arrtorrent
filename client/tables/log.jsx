@@ -45,7 +45,9 @@ var columns = {
 			var fragments = [];
 			for (var i=0; i < row.message.length; i++) {
 				fragments.push(
-					<span key={i} className="logMessageFragment">{ row.message[i] }</span>
+					(['string', 'number'].indexOf(typeof row.message[i]) === -1) ?
+					(<span key={i} className="logMessageFragment">{ JSON.stringify(row.message[i]) }</span>) :
+					(<span key={i} className="logMessageFragment">{ row.message[i] }</span>)
 				);
 			}
 			return (<span>{ fragments }</span>);

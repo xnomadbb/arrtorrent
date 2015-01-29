@@ -1,6 +1,7 @@
 var inherits = require('util').inherits;
 var jsonrpc = require('./json-rpc');
 var EventEmitter = require('events').EventEmitter;
+var log = require('./stores/log').module('ArrRpc');
 
 var ArrRpc = function() {};
 
@@ -80,7 +81,7 @@ ArrRpc.prototype.configLoad = function(message) {
 
 ArrRpc.prototype.routeRequests = function(message) {
 	// We shouldn't get much here except for rtorrent events
-	console.log(message);
+	log.debug('ServerRequest', 'Received request from server', message);
 	this.emit(message.method, message);
 };
 

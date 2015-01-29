@@ -1,6 +1,7 @@
 var React = require('react');
 var url = require('url');
 var sha1 = require('sha1');
+var log = require('./stores/log').module('util');
 
 var util = {
 	torrent: {
@@ -191,8 +192,9 @@ var util = {
 			} else if (!complete) {
 				return ['stopped', error];
 			} else {
+				// Persist to string because it's a mutable object
+				log.error('BadTorrentStatus', 'Impossible status detected in getStatusFromTorrent', JSON.stringify(torrent));
 				return ['unknown', true];
-				console.error('getStatusFromTorrent: impossible status detected'); //XXX log
 			}
 		},
 	},

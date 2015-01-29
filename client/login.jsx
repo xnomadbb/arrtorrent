@@ -1,5 +1,6 @@
 var React = require('react');
 var ArrRpc = require('./rpc');
+var log = require('./stores/log').module('ArrRoot');
 
 module.exports = React.createClass({
 	displayName: 'Login',
@@ -22,7 +23,7 @@ module.exports = React.createClass({
 		}
 	},
 	authDidFail: function() {
-		console.log('auth failed');
+		log.user_error('Login', 'AuthFail', 'Authentication to the arr websocket failed');
 		this.setState({didAuthFail: true});
 	},
 	componentWillUnmount: function() {

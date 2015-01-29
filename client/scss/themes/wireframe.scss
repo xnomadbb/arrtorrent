@@ -171,10 +171,12 @@ Table details
 .LogTable {
 	@extend %mono;
 	font-size: 0.75rem;
-	.level      { width:  5%;   }
-	.timestamp  { width: 10%;   }
-	.module     { width:  7.5%; }
-	.event      { width:  7.5%; }
-	.message    { width: 70%;   }
+	.level      { width:  5%; }
+	.timestamp  { width: 10%; }
+	.module     { width:  5%; }
+	.event      { width: 10%; }
+	.message    { width: 70%; }
+	.logMessageFragment { margin-right: 10px; }
+	.logMessageFragment:nth-child(2n) { background: #eee; }
 }
 

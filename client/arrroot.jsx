@@ -2,6 +2,7 @@ var React = require('react');
 var Sidebar = require('./sidebar');
 var MainPane = require('./pane-main');
 var FlexResizerMixin = require('./mixins/flex-resizer');
+var log = require('./stores/log').module('ArrRoot');
 
 module.exports = React.createClass({
 	displayName: 'ArrRoot',
@@ -12,7 +13,7 @@ module.exports = React.createClass({
 		};
 	},
 	changeView: function(viewId) {
-		console.log('changed view:', viewId);
+		log.debug('ViewChange', 'Changed active view', viewId);
 		this.setState({activeView: viewId});
 	},
 	render: function() {

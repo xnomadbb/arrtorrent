@@ -1,0 +1,29 @@
+#!/bin/sh
+# cd to this directory
+BASEDIR=$(dirname $0)
+cd "$BASEDIR"
+
+# check openssl existence
+if ! which openssl &> /dev/null; then
+	which openssl
+	echo 'ERROR: openssl not found in PATH (see above)'
+	exit 1
+fi
+
+cat <<EOF > tmpconfig
+[ req ]
+distinguished_name = req_distinguished_name
+prompt = no
+
+[ req_distinguished_name ]
+C = SO
+ST = Banaadir
+L = Mogadishu
+O = arrtorrent
+CN = arrtorrent
+EOF
+
+openssl genrsa -out server.key 4096 || echo 'ERROR: generating private key failed'
+openssl req -new -x509 -days 365 -sha256 -key server.key -out server.crt -config tmpconfig || echo 'ERROR: generating certificate failed'
+rm tmpconfig
+

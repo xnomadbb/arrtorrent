@@ -10,7 +10,18 @@ function loadConfigFromFolder(configFolder) {
 
 function configFolderIsValid(configFolder) {
 	//TODO Should check more things to provide better feedback
-	return fs.existsSync(configFolder + '/arrtorrent.js');
+	if (!fs.existsSync(configFolder + '/arrtorrent.js')) {
+		return false;
+	}
+
+	if (!fs.existsSync(configFolder + '/server.key') || !fs.existsSync(configFolder + '/server.crt')) {
+		// I'd just do it myself, but node makes a huge fucking production out of blocking for a process.
+		//TODO Revisit this once 0.12 is out, child_process.execFileSync should exist then.
+		console.error('ERROR: No SSL cert/key found, run ssl_setup in the config folder');
+		return false;
+	}
+
+	return true;
 }
 
 function locateConfigFolder() {

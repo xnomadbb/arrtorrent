@@ -1,5 +1,5 @@
 "use strict";
-var JsonRpcClass = require('../client/json-rpc.jsx');
+var JsonRpcClass = require('./json-rpc');
 
 function ClientSocket(ws, ArrRpc, rtEvents) {
 	console.log('accepted ws connection');

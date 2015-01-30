@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="utf-8">
+
+		<!-- No HSTS because this app will often have cert failures and we force things through SSL anyways -->
+		<meta name="referrer" content="no-referrer">
+		<meta name="robots" content="noindex,nofollow">
+		<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src wss://* 'self'; referrer no-referrer;">
+		<meta http-equiv="Frame-Options" content="deny">
+		<meta http-equiv="X-Content-Type-Options" content="nosniff">
+		<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+
 		<link rel="stylesheet" type="text/css" href="bundle.@@RESUNIQ@@.css">
 	</head>
 	<body>

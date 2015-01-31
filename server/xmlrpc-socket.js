@@ -64,6 +64,9 @@ Client.prototype.methodCall = function methodCall(method, params, callback) {
 	options.headers['Content-Length'] = Buffer.byteLength(xml, 'utf8');
 	this.headersProcessors.composeRequest(options.headers);
 	options.stream = net.createConnection(this.sockFile);
+	options.stream.on('error', function() {
+		callback(new Error('Could not establish connection with rtorrent'));
+	});
 
 	var handler = function(response) {
 		if (response.statusCode === 404) {

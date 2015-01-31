@@ -51,11 +51,24 @@ ArrRpc.prototype.wsDidOpen = function() {
 	var router = this.routeRequests.bind(this);
 	authTimer = setTimeout(function() {
 		this.jsonrpc = new jsonrpc(this.ws, router);
-		this.sendRequest = this.jsonrpc.sendRequest.bind(this.jsonrpc);
+		this.sendRequest = this._sendRequest.bind(this);
 		this.sendRequest('arr.get_config', [], this.configLoad.bind(this));
 		this.removeListener('wsError', cancelAuth);
 		this.emit('wsOpen');
 	}.bind(this), 300);
+};
+
+ArrRpc.prototype._sendRequest = function(method, params, callback) {
+	this.jsonrpc.sendRequest(method, params, function(response) {
+		if (response.error !== null) {
+			if (response.error.code === 'XmlRpcError') {
+				log.user_error('XmlRpcError', response.error.message, [method, params]);
+			} else {
+				log.user_error('ArrRpcError', response.error, [method, params]);
+			}
+		}
+		callback(response);
+	});
 };
 
 ArrRpc.prototype.wsDidError = function() {

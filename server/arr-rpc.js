@@ -9,8 +9,6 @@ function ArrRPC(xmlrpc) {
 		'arr.multicall': this._multicall.bind(this),
 		'arr.get_config': this._getConfig.bind(this)
 	};
-
-	this._addEventMethods();
 }
 
 // xmlrpc.methodCall with some niceties
@@ -73,19 +71,6 @@ ArrRPC.prototype._prepareParams = function(params) {
 		params = [params];
 	}
 	return params;
-};
-
-// Add event.* methods to receive events from rtorrent
-ArrRPC.prototype._addEventMethods = function() {
-	var eventCmd = __dirname + '/event-piper.js';
-	var eventTypes = ['closed', 'erased', 'finished', 'hash_done', 'hash_queued', 'hash_removed', 'inserted', 'inserted_new', 'inserted_session', 'opened', 'paused', 'resumed'];
-	var calls = [];
-	for (var i=0; i < eventTypes.length; i++) {
-		var event = eventTypes[i];
-		var action = 'execute_nothrow=' + eventCmd + ',' + event + ',$d.get_hash=';
-		calls.push(['system.method.set_key', ['event.download.' + event, 'arr_event_' + event, action]]);
-	}
-	this.call('arr.multicall', calls, function(){});
 };
 
 module.exports = ArrRPC;

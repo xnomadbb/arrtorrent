@@ -51,6 +51,9 @@ TorrentStore.prototype.queryViewInfo = function(view, fieldList) {
 
 	ArrRpc.sendRequest('d.multicall', multicall_args, function(response) {
 		// Save results, remove everything not listed if we queried all torrents (main)
+		if (response.error !== null) {
+			log.error('QueryError', 'Failed to receive torrent data from view', view);
+		}
 		var removeUnlisted = (view === 'main');
 		this.mergeTorrentInfo(response.result, fieldList, removeUnlisted);
 	}.bind(this));
@@ -74,6 +77,9 @@ TorrentStore.prototype.queryHashListInfo = function(hashList) {
 	}
 
 	ArrRpc.sendRequest('arr.multicall', multicalls, function(response) {
+		if (response.error !== null) {
+			log.error('QueryError', 'Failed to receive torrent data from hash list', hashList);
+		}
 		var results = _.chunk(response.result, this.allFields.length);
 		this.mergeTorrentInfo(results, this.allFields, false);
 	}.bind(this));

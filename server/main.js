@@ -25,8 +25,7 @@ var raw_rpc = new xmlrpc({sockFile: config.rtorrent.socket});
 var arr_rpc = new ArrRPC(raw_rpc);
 
 // Listen for events from rtorrent (pause, resume, hashing, etc)
-var EventReader = require('./event-reader');
-var rtEvents = EventReader.readEvents(config.rtorrent.eventSocket);
+var rtEvents = require('./event-reader')(config.rtorrent.eventSocket);
 
 // Expose XMLRPC over websockets
 var WebSocketServer = require('ws').Server;

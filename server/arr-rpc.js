@@ -82,7 +82,7 @@ ArrRPC.prototype._addEventMethods = function() {
 	var calls = [];
 	for (var i=0; i < eventTypes.length; i++) {
 		var event = eventTypes[i];
-		var action = 'execute_nothrow=' + eventCmd + ',' + event + ',$d.get_hash=,$d.get_name=';
+		var action = 'execute_nothrow=' + eventCmd + ',' + event + ',$d.get_hash=';
 		calls.push(['system.method.set_key', ['event.download.' + event, 'arr_event_' + event, action]]);
 	}
 	this.call('arr.multicall', calls, function(){});

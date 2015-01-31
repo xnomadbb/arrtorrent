@@ -10,7 +10,7 @@ theme CHOOSES to override them.
 Colors/borders/padding/margins/etc do not normally belong here.
 */
 
-html, body, #arr, .ArrRoot {
+html, body, #arr, .RootPane {
 	height: 100%;
 	margin: 0;
 	box-sizing: border-box;
@@ -32,7 +32,7 @@ html, body, #arr, .ArrRoot {
     }
 }
 
-.ArrRoot {
+.RootPane {
 	// Contains entire app
 	display: flex;
 	flex-direction: column;

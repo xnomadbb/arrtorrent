@@ -3,7 +3,6 @@ var _ = require('lodash');
 var log = require('../stores/log').module('BaseTable');
 
 var TableBodyCell = React.createClass({
-	displayName: 'TableBodyCell',
 	shouldComponentUpdate: function(nextProps) {
 		return !('renderHash' in nextProps) || this.props.renderHash !== nextProps.renderHash;
 	},
@@ -24,7 +23,6 @@ var TableBodyCell = React.createClass({
 });
 
 var TableBodyRow = React.createClass({
-	displayName: 'TableBodyRow',
 	shouldComponentUpdate: function(nextProps) {
 		// columnDescriptions are varant
 		return (
@@ -56,8 +54,7 @@ var TableBodyRow = React.createClass({
 
 
 
-module.exports = React.createClass({
-	displayName: 'BaseTable',
+var BaseTable = React.createClass({
 	getInitialState: function() {
 		return {
 			columnOrder: this.props.initialColumnOrder.slice(),
@@ -302,3 +299,5 @@ module.exports = React.createClass({
 		);
 	},
 });
+
+module.exports = BaseTable;

@@ -1,10 +1,9 @@
-var React = require('react');
+var React = require('react/addons');
 var TorrentTable = require('./tables/torrent');
 var DetailsPane = require('./pane-details');
 var FlexResizerMixin = require('./mixins/flex-resizer');
 
-module.exports = React.createClass({
-	displayName: 'MainPane',
+var MainPane = React.createClass({
 	mixins: [FlexResizerMixin],
 	render: function() {
 		return (
@@ -16,3 +15,5 @@ module.exports = React.createClass({
 		);
 	},
 });
+
+module.exports = MainPane;

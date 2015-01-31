@@ -1,10 +1,9 @@
-var React = require('react');
+var React = require('react/addons');
 var ViewStore = require('../stores/view');
 var TorrentColumns = require('./torrent-columns');
 var BaseTable = require('./base-table');
 
-module.exports = React.createClass({
-	displayName: 'TorrentTable',
+var TorrentTable = React.createClass({
 	componentWillMount: function() {
 		ViewStore.on('change', this.viewDidChange);
 	},
@@ -23,3 +22,5 @@ module.exports = React.createClass({
 		);
 	},
 });
+
+module.exports = TorrentTable;

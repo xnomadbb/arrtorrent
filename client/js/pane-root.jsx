@@ -1,11 +1,10 @@
-var React = require('react');
-var Sidebar = require('./sidebar');
+var React = require('react/addons');
+var SidebarPane = require('./pane-sidebar');
 var MainPane = require('./pane-main');
 var FlexResizerMixin = require('./mixins/flex-resizer');
-var log = require('./stores/log').module('ArrRoot');
+var log = require('./stores/log').module('RootPane');
 
-module.exports = React.createClass({
-	displayName: 'ArrRoot',
+var RootPane = React.createClass({
 	mixins: [FlexResizerMixin],
 	getInitialState: function() {
 		return {
@@ -18,10 +17,10 @@ module.exports = React.createClass({
 	},
 	render: function() {
 		return (
-			<div className="ArrRoot">
+			<div className="RootPane">
 				<div className="HeaderPane">Header stuff</div>
 				<div className="CenterPane">
-					<Sidebar ref="flexResizerTarget" activeView={this.state.activeView} onChoose={this.changeView} />
+					<SidebarPane ref="flexResizerTarget" activeView={this.state.activeView} onChoose={this.changeView} />
 					{ this.flexResizerRenderHandle('x', 'pos') }
 					<MainPane activeView={this.state.activeView} />
 				</div>
@@ -30,3 +29,5 @@ module.exports = React.createClass({
 		);
 	},
 });
+
+module.exports = RootPane;

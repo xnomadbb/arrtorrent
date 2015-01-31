@@ -6,7 +6,7 @@ BIN = ./node_modules/.bin
 
 dev: clean
 	cp -ar client web_build
-	$(BIN)/browserify web_build/js/client.jsx --outfile web_build/main.js --debug --extension=.jsx -t reactify
+	$(BIN)/browserify web_build/js/main.jsx --outfile web_build/main.js --debug --extension=.jsx -t reactify
 	$(BIN)/node-sass --output-style expanded --stdout web_build/assets/main.scss > web_build/assets/main.css
 	for themedir in web_build/assets/themes/*; do \
 		$(BIN)/node-sass --output-style expanded --stdout "$$themedir"/main.scss > "$$themedir"/main.css; \
@@ -17,7 +17,7 @@ dev: clean
 
 prod: clean
 	cp -ar client web_build
-	$(BIN)/browserify web_build/js/client.jsx --extension=.jsx -t reactify | \
+	$(BIN)/browserify web_build/js/main.jsx --extension=.jsx -t reactify | \
 	$(BIN)/uglifyjs -c --screw-ie8 > web_build/main.js
 	$(BIN)/node-sass --output-style compressed -x --stdout web_build/assets/main.scss > web_build/assets/main.css
 	for themedir in web_build/assets/themes/*; do \
@@ -49,5 +49,5 @@ clean:
 	rm -rf web_build
 
 run:
-	node server/server.js
+	node server/main.js
 

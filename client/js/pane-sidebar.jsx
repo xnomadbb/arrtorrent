@@ -1,9 +1,23 @@
-var React = require('react');
-var SidebarItem = require('./sidebar-item');
+var React = require('react/addons');
 var ViewStore = require('./stores/view');
 
-module.exports = React.createClass({
-	displayName: 'SidebarViews',
+
+var SidebarItem = React.createClass({
+	handleClick: function() {
+		this.props.onChoose(this.props.viewId);
+	},
+	render: function() {
+		var classes = React.addons.classSet({
+			'active': this.props.isActive
+		});
+		return <li className={classes} onClick={this.handleClick} title={this.props.tooltip}>
+			{this.props.name} ({this.props.count})
+		</li>;
+	},
+});
+
+
+var SidebarPane = module.exports = React.createClass({
 	componentWillMount: function() {
 		ViewStore.on('change', this.viewDidChange);
 	},
@@ -45,3 +59,5 @@ module.exports = React.createClass({
 		);
 	},
 });
+
+module.exports = SidebarPane;

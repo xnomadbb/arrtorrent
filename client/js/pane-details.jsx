@@ -1,8 +1,7 @@
-var React = require('react');
+var React = require('react/addons');
 var LogTable = require('./tables/log');
 
-module.exports = React.createClass({
-	displayName: 'DetailsPane',
+var DetailsPane = React.createClass({
 	render: function() {
 		return (
 			<div className="DetailsPane">
@@ -11,3 +10,5 @@ module.exports = React.createClass({
 		);
 	},
 });
+
+module.exports = DetailsPane;

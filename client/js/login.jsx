@@ -1,9 +1,8 @@
-var React = require('react');
+var React = require('react/addons');
 var ArrRpc = require('./rpc');
 var log = require('./stores/log').module('ArrRoot');
 
-module.exports = React.createClass({
-	displayName: 'Login',
+var Login = React.createClass({
 	getInitialState: function() {
 		return {
 			didAuthFail: null
@@ -46,3 +45,5 @@ module.exports = React.createClass({
 		);
 	},
 });
+
+module.exports = Login;

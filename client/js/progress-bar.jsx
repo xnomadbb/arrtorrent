@@ -1,7 +1,6 @@
-var React = require('react');
+var React = require('react/addons');
 
-module.exports = React.createClass({
-	displayName: 'ProgressBar',
+var ProgressBar = React.createClass({
 	render: function() {
 		var completed = parseInt(this.props.completed, 10) || 0;
 		return (
@@ -12,3 +11,4 @@ module.exports = React.createClass({
 	},
 });
 
+module.exports = ProgressBar;

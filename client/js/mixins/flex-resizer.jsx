@@ -1,6 +1,6 @@
-var React = require('react');
+var React = require('react/addons');
 
-var FlexResizerMixin = module.exports = {
+var FlexResizerMixin = {
 	// Requires:
 	// - flexResizerTarget ref on element to be resized
 	// - render handle with flexResizerRenderHandle, suppling the axis ('x' or 'y') and sign ('pos' or 'neg') of growth
@@ -75,3 +75,5 @@ var FlexResizerMixin = module.exports = {
 		}
 	},
 };
+
+module.exports = FlexResizerMixin;

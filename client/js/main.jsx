@@ -1,11 +1,11 @@
-var React = require('react');
+var React = require('react/addons');
 var Login = require('./login');
-var ArrRoot = require('./arrroot');
+var RootPane = require('./pane-root');
 var ArrRpc = require('./rpc');
 var LogStore = require('./stores/log');
 
-module.exports = React.createClass({
-	displayName: 'ArrTorrent',
+
+var ArrTorrent = React.createClass({
 	getInitialState: function() {
 		return {
 			isAuthenticated: false,
@@ -25,9 +25,15 @@ module.exports = React.createClass({
 	},
 	render: function() {
 		if (this.state.isAuthenticated) {
-			return <ArrRoot />;
+			return <RootPane />;
 		} else {
 			return <Login />;
 		}
 	},
 });
+
+
+React.render(
+	<ArrTorrent />,
+	document.getElementById('arr')
+);

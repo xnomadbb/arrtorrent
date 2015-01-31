@@ -1,11 +1,10 @@
-var React = require('react');
+var React = require('react/addons');
 var BaseTable = require('./base-table');
 var LogStore = require('../stores/log');
 var LogColumns = require('./log-columns');
 
 
-module.exports = React.createClass({
-	displayName: 'LogTable',
+var LogTable = React.createClass({
 	getInitialState: function() {
 		return {
 			'levelFilter': LogStore.levels.user_info,
@@ -87,3 +86,5 @@ module.exports = React.createClass({
 		);
 	},
 });
+
+module.exports = LogTable;

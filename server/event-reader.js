@@ -15,15 +15,18 @@ module.exports = function(sockFile, ArrRpc) {
 
 	var emitter = new events.EventEmitter();
 
-	var server = net.createServer(function(sock) {
-		sock.on('data', function(data) {
-			// This can in theory return only part of a line, but in practice we
-			// only receive a word and a hash at a time so I think it'll be okay.
-			data = JSON.parse(data.toString());
-			console.log('received:', data);
-			emitter.emit('rtEvent', data);
+	var initializeSocket = function() {
+		var server = net.createServer(function(sock) {
+			sock.on('data', function(data) {
+				// This can in theory return only part of a line, but in practice we
+				// only receive a word and a hash at a time so I think it'll be okay.
+				data = JSON.parse(data.toString());
+				console.log('received:', data);
+				emitter.emit('rtEvent', data);
+			});
 		});
-	});
+		server.listen(sockFile);
+	};
 
 	// Add event.* methods to receive events from rtorrent
 	var addEventMethods = function() {
@@ -44,7 +47,7 @@ module.exports = function(sockFile, ArrRpc) {
 		});
 	};
 
-	server.listen(sockFile);
+	initializeSocket();
 	addEventMethods();
 	return emitter;
 };

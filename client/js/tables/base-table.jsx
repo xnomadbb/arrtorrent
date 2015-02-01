@@ -270,6 +270,11 @@ var BaseTable = React.createClass({
 		var renderInfo = this.getRenderInfo();
 		var renderRowKeys = renderInfo.rowKeys;
 
+		if (this.props.updateVisibleRowKeys) {
+			//XXX Hacky way to keep track of currently visible contents so we know what/when to poll
+			this.props.updateVisibleRowKeys(renderRowKeys);
+		}
+
 		for (var i=0; i < renderRowKeys.length; i++) {
 			var rowKey = renderRowKeys[i];
 			var rowData = this.props.rowData[rowKey];

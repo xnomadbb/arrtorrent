@@ -37,6 +37,7 @@ module.exports = function(sockFile, ArrRpc) {
 			var event = eventTypes[i];
 			var action = 'execute_nothrow=' + eventCmd + ',' + event + ',$d.get_hash=';
 			calls.push(['system.method.set_key', ['event.download.' + event, 'arr_event_' + event, action]]);
+			calls.push(['set_xmlrpc_size_limit', ['5242880']]);
 		}
 		ArrRpc.call('arr.multicall', calls, function(err, value){
 			if (err !== null) {

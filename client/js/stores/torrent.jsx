@@ -104,6 +104,11 @@ TorrentStore.prototype.mergeTorrentInfo = function(infoList, fieldList, removeUn
 	for (var i=0; i < infoList.length; i++) {
 		// Prepare source and dest locations
 		var srcInfo = infoList[i];
+		if (_.compact(srcInfo).length === 0) {
+			// Empty record, probably removed before it was queried
+			continue;
+		}
+
 		var hash = srcInfo[hashIndex];
 		var dstInfo = this.torrents[hash];
 		if (dstInfo === undefined) {
@@ -217,10 +222,12 @@ TorrentStore.prototype._handleRtEventAct = function() {
 
 //TODO per-user caches, detect stale caches older than some threshold, don't attempt >5MB, etc. This is a hack atm
 TorrentStore.prototype._localStoragePersist = function() {
+	return; //XXX this bogs down everything now
 	localStorage.arr_torrent_cache = LZString.compressToUTF16(JSON.stringify(this.torrents));
 };
 
 TorrentStore.prototype._localStorageRestore = function() {
+	return; //XXX this bogs down everything now
 	if (localStorage.arr_torrent_cache) {
 		var newTorrents = JSON.parse(LZString.decompressFromUTF16(localStorage.arr_torrent_cache));
 		for (var prop in this.torrents) {

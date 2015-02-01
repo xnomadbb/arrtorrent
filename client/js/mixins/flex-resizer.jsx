@@ -36,7 +36,9 @@ var FlexResizerMixin = {
 	},
 
 	flexResizerHandleDragStart: function(e) {
-		e.dataTransfer.setData('arr/flexresizer', 'arr'); // Firefox dumbfuckery
+		e.dataTransfer.setData(JSON.stringify({
+			'action': 'flex_resize',
+		}), 'arr');
 		this.flexSize = this.refs.flexResizerTarget.getDOMNode().getBoundingClientRect();
 		this.flexSize = Math.ceil((this.flexAxis === 'x') ? this.flexSize.width : this.flexSize.height);
 		this.flexStartPos = this.flexLastPos = (this.flexAxis === 'x') ? e.clientX : e.clientY;

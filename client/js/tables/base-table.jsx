@@ -24,7 +24,7 @@ var TableBodyCell = React.createClass({
 
 var TableBodyRow = React.createClass({
 	shouldComponentUpdate: function(nextProps) {
-		// columnDescriptions are varant
+		// columnDescriptions are constant
 		return (
 			JSON.stringify(this.props.columnOrder) !== JSON.stringify(nextProps.columnOrder) ||
 			!('renderHash' in nextProps) ||

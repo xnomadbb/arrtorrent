@@ -16,6 +16,8 @@ basics and examples of useful defaults/patterns.
 $offwhite: #ddd;
 $grey50: #888;
 $errtextcolor: #C82A2A;
+$focuscolor: #1CB8E8;
+$selectioncolor: #C1F0FF;
 
 body {
 	font-size: 0.9rem;
@@ -93,6 +95,7 @@ General details
 
 .ProgressBarContainer {
 	border: 1px solid $offwhite;
+	background: #ffffff;
 }
 
 .ProgressBarProgress {
@@ -129,6 +132,21 @@ Table details
 	td {
 		box-sizing: border-box;
 		padding: 0 5px;
+	}
+	tr.selected {
+		background: $selectioncolor;
+	}
+	tr.focused td:first-child {
+		position: relative;
+		&:before {
+			position: absolute;
+			content: ' ';
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 3px;
+			background: $focuscolor;
+		}
 	}
 	.align_left  { text-align:  left; }
 	.align_right { text-align: right; }
@@ -173,6 +191,12 @@ Table details
 	.added         { width: 100px; }
 	.finished      { width: 100px; }
 	.tracker       { width: 120px; }
+
+	//XXX autoprefixer maybe?
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .LogTable {

@@ -28,7 +28,9 @@ var TableBodyRow = React.createClass({
 		return (
 			JSON.stringify(this.props.columnOrder) !== JSON.stringify(nextProps.columnOrder) ||
 			!('renderHash' in nextProps) ||
-			this.props.renderHash !== nextProps.renderHash
+			this.props.renderHash !== nextProps.renderHash ||
+			this.props.selected !== nextProps.selected ||
+			this.props.focused !== nextProps.focused
 		);
 	},
 	render: function() {
@@ -42,8 +44,13 @@ var TableBodyRow = React.createClass({
 			);
 		}
 
+		var classes = React.addons.classSet({
+			focused: this.props.focused,
+			selected: this.props.selected,
+		});
+
 		return (
-			<tr>
+			<tr className={classes} onClick={this.props.onClick}>
 				{ cells }
 			</tr>
 		);
@@ -66,6 +73,9 @@ var BaseTable = React.createClass({
 			headerRowHeight: 16, // pixel height of table header, this is just an initial approximation
 			tableHeight: 50, // pixel height of table viewport, this is just an initial approximation
 			tableTopOffset: 0, // pixel height we've scrolled down
+			// Row selection/focus data
+			focusedRow: null,
+			selectedRows: [],
 		};
 	},
 
@@ -194,6 +204,31 @@ var BaseTable = React.createClass({
 		e.preventDefault(); // Prevent browser from handling drop also
 	},
 
+	handleRowClick: function(targetKey, e) {
+		if (e.ctrlKey) {
+			// Invert targeted row, set focus to targeted row
+			var selectedRows = _.xor(this.state.selectedRows, [targetKey]);
+			this.setState({focusedRow: targetKey, selectedRows: selectedRows});
+		} else if (e.shiftKey && this.state.focusedRow !== null) {
+			// Select from focused row to targeted row, leave focus as-is
+			var sortedKeys = this.getSortedKeys();
+			var fromIndex = sortedKeys.indexOf(this.state.focusedRow);
+			var   toIndex = sortedKeys.indexOf(targetKey);
+			var min = Math.min(fromIndex, toIndex);
+			var max = Math.max(fromIndex, toIndex);
+			if (min === -1) {
+				// Either focus or target no longer exists, just select/focus the target
+				this.setState({focusedRow: targetKey, selectedRows: [targetKey]});
+			} else {
+				this.setState({selectedRows: sortedKeys.splice(min, max-min+1)});
+			}
+		} else {
+			// Normal click or shift-click with no "from" (focused) row set,
+			// select only targeted row and set focus to targeted row
+			this.setState({focusedRow: targetKey, selectedRows: [targetKey]});
+		}
+	},
+
 	handleFlexResize: function() {
 		this.updateScrollInfo();
 	},
@@ -238,6 +273,7 @@ var BaseTable = React.createClass({
 			// is called, so rowData is the same object. So we only reset scrolling
 			// when we're viewing a different object, not when it merely mutates.
 			this.resetScroll();
+			this.setState({focusedRow: null, selectedRows: []});
 		}
 		this.updateScrollInfo();
 	},
@@ -278,7 +314,12 @@ var BaseTable = React.createClass({
 		for (var i=0; i < renderRowKeys.length; i++) {
 			var rowKey = renderRowKeys[i];
 			var rowData = this.props.rowData[rowKey];
-			bodyRows.push(<TableBodyRow key={rowKey} columnOrder={this.state.columnOrder} columnDescriptions={this.props.columnDescriptions} rowData={rowData} renderHash={rowData.renderHash} />);
+			bodyRows.push(
+				<TableBodyRow key={rowKey} rowData={rowData} renderHash={rowData.renderHash}
+				columnOrder={this.state.columnOrder} columnDescriptions={this.props.columnDescriptions}
+				focused={this.state.focusedRow === rowKey} selected={this.state.selectedRows.indexOf(rowKey) !== -1}
+				onClick={this.handleRowClick.bind(this, rowKey)} />
+			);
 		}
 
 		return (

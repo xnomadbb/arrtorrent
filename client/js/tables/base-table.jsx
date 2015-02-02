@@ -115,8 +115,15 @@ var BaseTable = React.createClass({
 		// Sort by sortKey
 		var sortSign = (this.state.sortDirection === 'DESC') ? -1 : 1;
 		sortData.sort(function(a, b) {
-			var av = a.sortKey, bv = b.sortKey;
-			return ((av > bv) - (av < bv)) * sortSign;
+			// In case sortKeys are equal, rowKeys provide a stable sort.
+			// Compare by sortKey:    -2, 0, +2
+			// Then adjust by rowKey: -1, 0, +1
+			var as = a.sortKey, bs = b.sortKey;
+			var ar = a.rowKey,  br = b.rowKey;
+			return sortSign * (
+				((as > bs) - (as < bs)) * 2 +
+				((ar > br) - (ar < br))
+			);
 		});
 
 		return sortData.map(function(x) { return x.rowKey; });

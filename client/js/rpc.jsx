@@ -80,8 +80,10 @@ ArrRpc.prototype.wsDidClose = function(event) {
 	if (this.isErrored) {
 		this.isErrored = false;
 		// No use passing around the CloseEvent, everything except wasClean is restricted
+		log.error('WsError', 'websocket closed with error');
 		this.emit('wsError');
 	}
+	log.error('WsError', 'websocket closed');
 	this.emit('wsClose');
 };
 

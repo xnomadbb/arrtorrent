@@ -269,11 +269,11 @@ var util = {
 			var suffix = suffixSI[expIEC];
 
 			return (
-				<span className="byteSize" title={title} data-bytes={bytes}>
+				<span className="byteSize" title={title} data-bytes={bytes} data-exponent={expIEC}>
 					<span className="sizeWhole">{ coefficientParts[0] }</span>
 					<span className="sizeDecimal">.</span>
 					<span className="sizeFraction">{ coefficientParts[1] }</span>
-					<span className="sizeUnit" data-exponent={expIEC}>{ suffix }</span>
+					<span className="sizeUnit">{ suffix }</span>
 				</span>
 			);
 		},

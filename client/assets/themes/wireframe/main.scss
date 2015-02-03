@@ -147,9 +147,14 @@ General details
 	}
 }
 
-.byteSize .sizeUnit[data-exponent="0"]:before {
-	// Add extra space before unit so that B aligns with KB/MB/GB/etc
-	content: ' ';
+.byteSize[data-exponent="0"]{
+	.sizeUnit:before {
+		// Add extra space before unit so that B aligns with KB/MB/GB/etc
+		content: "\00a0";
+	}
+	.sizeDecimal, .sizeFraction {
+		display: none;
+	}
 }
 
 /*

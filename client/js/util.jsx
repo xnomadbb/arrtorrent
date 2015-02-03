@@ -269,7 +269,7 @@ var util = {
 			var suffix = suffixSI[expIEC];
 
 			return (
-				<span className="byteSize" title={title}>
+				<span className="byteSize" title={title} data-bytes={bytes}>
 					<span className="sizeWhole">{ coefficientParts[0] }</span>
 					<span className="sizeDecimal">.</span>
 					<span className="sizeFraction">{ coefficientParts[1] }</span>
@@ -282,7 +282,7 @@ var util = {
 			if (bytes === 0 && !showZero) {
 				return '';
 			}
-			return <span>{util.format.bytesToHtml(bytes)}/s</span>
+			return <span>{util.format.bytesToHtml(bytes, showZero)}/s</span>
 		},
 		secondsToHtml: function(seconds, showZero, maxUnits) {
 			if (!isFinite(seconds) && !isNaN(seconds)) {

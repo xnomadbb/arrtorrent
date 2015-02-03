@@ -13,6 +13,9 @@ Colors/borders/padding/margins/etc do not normally belong here.
 html, body, #arr, .RootPane {
 	height: 100%;
 	margin: 0;
+}
+
+* {
 	box-sizing: border-box;
 }
 
@@ -36,13 +39,11 @@ html, body, #arr, .RootPane {
 	// Contains entire app
 	display: flex;
 	flex-direction: column;
-	box-sizing: border-box;
 }
 
 .HeaderPane, .FooterPane {
 	// Extreme top and bottom panes
 	flex: 0 0 32px;
-	box-sizing: border-box;
 }
 
 .CenterPane {
@@ -50,13 +51,11 @@ html, body, #arr, .RootPane {
 	flex: 1 1 auto;
 	display: flex;
 	flex-direction: row;
-	box-sizing: border-box;
 }
 
 .Sidebar {
 	// Contains filter/etc links, resizable
 	flex: 0 0 auto;
-	box-sizing: border-box;
 	overflow: auto;
 }
 
@@ -65,7 +64,6 @@ html, body, #arr, .RootPane {
 	flex: 1 1 auto;
 	display: flex;
 	flex-direction: column;
-	box-sizing: border-box;
 	overflow-x: auto; // Needed in Firefox to maintain correct width
 }
 
@@ -73,19 +71,16 @@ html, body, #arr, .RootPane {
 	// Contains details on an individual torrent, sits below torrent table, resizable
 	display: flex;
 	flex: 0 0 300px;
-	box-sizing: border-box;
 }
 
 .FlexResizer {
 	// Little bar to resize resizable things!
 	flex: 0 0 5px;
-	box-sizing: border-box;
 }
 
 .BaseTable {
 	// Complex table with resizable headers, eg. torrent table
 	flex: 1 1 auto;
-	box-sizing: border-box;
 	overflow-x: auto;
 	overflow-y: hidden;
 	position: relative;

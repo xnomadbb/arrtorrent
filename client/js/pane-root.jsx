@@ -1,6 +1,7 @@
 var React = require('react/addons');
 var SidebarPane = require('./pane-sidebar');
 var MainPane = require('./pane-main');
+var FooterPane = require('./pane-footer');
 var FlexResizerMixin = require('./mixins/flex-resizer');
 var log = require('./stores/log').module('RootPane');
 
@@ -24,7 +25,7 @@ var RootPane = React.createClass({
 					{ this.flexResizerRenderHandle('x', 'pos') }
 					<MainPane activeView={this.state.activeView} />
 				</div>
-				<div className="FooterPane">Footer stuff</div>
+				<FooterPane />
 			</div>
 		);
 	},

@@ -38,7 +38,6 @@ Login
 
 	input, button {
 		display: block;
-		box-sizing: border-box;
 		text-align: center;
 		margin: 1rem auto;
 		width: 10rem;
@@ -69,9 +68,37 @@ Login
 Large top-level components
 */
 
-.HeaderPane, .FooterPane {
+.HeaderPane {
 	background: $offwhite;
-	flex-basis: 32px; // Height of header and footer bars
+	flex-basis: 32px;
+}
+.FooterPane {
+	background: $offwhite;
+	flex-basis: 2rem;
+	line-height: 2rem;
+	.sizeUnit:before {
+		content: '' !important;
+	}
+	.byteSize {
+		@extend %sans;
+	}
+	.summary {
+		padding: 0 1rem;
+	}
+	.upload:before {
+		content: "\25B4";
+		padding-right: 0.25rem;
+	}
+	.download:before {
+		content: "\25BE";
+		padding-right: 0.25rem;
+	}
+	.current_rate:after {
+		content: ', ';
+	}
+	.traffic_total:after {
+		content: ' Total';
+	}
 }
 .Sidebar {
 	padding-right: 2rem;
@@ -103,8 +130,9 @@ General details
 }
 
 .byteSize, .ratioSize {
-	.sizeWhole, .sizeFraction, .sizeUnit {
-		@extend %mono;
+	@extend %mono;
+	.sizeDecimal {
+		@extend %sans;
 	}
 }
 
@@ -114,12 +142,11 @@ General details
 }
 
 /*
-Table details
+All tables
 */
 
 .BaseTable {
 	th {
-		box-sizing: border-box;
 		font-weight: 400;
 		padding: 2px 5px;
 		&.sort_ASC.align_left:after    { content: "\25B4"; }
@@ -130,7 +157,6 @@ Table details
 		&:after  { margin-left:  5px; color: $grey50; }
 	}
 	td {
-		box-sizing: border-box;
 		padding: 0 5px;
 	}
 	tr.selected {
@@ -163,6 +189,10 @@ Table details
 .BaseTableBefore {
 	margin: 5px;
 }
+
+/*
+Specific tables
+*/
 
 .TorrentTable {
 	// Initial widths need to be set so things look okay initially.
@@ -200,8 +230,8 @@ Table details
 }
 
 .LogTable {
-	@extend %mono;
 	font-size: 0.75rem;
+	.BaseTableBody { @extend %mono; }
 	.level      { width:  5%; }
 	.timestamp  { width: 10%; }
 	.module     { width:  5%; }

@@ -88,5 +88,51 @@ module.exports = function(table, selectedRows) {
 		},
 	};
 
-	return [startOption, pauseOption, stopOption];
+	var hashOption = {
+		key: 'hash',
+		name: 'Force Recheck',
+		type: 'normal',
+		enabled: true,
+		handleClick: function() {
+			var calls = [];
+			for (var i=0; i < selectedRows.length; i++) {
+				calls.push(['d.check_hash', selectedRows[i].hash]);
+			}
+
+			ArrRpc.sendRequest('arr.multicall', calls, function(response) {
+				if (response.error !== null) {
+					log.user_error('CheckFail', 'Failed to begin checking torrents', response.error);
+				} else {
+					log.user_info('CheckSuccess', 'Successfully began checking torrents', calls.length);
+				}
+			});
+		},
+	};
+
+	var announceOption = {
+		key: 'announce',
+		name: 'Update Trackers',
+		type: 'normal',
+		enabled: true,
+		handleClick: function() {
+			var calls = [];
+			for (var i=0; i < selectedRows.length; i++) {
+				calls.push(['d.tracker_announnce', selectedRows[i].hash]);
+			}
+
+			ArrRpc.sendRequest('arr.multicall', calls, function(response) {
+				if (response.error !== null) {
+					log.user_error('AnnounceFail', 'Failed to announce torrents', response.error);
+				} else {
+					log.user_info('AnnounceSuccess', 'Successfully announced torrents', calls.length);
+				}
+			});
+		},
+	};
+
+	return [
+		startOption, pauseOption, stopOption,
+		{type: 'separator'},
+		hashOption, announceOption,
+	];
 };

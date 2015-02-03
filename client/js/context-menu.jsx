@@ -12,7 +12,11 @@ var ContextMenu = React.createClass({
 		}
 	},
 
-	renderOption: function(option) {
+	renderOption: function(option, i) {
+		if (option.type === 'separator') {
+			return <div key={'separator' + i} className="ContextSeparator"></div>;
+		}
+
 		var onClick = option.enabled ? this.handleClick.bind(this, option.handleClick) : _.noop;
 		var classes = {};
 		classes.ContextOption = true;

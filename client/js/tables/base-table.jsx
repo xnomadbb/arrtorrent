@@ -1,6 +1,7 @@
 var React = require('react/addons');
 var _ = require('lodash');
 var log = require('../stores/log').module('BaseTable');
+var ContextMenuMixin = require('../mixins/context-menu');
 
 var TableBodyCell = React.createClass({
 	shouldComponentUpdate: function(nextProps) {
@@ -23,6 +24,7 @@ var TableBodyCell = React.createClass({
 });
 
 var TableBodyRow = React.createClass({
+	mixins: [ContextMenuMixin],
 	shouldComponentUpdate: function(nextProps) {
 		// columnDescriptions are constant
 		return (
@@ -318,14 +320,32 @@ var BaseTable = React.createClass({
 			this.props.updateVisibleRowKeys(renderRowKeys);
 		}
 
+		// Used for context menus
+		var allRowData = this.props.rowData;
+		var selectedData = this.state.selectedRows.map(function(key) {
+			return allRowData[key];
+		});
+
 		for (var i=0; i < renderRowKeys.length; i++) {
 			var rowKey = renderRowKeys[i];
 			var rowData = this.props.rowData[rowKey];
+			var isSelected = this.state.selectedRows.indexOf(rowKey) !== -1;
+
+			// Pass just the targeted row if it's not in the selection,
+			// or the selection if it's part of it.
+			var getContextMenuOptions = this.props.getContextMenuOptions;
+			if (getContextMenuOptions) {
+				if (isSelected) {
+					getContextMenuOptions = _.partial(this.props.getContextMenuOptions, selectedData);
+				} else {
+					getContextMenuOptions = _.partial(this.props.getContextMenuOptions, [rowData]);
+				}
+			}
 			bodyRows.push(
 				<TableBodyRow key={rowKey} rowData={rowData} renderHash={rowData.renderHash}
 				columnOrder={this.state.columnOrder} columnDescriptions={this.props.columnDescriptions}
-				focused={this.state.focusedRow === rowKey} selected={this.state.selectedRows.indexOf(rowKey) !== -1}
-				onClick={this.handleRowClick.bind(this, rowKey)} />
+				focused={this.state.focusedRow === rowKey} selected={isSelected}
+				onClick={this.handleRowClick.bind(this, rowKey)} getContextMenuOptions={getContextMenuOptions} />
 			);
 		}
 

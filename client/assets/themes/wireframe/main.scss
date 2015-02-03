@@ -5,6 +5,12 @@ Not intended as a particularly pretty/flashy theme, just some of the UI
 basics and examples of useful defaults/patterns.
 */
 
+$offwhite: #ddd;
+$grey50: #888;
+$errtextcolor: #C82A2A;
+$focuscolor: #1CB8E8;
+$selectioncolor: #C1F0FF;
+
 @import 'type';
 %mono {
 	font-family: 'Source Code Pro', monospace;
@@ -13,11 +19,15 @@ basics and examples of useful defaults/patterns.
 	font-family: 'Source Sans Pro', sans-serif;
 }
 
-$offwhite: #ddd;
-$grey50: #888;
-$errtextcolor: #C82A2A;
-$focuscolor: #1CB8E8;
-$selectioncolor: #C1F0FF;
+%focusIndicator {
+	position: absolute;
+	content: ' ';
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 3px;
+	background: $focuscolor;
+}
 
 body {
 	font-size: 0.9rem;
@@ -165,13 +175,7 @@ All tables
 	tr.focused td:first-child {
 		position: relative;
 		&:before {
-			position: absolute;
-			content: ' ';
-			top: 0;
-			left: 0;
-			height: 100%;
-			width: 3px;
-			background: $focuscolor;
+			@extend %focusIndicator;
 		}
 	}
 	.align_left  { text-align:  left; }
@@ -246,3 +250,28 @@ Specific tables
 .LogTableContainer .LogFilterLabel {
 	margin-left: 1rem;
 }
+
+/*
+Context menus
+*/
+
+.ContextMenuManager {
+	.ContextMenu {
+		background: #fff;
+		border: 1px solid $offwhite;
+		box-shadow: 0.1rem 0.1rem 0.25rem $grey50;
+		min-width: 10rem;
+	}
+	.ContextOption {
+		padding: 0 0.5rem;
+		line-height: 1.5rem;
+		position: relative;
+		&:hover {
+			background: $selectioncolor;
+			&:before {
+				@extend %focusIndicator;
+			}
+		}
+	}
+}
+

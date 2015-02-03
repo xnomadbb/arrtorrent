@@ -2,6 +2,7 @@ var React = require('react/addons');
 var SidebarPane = require('./pane-sidebar');
 var MainPane = require('./pane-main');
 var FooterPane = require('./pane-footer');
+var ContextMenuManager = require('./context-menu');
 var FlexResizerMixin = require('./mixins/flex-resizer');
 var log = require('./stores/log').module('RootPane');
 
@@ -26,6 +27,7 @@ var RootPane = React.createClass({
 					<MainPane activeView={this.state.activeView} />
 				</div>
 				<FooterPane />
+				<ContextMenuManager />
 			</div>
 		);
 	},

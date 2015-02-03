@@ -3,6 +3,7 @@ var _ = require('lodash');
 var ViewStore = require('../stores/view');
 var TorrentStore = require('../stores/torrent');
 var TorrentColumns = require('./torrent-columns');
+var GetMenuOptions = require('./torrent-menu');
 var BaseTable = require('./base-table');
 
 var TorrentTable = React.createClass({
@@ -35,7 +36,8 @@ var TorrentTable = React.createClass({
 		return (
 			<BaseTable ref="flexResizerNotifyProxy" tableKey="torrent" className="TorrentTable"
 			columnDescriptions={TorrentColumns.columns} initialColumnOrder={TorrentColumns.initialOrder}
-			initialSort={['name', 'ASC']} rowData={rowData} updateVisibleRowKeys={this.handleRowVisibiliyChange} />
+			initialSort={['name', 'ASC']} rowData={rowData} updateVisibleRowKeys={this.handleRowVisibiliyChange}
+			getContextMenuOptions={_.partial(GetMenuOptions, this)} />
 		);
 	},
 });

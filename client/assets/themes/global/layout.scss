@@ -19,21 +19,9 @@ html, body, #arr, .RootPane {
 	box-sizing: border-box;
 }
 
-.ProgressBarContainer {
-	height: 14px;
-	width: 100%;
-	min-width: 100px;
-	.ProgressBarProgress {
-		height: 100%;
-	}
-}
-
-/* width: attr(data-completed) won't work */
-@for $i from 0 through 100 {
-    .ProgressBarProgress[data-completed="#{$i}"] {
-      width: #{percentage($i/100)};
-    }
-}
+/*
+Sizing of large top-level components
+*/
 
 .RootPane {
 	// Contains entire app
@@ -78,6 +66,10 @@ html, body, #arr, .RootPane {
 	flex: 0 0 5px;
 }
 
+/*
+Tables
+*/
+
 .BaseTable {
 	// Complex table with resizable headers, eg. torrent table
 	flex: 1 1 auto;
@@ -113,4 +105,43 @@ html, body, #arr, .RootPane {
 
 .BaseTableBefore {
 	flex: 0 0 auto;
+}
+
+/*
+General details
+*/
+
+.ProgressBarContainer {
+	height: 14px;
+	width: 100%;
+	min-width: 100px;
+	.ProgressBarProgress {
+		height: 100%;
+	}
+}
+
+// width: attr(data-completed) won't work
+@for $i from 0 through 100 {
+    .ProgressBarProgress[data-completed="#{$i}"] {
+      width: #{percentage($i/100)};
+    }
+}
+
+/*
+Context menus
+*/
+
+.ContextMenuManager {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: none;
+	&.active {
+		display: block;
+	}
+	.ContextMenu {
+		position: absolute;
+	}
 }

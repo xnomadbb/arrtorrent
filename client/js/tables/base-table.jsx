@@ -238,6 +238,20 @@ var BaseTable = React.createClass({
 		}
 	},
 
+	getContextMenuOptions: function(rowKey) {
+		var isSelected = this.state.selectedRows.indexOf(rowKey) !== -1;
+		if (isSelected) {
+			var allRowData = this.props.rowData;
+			var selectedData = this.state.selectedRows.map(function(key) {
+				return allRowData[key];
+			});
+			return this.props.getContextMenuOptions(selectedData);
+		} else {
+			this.setState({focusedRow: rowKey, selectedRows: [rowKey]});
+			return this.props.getContextMenuOptions([this.props.rowData[rowKey]]);
+		}
+	},
+
 	handleFlexResize: function() {
 		this.updateScrollInfo();
 	},
@@ -320,12 +334,6 @@ var BaseTable = React.createClass({
 			this.props.updateVisibleRowKeys(renderRowKeys);
 		}
 
-		// Used for context menus
-		var allRowData = this.props.rowData;
-		var selectedData = this.state.selectedRows.map(function(key) {
-			return allRowData[key];
-		});
-
 		for (var i=0; i < renderRowKeys.length; i++) {
 			var rowKey = renderRowKeys[i];
 			var rowData = this.props.rowData[rowKey];
@@ -335,12 +343,9 @@ var BaseTable = React.createClass({
 			// or the selection if it's part of it.
 			var getContextMenuOptions = this.props.getContextMenuOptions;
 			if (getContextMenuOptions) {
-				if (isSelected) {
-					getContextMenuOptions = _.partial(this.props.getContextMenuOptions, selectedData);
-				} else {
-					getContextMenuOptions = _.partial(this.props.getContextMenuOptions, [rowData]);
-				}
+				getContextMenuOptions = this.getContextMenuOptions.bind(this, rowKey);
 			}
+
 			bodyRows.push(
 				<TableBodyRow key={rowKey} rowData={rowData} renderHash={rowData.renderHash}
 				columnOrder={this.state.columnOrder} columnDescriptions={this.props.columnDescriptions}

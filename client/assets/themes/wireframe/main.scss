@@ -7,6 +7,7 @@ basics and examples of useful defaults/patterns.
 
 $offwhite: #ddd;
 $grey50: #888;
+$grey25: #CCC;
 $errtextcolor: #C82A2A;
 $focuscolor: #1CB8E8;
 $selectioncolor: #C1F0FF;
@@ -266,11 +267,14 @@ Context menus
 		padding: 0 0.5rem;
 		line-height: 1.5rem;
 		position: relative;
-		&:hover {
+		&.enabled:hover {
 			background: $selectioncolor;
 			&:before {
 				@extend %focusIndicator;
 			}
+		}
+		&.disabled {
+			color: $grey25;
 		}
 	}
 }

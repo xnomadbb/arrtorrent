@@ -1,5 +1,6 @@
 var React = require('react/addons');
 var NativeListener = require('react-native-listener');
+var _ = require('lodash');
 var ContextMenuStore = require('./stores/context-menu');
 var log = require('./stores/log').module('ContextMenu');
 
@@ -12,14 +13,16 @@ var ContextMenu = React.createClass({
 	},
 
 	renderOption: function(option) {
+		var onClick = option.enabled ? this.handleClick.bind(this, option.handleClick) : _.noop;
 		var classes = {};
 		classes.ContextOption = true;
-		classes.enabled = option.enabled;
+		classes.enabled  =  option.enabled;
+		classes.disabled = !option.enabled;
 		classes[option.key] = true;
 		classes = React.addons.classSet(classes);
 
 		return (
-			<div key={option.key} className={classes} onClick={this.handleClick.bind(this, option.handleClick)}>
+			<div key={option.key} className={classes} onClick={onClick}>
 				{option.name}
 			</div>
 		);

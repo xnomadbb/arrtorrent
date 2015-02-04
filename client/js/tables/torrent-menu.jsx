@@ -1,6 +1,8 @@
 var React = require('react/addons');
 var _ = require('lodash');
 var ArrRpc = require('../rpc');
+var ViewStore = require('../stores/view');
+var TorrentStore = require('../stores/torrent');
 var log = require('../stores/log').module('TorrentMenu');
 
 function isTorrentStoppedOrPaused(t) {
@@ -9,6 +11,11 @@ function isTorrentStoppedOrPaused(t) {
 
 // Context menu options for the torrent table
 module.exports = function(table, selectedRows) {
+	var hashes = [];
+	for (var i=0; i < selectedRows.length; i++) {
+		hashes.push(selectedRows[i].hash);
+	}
+
 	var startOption = {
 		key: 'start',
 		name: 'Start',
@@ -123,28 +130,77 @@ module.exports = function(table, selectedRows) {
 		},
 	};
 
-	var subfoo = {
-		key: 'foo',
-		name: 'foo',
-		handleClick: function() { console.log('foo'); },
-	};
-	var subbar = {
-		key: 'bar',
-		name: 'bar',
-		handleClick: function() { console.log('bar'); },
-	};
-	var testSubOption = {
-		key: 'subtest',
-		name: 'Cocks',
+	//TODO Add new label option
+	var labelsOption = {
+		key: 'labels',
+		name: 'Labels',
 		type: 'submenu',
-		menuOptions: [subfoo, subbar],
+		menuOptions: ViewStore.viewGroups.label.map(function(viewId) {
+			var viewName = ViewStore.viewNames[viewId];
+			var labelValue = (viewId === 'label_none') ? '' : viewName;
+			return {
+				key: viewId,
+				name: viewName,
+				handleClick: function() {
+					var calls = [];
+					for (var i=0; i < hashes.length; i++) {
+						calls.push(['d.set_custom1', [hashes[i], labelValue]]);
+					}
+
+					ArrRpc.sendRequest('arr.multicall', calls, function(response) {
+						if (response.error !== null) {
+							log.user_error('LabelFail', 'Failed to change label', response.error);
+						} else {
+							log.user_info('LabelSuccess', 'Successfully changed label', calls.length);
+						}
+
+						TorrentStore.queryHashListInfo(hashes);
+					});
+				},
+			};
+		}),
 	};
+
+	var priorityOption = {
+		key: 'priority',
+		name: 'Priority',
+		type: 'submenu',
+		menuOptions: [
+			['3', 'High'],
+			['2', 'Normal'],
+			['1', 'Low'],
+			['0', 'Ignore'],
+		].map(function(p) {
+			var value = p[0];
+			var name = p[1];
+			return {
+				key: value,
+				name: name,
+				handleClick: function() {
+					var calls = [];
+					for (var i=0; i < hashes.length; i++) {
+						calls.push(['d.set_priority', [hashes[i], value]]);
+					}
+
+					ArrRpc.sendRequest('arr.multicall', calls, function(response) {
+						if (response.error !== null) {
+							log.user_error('PriorityFail', 'Failed to change priority', response.error);
+						} else {
+							log.user_info('PrioritySuccess', 'Successfully changed priority', calls.length);
+						}
+
+						TorrentStore.queryHashListInfo(hashes);
+					});
+				},
+			};
+		}),
+	};
+
 
 	return [
 		startOption, pauseOption, stopOption,
-		{type: 'separator'},
 		hashOption, announceOption,
 		{type: 'separator'},
-		testSubOption,
+		labelsOption, priorityOption
 	];
 };

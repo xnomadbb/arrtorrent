@@ -161,6 +161,10 @@ var util = {
 					};
 				});
 			},
+			'priority_string': function(rawResponse) {
+				// "off" is a confusing string for this
+				return (rawResponse === 'off') ? 'Ignore' : rawResponse;
+			}
 		},
 		statusNames: {
 			'hashing':  'Hashing',

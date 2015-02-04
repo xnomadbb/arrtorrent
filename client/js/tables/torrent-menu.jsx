@@ -9,8 +9,8 @@ function isTorrentStoppedOrPaused(t) {
 	return (t.is_active === '0' || t.mystery_state === '0');
 }
 
-// Context menu options for the torrent table
-module.exports = function(table, selectedRows) {
+// Context menu options for torrents
+module.exports = function(selectedRows) {
 	var hashes = [];
 	for (var i=0; i < selectedRows.length; i++) {
 		hashes.push(selectedRows[i].hash);

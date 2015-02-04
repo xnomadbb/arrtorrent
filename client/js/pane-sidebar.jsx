@@ -1,8 +1,12 @@
 var React = require('react/addons');
+var _ = require('lodash');
 var ViewStore = require('./stores/view');
+var ContextMenuMixin = require('./mixins/context-menu');
+var GetMenuOptions = require('./tables/torrent-menu');
 
 
 var SidebarItem = React.createClass({
+	mixins: [ContextMenuMixin],
 	handleClick: function() {
 		this.props.onChoose(this.props.viewId);
 	},
@@ -27,6 +31,11 @@ var SidebarPane = module.exports = React.createClass({
 	viewDidChange: function() {
 		this.forceUpdate();
 	},
+	getContextMenuOptions: function(viewId) {
+		//TODO add support for rt views where applicable using d.multicall
+		var rows = _.values(ViewStore.viewContents[viewId]);
+		return GetMenuOptions(rows);
+	},
 	render: function() {
 		var groupNodes = [];
 
@@ -39,7 +48,9 @@ var SidebarPane = module.exports = React.createClass({
 				var tooltip = ViewStore.viewTooltips[viewId];
 				var viewCount = Object.keys(ViewStore.viewContents[viewId]).length;
 				var isActive = viewId === this.props.activeView;
-				viewNodes.push(<SidebarItem key={viewId} viewId={viewId} name={viewName} isActive={isActive} count={viewCount} tooltip={tooltip} onChoose={this.props.onChoose} />);
+				viewNodes.push(
+					<SidebarItem key={viewId} viewId={viewId} name={viewName} isActive={isActive} count={viewCount} tooltip={tooltip}
+					onChoose={this.props.onChoose} getContextMenuOptions={this.getContextMenuOptions.bind(this, viewId)} />);
 			}
 
 			groupNodes.push(

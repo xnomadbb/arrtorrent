@@ -268,7 +268,7 @@ Context menus
 		box-shadow: 0.1rem 0.1rem 0.25rem $grey50;
 		min-width: 10rem;
 	}
-	.ContextOption {
+	.ContextOption, .ContextSubmenu {
 		padding: 0 0.5rem;
 		line-height: 1.5rem;
 		position: relative;
@@ -286,6 +286,11 @@ Context menus
 		background: $offwhite;
 		height: 1px;
 		margin: 1px 0;
+	}
+	.ContextSubmenu:after {
+		position: absolute;
+		content: "\25B8";
+		right: 5px;
 	}
 }
 

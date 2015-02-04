@@ -13,31 +13,48 @@ var ContextMenu = React.createClass({
 	},
 
 	renderOption: function(option, i) {
+		// option.type is assumed 'normal' unless specified
+		// option.enabled is assumed true unless false
+		option.type = option.type || 'normal';
+		option.enabled = (option.enabled === false) ? false : true;
 		if (option.type === 'separator') {
 			return <div key={'separator' + i} className="ContextSeparator"></div>;
 		}
 
-		var onClick = option.enabled ? this.handleClick.bind(this, option.handleClick) : _.noop;
 		var classes = {};
-		classes.ContextOption = true;
 		classes.enabled  =  option.enabled;
 		classes.disabled = !option.enabled;
 		classes[option.key] = true;
-		classes = React.addons.classSet(classes);
 
-		return (
-			<div key={option.key} className={classes} onClick={onClick}>
-				{option.name}
-			</div>
-		);
+		if (option.type === 'submenu') {
+			classes.ContextSubmenu = true;
+			classes = React.addons.classSet(classes);
+			return (
+				<div key={option.key} className={classes}>
+					{option.name}
+					<ContextMenu options={option.menuOptions} closeMenu={this.props.closeMenu} />
+				</div>
+			);
+		} else {
+			// normal
+			var onClick = option.enabled ? this.handleClick.bind(this, option.handleClick) : _.noop;
+			classes.ContextOption = true;
+			classes = React.addons.classSet(classes);
+			return (
+				<div key={option.key} className={classes} onClick={onClick}>
+					{option.name}
+				</div>
+			);
+		}
 	},
 
 	render: function() {
 		var optionNodes = this.props.options.map(this.renderOption);
-		var style = {
-			left: this.props.x,
-			top:  this.props.y,
-		};
+		var style = {};
+		if (this.props.x && this.props.y) {
+			style.left = this.props.x;
+			style.top  = this.props.y;
+		}
 		return (
 			<div style={style} className="ContextMenu">
 				{optionNodes}

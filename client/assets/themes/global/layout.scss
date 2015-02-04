@@ -144,4 +144,15 @@ Context menus
 	.ContextMenu {
 		position: absolute;
 	}
+	.ContextSubmenu {
+		position: relative;
+		> .ContextMenu {
+			display: none;
+			top: 0;
+			left: 100%;
+		}
+		&:hover > .ContextMenu {
+			display: block;
+		}
+	}
 }

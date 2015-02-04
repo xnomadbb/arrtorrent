@@ -12,7 +12,6 @@ module.exports = function(table, selectedRows) {
 	var startOption = {
 		key: 'start',
 		name: 'Start',
-		type: 'normal',
 		enabled: _.some(selectedRows, isTorrentStoppedOrPaused),
 		handleClick: function() {
 			var rows = _.filter(selectedRows, isTorrentStoppedOrPaused);
@@ -43,7 +42,6 @@ module.exports = function(table, selectedRows) {
 	var pauseOption = {
 		key: 'pause',
 		name: 'Pause',
-		type: 'normal',
 		enabled: _.some(selectedRows, {is_active: '1'}),
 		handleClick: function() {
 			var rows = _.filter(selectedRows, {is_active: '1'});
@@ -67,7 +65,6 @@ module.exports = function(table, selectedRows) {
 	var stopOption = {
 		key: 'stop',
 		name: 'Stop',
-		type: 'normal',
 		enabled: _.some(selectedRows, {mystery_state: '1'}),
 		handleClick: function() {
 			var rows = _.filter(selectedRows, {mystery_state: '1'});
@@ -91,8 +88,6 @@ module.exports = function(table, selectedRows) {
 	var hashOption = {
 		key: 'hash',
 		name: 'Force Recheck',
-		type: 'normal',
-		enabled: true,
 		handleClick: function() {
 			var calls = [];
 			for (var i=0; i < selectedRows.length; i++) {
@@ -112,8 +107,6 @@ module.exports = function(table, selectedRows) {
 	var announceOption = {
 		key: 'announce',
 		name: 'Update Trackers',
-		type: 'normal',
-		enabled: true,
 		handleClick: function() {
 			var calls = [];
 			for (var i=0; i < selectedRows.length; i++) {
@@ -130,9 +123,28 @@ module.exports = function(table, selectedRows) {
 		},
 	};
 
+	var subfoo = {
+		key: 'foo',
+		name: 'foo',
+		handleClick: function() { console.log('foo'); },
+	};
+	var subbar = {
+		key: 'bar',
+		name: 'bar',
+		handleClick: function() { console.log('bar'); },
+	};
+	var testSubOption = {
+		key: 'subtest',
+		name: 'Cocks',
+		type: 'submenu',
+		menuOptions: [subfoo, subbar],
+	};
+
 	return [
 		startOption, pauseOption, stopOption,
 		{type: 'separator'},
 		hashOption, announceOption,
+		{type: 'separator'},
+		testSubOption,
 	];
 };

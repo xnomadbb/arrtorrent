@@ -79,7 +79,7 @@ var LogTable = React.createClass({
 					<button onClick={this.handleEmptyCommand}>Clear</button>
 					{ filterSelector }
 				</div>
-				<BaseTable ref="flexResizerNotifyProxy" tableKey="log" className="LogTable"
+				<BaseTable tableKey="log" className="LogTable"
 				columnDescriptions={LogColumns.columns} initialColumnOrder={LogColumns.initialOrder}
 				initialSort={['timestamp', 'DESC']} rowData={this.state.rowData} />
 			</div>

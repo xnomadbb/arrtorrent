@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var ContextMenuStore = require('../stores/context-menu');
+var Event = require('../event');
 
 var ContextMenuMixin = {
 	componentDidMount: function() {
@@ -13,7 +13,7 @@ var ContextMenuMixin = {
 		if (this.props.getContextMenuOptions) {
 			var menuOptions = this.props.getContextMenuOptions();
 			if (menuOptions) {
-				ContextMenuStore.requestMenu(menuOptions, coords);
+				Event.emit('ContextMenu.requestMenu', menuOptions, coords);
 				e.preventDefault();
 			}
 		}

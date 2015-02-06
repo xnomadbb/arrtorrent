@@ -1,4 +1,5 @@
 var React = require('react/addons');
+var Event = require('../event');
 
 var FlexResizerMixin = {
 	// Requires:
@@ -28,11 +29,8 @@ var FlexResizerMixin = {
 		this.windowResizeDebounce = setTimeout(this.handleWindowResizeAction, 5);
 	},
 	handleWindowResizeAction: function() {
-		// Send resize events
-		this.flexResizerPropogateNotification(this.refs.flexResizerTarget);
-		if (this.refs.flexResizerPassive) {
-			this.flexResizerPropogateNotification(this.refs.flexResizerPassive);
-		}
+		// Send resize event
+		Event.emit('PaneResize');
 	},
 
 	flexResizerHandleDragStart: function(e) {
@@ -55,26 +53,8 @@ var FlexResizerMixin = {
 		this.refs.flexResizerTarget.getDOMNode().style.flexBasis = this.flexSize + 'px';
 		// Not aware of any actual issue from not clearing these, but it makes me nervous
 		this.flexSize = this.flexLastPos = this.flexStartPos = undefined;
-		// Send resize events
-		this.flexResizerPropogateNotification(this.refs.flexResizerTarget);
-		if (this.refs.flexResizerPassive) {
-			this.flexResizerPropogateNotification(this.refs.flexResizerPassive);
-		}
-	},
-	flexResizerPropogateNotification: function(component) {
-		// Call a handleFlexResize method on given component and
-		// propogate to any flexResizerNotifyProxy refs recursively.
-		while (true) {
-			if (component.handleFlexResize) {
-				component.handleFlexResize();
-			}
-			if (component.refs && component.refs.flexResizerNotifyProxy) {
-				// Try the next ref in the chain if it exists
-				component = component.refs.flexResizerNotifyProxy;
-			} else {
-				break;
-			}
-		}
+		// Send resize event
+		Event.emit('PaneResize');
 	},
 };
 

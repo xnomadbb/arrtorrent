@@ -1,7 +1,7 @@
 var React = require('react/addons');
 var NativeListener = require('react-native-listener');
 var _ = require('lodash');
-var ContextMenuStore = require('./stores/context-menu');
+var Event = require('./event');
 var log = require('./stores/log').module('ContextMenu');
 
 
@@ -73,10 +73,10 @@ var ContextMenuManager = React.createClass({
 	},
 
 	componentWillMount: function() {
-		ContextMenuStore.on('requestMenu', this.handleMenuRequest);
+		Event.on('ContextMenu.requestMenu', this.handleMenuRequest);
 	},
 	componentWillUnmount: function() {
-		ContextMenuStore.removeListener('requestMenu', this.handleMenuRequest);
+		Event.removeListener('ContextMenu.requestMenu', this.handleMenuRequest);
 	},
 
 	handleMenuRequest: function(menuOptions, coords) {

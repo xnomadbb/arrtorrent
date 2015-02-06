@@ -2,6 +2,7 @@ var React = require('react/addons');
 var _ = require('lodash');
 var log = require('../stores/log').module('BaseTable');
 var ContextMenuMixin = require('../mixins/context-menu');
+var Event = require('../event');
 
 var TableBodyCell = React.createClass({
 	shouldComponentUpdate: function(nextProps) {
@@ -252,7 +253,7 @@ var BaseTable = React.createClass({
 		}
 	},
 
-	handleFlexResize: function() {
+	handlePaneResize: function() {
 		this.updateScrollInfo();
 	},
 	updateScrollInfo: function() {
@@ -283,6 +284,10 @@ var BaseTable = React.createClass({
 
 	componentWillMount: function() {
 		this.updateSortOrder(this.props.initialSort[0], this.props.initialSort[1]);
+		Event.on('PaneResize', this.handlePaneResize);
+	},
+	componentWillUnmount: function() {
+		Event.removeListener('PaneResize', this.handlePaneResize);
 	},
 	componentDidMount: function() {
 		// We need an extra render cycle to gather heights/etc that are done on-the-fly

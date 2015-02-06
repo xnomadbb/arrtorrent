@@ -34,7 +34,7 @@ var TorrentTable = React.createClass({
 	render: function() {
 		var rowData = ViewStore.viewContents[this.props.activeView];
 		return (
-			<BaseTable ref="flexResizerNotifyProxy" tableKey="torrent" className="TorrentTable"
+			<BaseTable tableKey="torrent" className="TorrentTable"
 			columnDescriptions={TorrentColumns.columns} initialColumnOrder={TorrentColumns.initialOrder}
 			initialSort={['name', 'ASC']} rowData={rowData} updateVisibleRowKeys={this.handleRowVisibiliyChange}
 			getContextMenuOptions={GetMenuOptions} />

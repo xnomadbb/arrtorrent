@@ -294,3 +294,20 @@ Context menus
 	}
 }
 
+/*
+Tab bars
+*/
+
+.TabHeader {
+	float: left;
+	padding: 5px;
+	&.active {
+		background: white;
+	}
+	&:hover {
+		outline: 1px solid white;
+	}
+}
+.TabHeaders {
+	background: $offwhite;
+}

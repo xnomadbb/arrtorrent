@@ -156,3 +156,21 @@ Context menus
 		}
 	}
 }
+
+/*
+Tab bars
+*/
+
+.TabBar {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	min-width: 100%;
+	.TabHeaders {
+		flex: 0 0 auto;
+	}
+	.TabBody {
+		display: flex;
+		flex: 1 1 auto;
+	}
+}

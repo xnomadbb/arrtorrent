@@ -194,6 +194,10 @@ All tables
 	}
 	.align_left  { text-align:  left; }
 	.align_right { text-align: right; }
+	.ColumnResizeStripe {
+		width: 1px;
+		background: $offwhite;
+	}
 }
 
 .BaseTableHeader {

@@ -106,6 +106,13 @@ Tables
 			width: 1em; // This should render transparent, but it needs a wide handle to be usable
 		}
 	}
+	.ColumnResizeStripe {
+		position: absolute;
+		height: 100%;
+		width: 1px;
+		left: -1px; // Off-screen until JS moves it
+		z-index: 10;
+	}
 }
 
 .BaseTableContainer {

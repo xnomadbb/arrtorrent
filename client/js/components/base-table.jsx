@@ -160,7 +160,6 @@ var BaseTable = React.createClass({
 	//FIXME reorder: Don't swap the column orders, move the FROM column before/after the TO column.
 	//FIXME reorder: Preferably base before/after on whether drop is on left/right of the TO column.
 	//FIXME reorder: Display destination separator darker/thicker during reorder.
-	//FIXME resize:  Display width previews during resize.
 
 	// Non-Firefox browsers can't get at the data on dragover.
 	// For any complicated checking this is a huge pain in the ass.
@@ -183,12 +182,15 @@ var BaseTable = React.createClass({
 		log.debug('ColumnResizeDragStart', 'Began column resize', columnKey);
 		var initial_width = Math.ceil(e.target.parentNode.getBoundingClientRect().width);
 		var initial_x = e.clientX;
+		var stripe_offset = this.refs.tableRoot.getDOMNode().scrollLeft - this.refs.tableRoot.getDOMNode().getBoundingClientRect().left;
+		this.refs.columnResizeStripe.getDOMNode().style.left = e.clientX + stripe_offset + 'px';
 		e.dataTransfer.setData(JSON.stringify({
 			'action': 'header_resize',
 			'table_key': this.props.tableKey,
 			'column_key': columnKey,
 			'initial_width': initial_width,
 			'initial_x': initial_x,
+			'stripe_offset': stripe_offset,
 		}), 'arr');
 		e.stopPropagation(); // header_reorder will also process otherwise
 	},
@@ -220,7 +222,7 @@ var BaseTable = React.createClass({
 				return;
 			}
 			// Handle resize update
-
+			this.refs.columnResizeStripe.getDOMNode().style.left = e.clientX + data.stripe_offset + 'px';
 
 		} else {
 				log.debug('RejectColumnDragOver', 'Rejected invalid event', data);
@@ -247,6 +249,7 @@ var BaseTable = React.createClass({
 			this.setState({columnOrder: columnOrder});
 		} else if (data.action === 'header_resize') {
 			// Resize columns
+			this.refs.columnResizeStripe.getDOMNode().style.left = -1 + 'px';
 			var newWidth = (data.initial_width + e.clientX - data.initial_x) + 'px';
 			this.refs.tableHeader.getDOMNode().querySelector('col.' + data.column_key).style.width = newWidth;
 			this.refs.tableBody.getDOMNode().querySelector(  'col.' + data.column_key).style.width = newWidth;
@@ -420,7 +423,7 @@ var BaseTable = React.createClass({
 		}
 
 		return (
-			<div className={"BaseTable " + this.props.className}>
+			<div ref="tableRoot" className={"BaseTable " + this.props.className}>
 				<table ref="tableHeader" className="BaseTableHeader">
 					{ this.renderColgroup(this.state.columnOrder) }
 					<tbody>
@@ -429,6 +432,7 @@ var BaseTable = React.createClass({
 						</tr>
 					</tbody>
 				</table>
+				<div ref="columnResizeStripe" className="ColumnResizeStripe" />
 				<div ref="scrollContainer" className="BaseTableBodyContainer" onScroll={ _.throttle(this.updateScrollInfo, 16) }
 				style={{height: 'calc(100% - '+ this.state.headerRowHeight +'px)'}} >
 					<div ref="scrollPadTop" className="ScrollPadding" style={{height: renderInfo.topPadding}} />

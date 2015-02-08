@@ -177,8 +177,7 @@ var BaseTable = React.createClass({
 	},
 	headerResizeHandleDragStart: function(columnKey, e) {
 		log.debug('ColumnResizeDragStart', 'Began column resize', columnKey);
-		var initial_width = Math.ceil(e.target.parentNode.getBoundingClientRect().width);
-		var initial_x = e.clientX;
+		var initial_left = Math.ceil(e.target.parentNode.getBoundingClientRect().left);
 		var table_offset = this.refs.tableRoot.getDOMNode().scrollLeft - this.refs.tableRoot.getDOMNode().getBoundingClientRect().left;
 		this.refs.columnResizeStripe.getDOMNode().style.left = e.clientX + table_offset + 'px';
 		e.dataTransfer.setDragImage(document.createElement('span'), 0, 0); // Don't display anything for drag image
@@ -187,8 +186,7 @@ var BaseTable = React.createClass({
 			'table_key': this.props.tableKey,
 			'column_key': columnKey,
 			'table_offset': table_offset,
-			'initial_width': initial_width,
-			'initial_x': initial_x,
+			'initial_left': initial_left,
 		}), 'arr');
 		e.stopPropagation(); // header_reorder will also process otherwise
 	},
@@ -287,10 +285,10 @@ var BaseTable = React.createClass({
 		} else if (data.action === 'header_resize') {
 			// Resize columns
 			this.refs.columnResizeStripe.getDOMNode().style.left = -1 + 'px';
-			var newWidth = (data.initial_width + e.clientX - data.initial_x) + 'px';
+			var newWidth = (e.clientX - data.initial_left) + 'px';
 			this.refs.tableHeader.getDOMNode().querySelector('col.' + fromColumnKey).style.width = newWidth;
 			this.refs.tableBody.getDOMNode().querySelector(  'col.' + fromColumnKey).style.width = newWidth;
-			log.debug('AcceptColumnResize', 'Column resize', fromColumnKey, data.initial_width, newWidth);
+			log.debug('AcceptColumnResize', 'Column resize', fromColumnKey, newWidth);
 		}
 
 		e.preventDefault(); // Prevent browser from handling drop also

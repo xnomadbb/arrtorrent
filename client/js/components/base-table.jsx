@@ -172,44 +172,86 @@ var BaseTable = React.createClass({
 	// We can sneak JSON-encoded text through here, but beware that it
 	// gets converted to lowercase in the process.
 	headerReorderHandleDragStart: function(columnKey, e) {
+		log.debug('ColumnReorderDragStart', 'Began column reorder', columnKey);
 		e.dataTransfer.setData(JSON.stringify({
 			'action': 'header_reorder',
 			'table_key': this.props.tableKey,
 			'column_key': columnKey,
 		}), 'arr');
 	},
-	headerReorderHandleDragOver: function(columnKey, e) {
+	headerResizeHandleDragStart: function(columnKey, e) {
+		log.debug('ColumnResizeDragStart', 'Began column resize', columnKey);
+		var initial_width = Math.ceil(e.target.parentNode.getBoundingClientRect().width);
+		var initial_x = e.clientX;
+		e.dataTransfer.setData(JSON.stringify({
+			'action': 'header_resize',
+			'table_key': this.props.tableKey,
+			'column_key': columnKey,
+			'initial_width': initial_width,
+			'initial_x': initial_x,
+		}), 'arr');
+		e.stopPropagation(); // header_reorder will also process otherwise
+	},
+	headerHandleDragOver: function(columnKey, e) {
 		var data = e.dataTransfer.types[0];
 		if (data.indexOf('{') !== 0) {
 			log.debug('RejectColumnDragOver', 'Rejected non-JSON event', data);
 			return;
 		}
 		data = JSON.parse(data);
-		if ( data.action !== 'header_reorder' // Wrong action
-			|| data.table_key !== this.props.tableKey // Wrong table
-			|| data.column_key === columnKey // Same column
-			|| this.state.columnOrder.indexOf(data.column_key) === -1 // Invalid column
-		) {
-			log.debug('RejectColumnDragOver', 'Rejected invalid event', data);
-			return;
+
+		if (data.action === 'header_reorder') {
+			if (data.table_key !== this.props.tableKey // Wrong table
+				|| data.column_key === columnKey // Same column
+				|| this.state.columnOrder.indexOf(data.column_key) === -1 // Invalid column
+			) {
+				log.debug('RejectColumnDragOver', 'Rejected invalid reorder event', data);
+				return;
+			}
+			// Handle reorder update
+
+
+
+		} else if (data.action === 'header_resize') {
+			if (data.table_key !== this.props.tableKey // Wrong table
+				|| this.state.columnOrder.indexOf(data.column_key) === -1 // Invalid column
+			) {
+				log.debug('RejectColumnDragOver', 'Rejected invalid resize event', data);
+				return;
+			}
+			// Handle resize update
+
+
+		} else {
+				log.debug('RejectColumnDragOver', 'Rejected invalid event', data);
+				return;
 		}
 
 		e.dataTransfer.effectAllowed = e.dataTransfer.dropEffect = 'move';
 		e.preventDefault(); // Accept drop
 	},
-	headerReorderHandleDrop: function(toColumnKey, e) {
+	headerHandleDrop: function(toColumnKey, e) {
 		// data already validated on dragover
 		var data = JSON.parse(e.dataTransfer.types[0]);
 		var fromColumnKey = data.column_key;
-		log.debug('AcceptColumnDrop', 'Column reorder from', fromColumnKey, 'to', toColumnKey);
 
-		// Swap columns
-		var columnOrder = this.state.columnOrder.slice(); // New instance
-		var fromIndex = columnOrder.indexOf(fromColumnKey);
-		var toIndex   = columnOrder.indexOf(  toColumnKey);
-		columnOrder[fromIndex] =   toColumnKey;
-		columnOrder[  toIndex] = fromColumnKey;
-		this.setState({columnOrder: columnOrder});
+		if (data.action === 'header_reorder') {
+			log.debug('AcceptColumnDrop', 'Column reorder from', fromColumnKey, 'to', toColumnKey);
+
+			// Swap columns
+			var columnOrder = this.state.columnOrder.slice(); // New instance
+			var fromIndex = columnOrder.indexOf(fromColumnKey);
+			var toIndex   = columnOrder.indexOf(  toColumnKey);
+			columnOrder[fromIndex] =   toColumnKey;
+			columnOrder[  toIndex] = fromColumnKey;
+			this.setState({columnOrder: columnOrder});
+		} else if (data.action === 'header_resize') {
+			// Resize columns
+			var newWidth = (data.initial_width + e.clientX - data.initial_x) + 'px';
+			this.refs.tableHeader.getDOMNode().querySelector('col.' + data.column_key).style.width = newWidth;
+			this.refs.tableBody.getDOMNode().querySelector(  'col.' + data.column_key).style.width = newWidth;
+			log.debug('AcceptColumnResize', 'Column resize', data.column_key, data.initial_width, newWidth);
+		}
 
 		e.preventDefault(); // Prevent browser from handling drop also
 	},
@@ -325,13 +367,23 @@ var BaseTable = React.createClass({
 
 		return (
 			<th key={columnKey} ref={'head_' + columnKey} className={classes} title={columnDescription.tooltip} draggable="true"
-			onDragStart={this.headerReorderHandleDragStart.bind(this, columnKey)}
-			onDragOver={this.headerReorderHandleDragOver.bind(this, columnKey)}
-			onDrop={this.headerReorderHandleDrop.bind(this, columnKey)}
-			onClick={this.updateSortOrder.bind(this, columnKey, 'toggle')} >
+			onDragStart={    this.headerReorderHandleDragStart.bind(this, columnKey)}
+			onDragOver={     this.headerHandleDragOver.bind(        this, columnKey)}
+			onDrop={         this.headerHandleDrop.bind(            this, columnKey)}
+			onClick={        this.updateSortOrder.bind(             this, columnKey, 'toggle')} >
 				{columnDescription.name}
+				<span className="resizeHandle" draggable="true"
+				onDragStart={this.headerResizeHandleDragStart.bind( this, columnKey)}
+				onDragOver={ this.headerHandleDragOver.bind(        this, columnKey)}
+				onDrop={     this.headerHandleDrop.bind(            this, columnKey)} />
 			</th>
 		);
+	},
+	renderColgroup: function(columnOrder) {
+		var cols = columnOrder.map(function(columnKey) {
+			return <col key={columnKey} className={columnKey} />;
+		});
+		return <colgroup>{cols}</colgroup>;
 	},
 	render: function() {
 		var headerCells = this.state.columnOrder.map(this.renderHeaderCell);
@@ -367,6 +419,7 @@ var BaseTable = React.createClass({
 		return (
 			<div className={"BaseTable " + this.props.className}>
 				<table ref="tableHeader" className="BaseTableHeader">
+					{ this.renderColgroup(this.state.columnOrder) }
 					<tbody>
 						<tr>
 							{ headerCells }
@@ -376,7 +429,8 @@ var BaseTable = React.createClass({
 				<div ref="scrollContainer" className="BaseTableBodyContainer" onScroll={ _.throttle(this.updateScrollInfo, 16) }
 				style={{height: 'calc(100% - '+ this.state.headerRowHeight +'px)'}} >
 					<div ref="scrollPadTop" className="ScrollPadding" style={{height: renderInfo.topPadding}} />
-					<table className="BaseTableBody">
+					<table ref="tableBody" className="BaseTableBody">
+						{ this.renderColgroup(this.state.columnOrder) }
 						<tbody>
 							{ bodyRows }
 						</tbody>

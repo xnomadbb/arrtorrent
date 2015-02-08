@@ -4,6 +4,7 @@ var log = require('../stores/log').module('TabBar');
 var TabBar = React.createClass({
 	getInitialState: function() {
 		return {
+			//FIXME Children lose state upon changing active tab, we should try to preserve state.
 			activeTab: this.props.initialTab,
 		};
 	},

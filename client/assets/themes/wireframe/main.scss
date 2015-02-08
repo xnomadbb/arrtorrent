@@ -171,6 +171,14 @@ All tables
 		&.sort_DESC.align_right:before { content: "\25BE"; }
 		&:before { margin-right: 5px; color: $grey50; }
 		&:after  { margin-left:  5px; color: $grey50; }
+		.resizeHandle {
+			margin-top: -2px; // To offset the th padding-top
+			background: transparent;
+			border-right: 1px solid transparent;
+		}
+	}
+	tr:hover .resizeHandle {
+		border-color: $offwhite;
 	}
 	td {
 		padding: 0 5px;
@@ -210,27 +218,25 @@ Specific tables
 	// can scroll off to the right.
 	// Pixel values are minimums and may be inflated if all columns are
 	// <100% of the parent's width.
-	// Percentages are respected so long as they add up to 100%, although
-	// things might get weird upon column resize (untested/unimplemented)
-	.name          { width: 400px; }
-	.status        { width:  60px; }
-	.size          { width: 100px; }
-	.progress      { width: 150px; }
-	.download_size { width: 100px; }
-	.upload_size   { width: 100px; }
-	.download_rate { width: 100px; }
-	.upload_rate   { width: 100px; }
-	.ratio         { width:  60px; }
-	.eta           { width:  60px; }
-	.label         { width: 120px; }
-	.peers         { width:  80px; }
-	.seeds         { width:  80px; }
-	.priority      { width:  70px; }
-	.remaining     { width: 100px; }
-	.created       { width: 100px; }
-	.added         { width: 100px; }
-	.finished      { width: 100px; }
-	.tracker       { width: 120px; }
+	col.name          { width: 400px; }
+	col.status        { width:  60px; }
+	col.size          { width: 100px; }
+	col.progress      { width: 150px; }
+	col.download_size { width: 100px; }
+	col.upload_size   { width: 100px; }
+	col.download_rate { width: 100px; }
+	col.upload_rate   { width: 100px; }
+	col.ratio         { width:  60px; }
+	col.eta           { width:  60px; }
+	col.label         { width: 120px; }
+	col.peers         { width:  80px; }
+	col.seeds         { width:  80px; }
+	col.priority      { width:  70px; }
+	col.remaining     { width: 100px; }
+	col.created       { width: 100px; }
+	col.added         { width: 100px; }
+	col.finished      { width: 100px; }
+	col.tracker       { width: 120px; }
 
 	//XXX autoprefixer maybe?
 	-moz-user-select: none;
@@ -244,11 +250,11 @@ Specific tables
 .LogTable {
 	font-size: 0.75rem;
 	.BaseTableBody { @extend %mono; }
-	.level      { width:  5%; }
-	.timestamp  { width: 10%; }
-	.module     { width:  5%; }
-	.event      { width: 10%; }
-	.message    { width: 70%; }
+	col.level      { width: 100px; }
+	col.timestamp  { width: 175px; }
+	col.module     { width: 125px; }
+	col.event      { width: 200px; }
+	col.message    { width: 900px; }
 	.logMessageFragment { margin-right: 1rem; }
 	.logMessageFragment:nth-child(2n) { background: #eee; }
 }

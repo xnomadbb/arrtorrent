@@ -86,14 +86,25 @@ Tables
 	min-width: 100%;
 }
 
-.BaseTable table {
-	table-layout: fixed;
-	width: 0;
-	min-width: 100%;
+.BaseTable {
+	table {
+		table-layout: fixed;
+		width: 0;
+		min-width: 100%;
+	}
 	td, th {
 		overflow: hidden;
 		white-space: nowrap;
 		width: 100px; // Override this per-column, everything will mash together without this
+	}
+	th {
+		position: relative;
+		.resizeHandle {
+			position: absolute;
+			right: 0;
+			height: 100%;
+			width: 1em; // This should render transparent, but it needs a wide handle to be usable
+		}
 	}
 }
 

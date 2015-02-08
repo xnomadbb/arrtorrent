@@ -2,7 +2,7 @@
   "name": "arrtorrent",
   "version": "0.0.1",
   "description": "TODO",
-  "license": "WTFPL",
+  "license": "ARRPL",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "compression": "^1.3.0",

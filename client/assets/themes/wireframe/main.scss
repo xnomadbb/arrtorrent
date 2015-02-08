@@ -179,6 +179,9 @@ All tables
 	}
 	tr:hover .resizeHandle {
 		border-color: $offwhite;
+		&.IsReorderTarget {
+			border-right: 2px solid $grey50;
+		}
 	}
 	td {
 		padding: 0 5px;

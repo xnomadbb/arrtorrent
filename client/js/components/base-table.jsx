@@ -157,10 +157,6 @@ var BaseTable = React.createClass({
 		});
 	},
 
-	//FIXME reorder: Don't swap the column orders, move the FROM column before/after the TO column.
-	//FIXME reorder: Preferably base before/after on whether drop is on left/right of the TO column.
-	//FIXME reorder: Display destination separator darker/thicker during reorder.
-
 	// Non-Firefox browsers can't get at the data on dragover.
 	// For any complicated checking this is a huge pain in the ass.
 	// We abuse the type string to sneak some data around.
@@ -172,6 +168,7 @@ var BaseTable = React.createClass({
 	// gets converted to lowercase in the process.
 	headerReorderHandleDragStart: function(columnKey, e) {
 		log.debug('ColumnReorderDragStart', 'Began column reorder', columnKey);
+		e.dataTransfer.setDragImage(document.createElement('span'), 0, 0); // Don't display anything for drag image
 		e.dataTransfer.setData(JSON.stringify({
 			'action': 'header_reorder',
 			'table_key': this.props.tableKey,
@@ -182,15 +179,16 @@ var BaseTable = React.createClass({
 		log.debug('ColumnResizeDragStart', 'Began column resize', columnKey);
 		var initial_width = Math.ceil(e.target.parentNode.getBoundingClientRect().width);
 		var initial_x = e.clientX;
-		var stripe_offset = this.refs.tableRoot.getDOMNode().scrollLeft - this.refs.tableRoot.getDOMNode().getBoundingClientRect().left;
-		this.refs.columnResizeStripe.getDOMNode().style.left = e.clientX + stripe_offset + 'px';
+		var table_offset = this.refs.tableRoot.getDOMNode().scrollLeft - this.refs.tableRoot.getDOMNode().getBoundingClientRect().left;
+		this.refs.columnResizeStripe.getDOMNode().style.left = e.clientX + table_offset + 'px';
+		e.dataTransfer.setDragImage(document.createElement('span'), 0, 0); // Don't display anything for drag image
 		e.dataTransfer.setData(JSON.stringify({
 			'action': 'header_resize',
 			'table_key': this.props.tableKey,
 			'column_key': columnKey,
+			'table_offset': table_offset,
 			'initial_width': initial_width,
 			'initial_x': initial_x,
-			'stripe_offset': stripe_offset,
 		}), 'arr');
 		e.stopPropagation(); // header_reorder will also process otherwise
 	},
@@ -210,9 +208,31 @@ var BaseTable = React.createClass({
 				log.debug('RejectColumnDragOver', 'Rejected invalid reorder event', data);
 				return;
 			}
-			// Handle reorder update
 
+			// Determine where column would be dropped based on which half of the th we're dragging over
+			var destIndicator;
+			var destTh = this.refs.tableHeader.getDOMNode().querySelector('th.' + columnKey);
+			var destRect = destTh.getBoundingClientRect();
+			if (e.clientX <= destRect.left + destRect.width/2) {
+				// Left half of column, highlight previous column handle
+				if (destTh.previousSibling) {
+					destIndicator = destTh.previousSibling.querySelector('.resizeHandle');
+				}
+			} else {
+				// Right half of column, highlight this column handle
+				destIndicator = destTh.querySelector('.resizeHandle');
+			}
 
+			// Add class only to destIndicator
+			var allIndicators = this.refs.tableHeader.getDOMNode().querySelectorAll('.resizeHandle');
+			for (var i=0; i < allIndicators.length; i++) {
+				if (allIndicators[i] !== destIndicator) {
+					allIndicators[i].classList.remove('IsReorderTarget');
+				}
+			}
+			if (destIndicator) {
+				destIndicator.classList.add('IsReorderTarget');
+			}
 
 		} else if (data.action === 'header_resize') {
 			if (data.table_key !== this.props.tableKey // Wrong table
@@ -222,7 +242,7 @@ var BaseTable = React.createClass({
 				return;
 			}
 			// Handle resize update
-			this.refs.columnResizeStripe.getDOMNode().style.left = e.clientX + data.stripe_offset + 'px';
+			this.refs.columnResizeStripe.getDOMNode().style.left = e.clientX + data.table_offset + 'px';
 
 		} else {
 				log.debug('RejectColumnDragOver', 'Rejected invalid event', data);
@@ -238,22 +258,39 @@ var BaseTable = React.createClass({
 		var fromColumnKey = data.column_key;
 
 		if (data.action === 'header_reorder') {
-			log.debug('AcceptColumnDrop', 'Column reorder from', fromColumnKey, 'to', toColumnKey);
-
-			// Swap columns
+			// Make a new instance of the column list without the column we're moving
 			var columnOrder = this.state.columnOrder.slice(); // New instance
-			var fromIndex = columnOrder.indexOf(fromColumnKey);
-			var toIndex   = columnOrder.indexOf(  toColumnKey);
-			columnOrder[fromIndex] =   toColumnKey;
-			columnOrder[  toIndex] = fromColumnKey;
+			columnOrder.splice(columnOrder.indexOf(fromColumnKey), 1); // Remove the column we're moving from the list
+
+			// Remove any drop indicators
+			var allIndicators = this.refs.tableHeader.getDOMNode().querySelectorAll('.resizeHandle');
+			for (var i=0; i < allIndicators.length; i++) {
+				allIndicators[i].classList.remove('IsReorderTarget');
+			}
+
+			// Determine where column should be placed based on which half of the target we've dropped over
+			var targetIndex = columnOrder.indexOf(toColumnKey);
+			var destRect = this.refs.tableHeader.getDOMNode().querySelector('th.' + toColumnKey).getBoundingClientRect();
+			if (e.clientX <= destRect.left + destRect.width/2) {
+				// Left half of column, place before this column
+				// targetIndex is correct
+			} else {
+				// Right half of column, place after this column
+				targetIndex++;
+			}
+
+			// Reinsert column and apply
+			columnOrder.splice(targetIndex, 0, fromColumnKey);
 			this.setState({columnOrder: columnOrder});
+			log.debug('AcceptColumnDrop', 'Column reorder', fromColumnKey, 'to', targetIndex);
+
 		} else if (data.action === 'header_resize') {
 			// Resize columns
 			this.refs.columnResizeStripe.getDOMNode().style.left = -1 + 'px';
 			var newWidth = (data.initial_width + e.clientX - data.initial_x) + 'px';
-			this.refs.tableHeader.getDOMNode().querySelector('col.' + data.column_key).style.width = newWidth;
-			this.refs.tableBody.getDOMNode().querySelector(  'col.' + data.column_key).style.width = newWidth;
-			log.debug('AcceptColumnResize', 'Column resize', data.column_key, data.initial_width, newWidth);
+			this.refs.tableHeader.getDOMNode().querySelector('col.' + fromColumnKey).style.width = newWidth;
+			this.refs.tableBody.getDOMNode().querySelector(  'col.' + fromColumnKey).style.width = newWidth;
+			log.debug('AcceptColumnResize', 'Column resize', fromColumnKey, data.initial_width, newWidth);
 		}
 
 		e.preventDefault(); // Prevent browser from handling drop also

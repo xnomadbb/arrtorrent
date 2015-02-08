@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var log = require('./stores/log').module('TabBar');
+var log = require('../stores/log').module('TabBar');
 
 var TabBar = React.createClass({
 	getInitialState: function() {

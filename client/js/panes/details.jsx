@@ -1,6 +1,6 @@
 var React = require('react/addons');
-var LogTable = require('./tables/log');
-var TabBar = require('./tab-bar');
+var LogTable = require('../details/log-table');
+var TabBar = require('../components/tab-bar');
 
 var DetailsPane = React.createClass({
 	render: function() {

@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var ProgressBar = require('../progress-bar');
+var ProgressBar = require('../components/progress-bar');
 var util = require('../util');
 
 //TODO Figure out if we can omit downloading some columns/data from rtorrent

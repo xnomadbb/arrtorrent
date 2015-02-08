@@ -2,10 +2,6 @@ var inherits = require('util').inherits;
 var EventEmitter = require('events').EventEmitter;
 var _ = require('lodash');
 
-/// Used like this:
-//var log = require('./log').module('DerpModule');
-//log.warn('HerpOverflow', 'The herping has derped beyond critical mass', 'more', 'arguments', 'here')
-
 // Normal levels are internal/console logs that aren't normally displayed to the user.
 // user_ levels are displayed to the user through the log pane.
 // notify_ levels make an effort to (intrusively) notify the user.

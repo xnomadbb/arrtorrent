@@ -1,7 +1,7 @@
 var React = require('react/addons');
-var BaseTable = require('./base-table');
+var BaseTable = require('../components/base-table');
 var LogStore = require('../stores/log');
-var LogColumns = require('./log-columns');
+var LogColumns = require('./log-table-columns');
 
 
 var LogTable = React.createClass({

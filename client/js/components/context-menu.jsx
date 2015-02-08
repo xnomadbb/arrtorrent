@@ -1,8 +1,8 @@
 var React = require('react/addons');
 var NativeListener = require('react-native-listener');
 var _ = require('lodash');
-var Event = require('./event');
-var log = require('./stores/log').module('ContextMenu');
+var Event = require('../event');
+var log = require('../stores/log').module('ContextMenu');
 
 
 var ContextMenu = React.createClass({

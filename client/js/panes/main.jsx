@@ -1,7 +1,7 @@
 var React = require('react/addons');
-var TorrentTable = require('./tables/torrent');
-var DetailsPane = require('./pane-details');
-var FlexResizerMixin = require('./mixins/flex-resizer');
+var TorrentTable = require('../torrent/table');
+var DetailsPane = require('./details');
+var FlexResizerMixin = require('../mixins/flex-resizer');
 
 var MainPane = React.createClass({
 	mixins: [FlexResizerMixin],

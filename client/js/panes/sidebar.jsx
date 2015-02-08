@@ -1,8 +1,8 @@
 var React = require('react/addons');
 var _ = require('lodash');
-var ViewStore = require('./stores/view');
-var ContextMenuMixin = require('./mixins/context-menu');
-var GetMenuOptions = require('./tables/torrent-menu');
+var ViewStore = require('../stores/view');
+var ContextMenuMixin = require('../mixins/context-menu');
+var GetMenuOptions = require('../torrent/menu');
 
 
 var SidebarItem = React.createClass({

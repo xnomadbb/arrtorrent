@@ -305,6 +305,11 @@ var BaseTable = React.createClass({
 		}
 		this.updateScrollInfo();
 	},
+	componentWillUpdate: function(nextProps, nextState) {
+		if (this.state.focusedRow !== nextState.focusedRow) {
+			Event.emit('BaseTable.FocusChange', this.props.tableKey, nextState.focusedRow);
+		}
+	},
 
 
 	renderHeaderCell: function(columnKey) {

@@ -2,9 +2,9 @@ var React = require('react/addons');
 var _ = require('lodash');
 var ViewStore = require('../stores/view');
 var TorrentStore = require('../stores/torrent');
-var TorrentColumns = require('./torrent-columns');
-var GetMenuOptions = require('./torrent-menu');
-var BaseTable = require('./base-table');
+var TorrentColumns = require('./columns');
+var GetMenuOptions = require('./menu');
+var BaseTable = require('../components/base-table');
 
 var TorrentTable = React.createClass({
 	componentWillMount: function() {

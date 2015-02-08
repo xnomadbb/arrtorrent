@@ -1,7 +1,7 @@
 var React = require('react/addons');
-var log = require('./stores/log').module('FooterPane');
-var ArrRpc = require('./rpc');
-var util = require('./util');
+var log = require('../stores/log').module('FooterPane');
+var ArrRpc = require('../rpc');
+var util = require('../util');
 
 var FooterPane = React.createClass({
 	getInitialState: function() {

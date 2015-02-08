@@ -1,6 +1,6 @@
 var React = require('react/addons');
-var Login = require('./login');
-var RootPane = require('./pane-root');
+var LoginPane = require('./panes/login');
+var RootPane = require('./panes/root');
 var ArrRpc = require('./rpc');
 var LogStore = require('./stores/log');
 
@@ -27,7 +27,7 @@ var ArrTorrent = React.createClass({
 		if (this.state.isAuthenticated) {
 			return <RootPane />;
 		} else {
-			return <Login />;
+			return <LoginPane />;
 		}
 	},
 });

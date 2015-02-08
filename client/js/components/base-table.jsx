@@ -247,7 +247,6 @@ var BaseTable = React.createClass({
 				return;
 		}
 
-		e.dataTransfer.effectAllowed = e.dataTransfer.dropEffect = 'move';
 		e.preventDefault(); // Accept drop
 	},
 	headerHandleDrop: function(toColumnKey, e) {

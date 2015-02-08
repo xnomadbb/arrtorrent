@@ -4,7 +4,6 @@ var log = require('../stores/log').module('TabBar');
 var TabBar = React.createClass({
 	getInitialState: function() {
 		return {
-			//FIXME Children lose state upon changing active tab, we should try to preserve state.
 			activeTab: this.props.initialTab,
 		};
 	},
@@ -37,23 +36,23 @@ var TabBar = React.createClass({
 
 	render: function() {
 		var tabHeaders = this.renderTabHeaders();
-		var tabBody;
+		var tabBodys = [];
 
+		// Have non-active tabs display:none so that state is preserved for them
 		for (var i=0; i < this.props.children.length; i++) {
 			var tab = this.props.children[i];
-			if (tab.props.tabKey !== this.state.activeTab) {
-				continue;
-			}
-			tabBody = tab;
-			break;
+			var style = (tab.props.tabKey === this.state.activeTab) ? {} : {display: 'none'};
+			tabBodys.push(
+				<div key={tab.props.tabKey} className="TabBody" style={style}>
+					{tab}
+				</div>
+			);
 		}
 
 		return (
 			<div className="TabBar">
 				<div className="TabHeaders">{tabHeaders}</div>
-				<div className="TabBody">
-					{tabBody}
-				</div>
+				{tabBodys}
 			</div>
 		);
 	},

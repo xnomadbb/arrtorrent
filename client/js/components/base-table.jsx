@@ -300,20 +300,23 @@ var BaseTable = React.createClass({
 	},
 	updateScrollInfo: function() {
 		var scrollContainer = this.refs.scrollContainer.getDOMNode();
+
+		this.setState({
+			tableHeight: scrollContainer.getBoundingClientRect().height,
+			tableTopOffset: scrollContainer.scrollTop,
+			headerRowHeight: this.refs.tableHeader.getDOMNode().getBoundingClientRect().height,
+		});
+
+		// Only update the row height if there's something there with non-zero height (it's 0 during display:none)
+		// We need to be cautious here because if this is set to 0 no rows will render and so it will never become non-zero.
 		var firstRow = scrollContainer.querySelector('tr');
 		if (firstRow) {
-			this.setState({
-				tableHeight: scrollContainer.getBoundingClientRect().height,
-				tableTopOffset: scrollContainer.scrollTop,
-				headerRowHeight: this.refs.tableHeader.getDOMNode().getBoundingClientRect().height,
-				rowHeight: firstRow.getBoundingClientRect().height,
-			});
-		} else {
-			this.setState({
-				tableHeight: scrollContainer.getBoundingClientRect().height,
-				tableTopOffset: scrollContainer.scrollTop,
-				headerRowHeight: this.refs.tableHeader.getDOMNode().getBoundingClientRect().height,
-			});
+			var rowHeight = firstRow.getBoundingClientRect().height;
+			if (rowHeight) {
+				this.setState({
+					rowHeight: firstRow.getBoundingClientRect().height,
+				});
+			}
 		}
 	},
 	resetScroll: function() {

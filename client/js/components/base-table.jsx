@@ -157,10 +157,10 @@ var BaseTable = React.createClass({
 		});
 	},
 
-	//FIXME don't swap the column orders, move the FROM column before/after the TO column.
-	//FIXME Preferably base before/after on whether drop is on left/right of the TO column.
-	//FIXME display column separators on drag/hover.
-	//FIXME display destination separator darker/thicker on drag/hover.
+	//FIXME reorder: Don't swap the column orders, move the FROM column before/after the TO column.
+	//FIXME reorder: Preferably base before/after on whether drop is on left/right of the TO column.
+	//FIXME reorder: Display destination separator darker/thicker during reorder.
+	//FIXME resize:  Display width previews during resize.
 
 	// Non-Firefox browsers can't get at the data on dragover.
 	// For any complicated checking this is a huge pain in the ass.

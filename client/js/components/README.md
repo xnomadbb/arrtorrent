@@ -10,12 +10,12 @@ We can interact with this to display rich tables with fancy features. Check out 
 	updateVisibleRowKeys={Function} getContextMenuOptions={Function} />
 	```
 
-- `context-menu.jsx`
+- `context-menu-manager.jsx`
 This sits at the root of the application and displays custom context menus when requested via event.
 	
 	Usage:
 	```jsx
-	Event.emit('ContextMenu.requestMenu', menuOptions, [clientX, clientY]);
+	Event.emit('ContextMenuManager.requestMenu', menuOptions, [clientX, clientY]);
 	var menuOptions = [
 		{
 			key: 'key1',

@@ -13,7 +13,7 @@ var ContextMenuMixin = {
 		if (this.props.getContextMenuOptions) {
 			var menuOptions = this.props.getContextMenuOptions();
 			if (menuOptions) {
-				Event.emit('ContextMenu.requestMenu', menuOptions, coords);
+				Event.emit('ContextMenuManager.requestMenu', menuOptions, coords);
 				e.preventDefault();
 			}
 		}

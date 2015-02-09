@@ -11,7 +11,7 @@ to one per component.
 
 Currently these events are:
 
-ContextMenu.requestMenu(menuOptions, [clientX, clientY]):
+ContextMenuManager.requestMenu(menuOptions, [clientX, clientY]):
 	Spawns a context menu, needs to be modal and top-level or else we'd
 	need plumbing for anything that could house a menu.
 

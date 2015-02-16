@@ -308,6 +308,28 @@ Context menus
 }
 
 /*
+Windows
+*/
+
+.WindowManager {
+	background: rgba($grey50, 0.75);
+	.Window {
+		background: white;
+	}
+	.WindowTitleBar, .WindowContents {
+		padding: 0.5rem;
+	}
+	.WindowTitleBar {
+		background: $offwhite;
+	}
+	.WindowClose {
+		&:after {
+			content: 'x';
+		}
+	}
+}
+
+/*
 Tab bars
 */
 

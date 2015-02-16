@@ -15,6 +15,9 @@ ContextMenuManager.requestMenu(menuOptions, [clientX, clientY]):
 	Spawns a context menu, needs to be modal and top-level or else we'd
 	need plumbing for anything that could house a menu.
 
+WindowManager.requestWindow(windowClass):
+	Spawns a window, see ContextMenuManager.requestMenu for rationale.
+
 PaneResize(void):
 	Fires any time a pane resizes to warn components to check their sizes.
 

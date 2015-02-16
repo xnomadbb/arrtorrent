@@ -33,6 +33,29 @@ This sits at the root of the application and displays custom context menus when 
 	];
 	```
 
+- `window-manager.jsx`, `window.jsx`
+The manager sits at the root of the application and displays custom windows when requested via event.
+The window class handles some of the common window functionality.
+A custom class typically sits between the window manager and base window class, as shown below.
+When disallowClose is true, the default X button and shortcuts do not exist, and the window
+can only be closed by its controlling component. If we just want to override the close behavior,
+wrap the closeWindow prop instead.
+	
+	Usage:
+	```jsx
+	Event.emit('WindowManager.requestWindow', windowClass);
+	var Window = require('./window.jsx');
+	var windowClass = React.createClass({
+		render: function() {
+			return (
+				<Window disallowClose={true} closeWindow={this.props.closeWindow} title="Window Title">
+					Window contents go here
+				</Window>
+			);
+		},
+	});
+	```
+
 - `progress-bar.jsx`
 Displays a basic progress bar. This can be made to look very nice with CSS, but since things like `width: calc(attr(percentage));` don't work, each percentage needs a rule to match it. You'll notice that the global SCSS coughs out 100 rules to style this, and that's why.
 	

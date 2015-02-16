@@ -3,6 +3,7 @@ var SidebarPane = require('./sidebar');
 var MainPane = require('./main');
 var FooterPane = require('./footer');
 var ContextMenuManager = require('../components/context-menu-manager');
+var WindowManager = require('../components/window-manager');
 var FlexResizerMixin = require('../mixins/flex-resizer');
 var log = require('../stores/log').module('RootPane');
 
@@ -28,6 +29,7 @@ var RootPane = React.createClass({
 				</div>
 				<FooterPane />
 				<ContextMenuManager />
+				<WindowManager />
 			</div>
 		);
 	},

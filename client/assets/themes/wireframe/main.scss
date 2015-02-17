@@ -327,6 +327,21 @@ Windows
 			content: 'x';
 		}
 	}
+	.WindowLabel:after {
+		content: ':';
+	}
+	.WindowInput {
+		display: block;
+	}
+	.WindowButton {
+		border: 1px solid $offwhite;
+		padding: 0.25rem;
+		line-height: 3rem;
+		margin-right: 0.5rem;
+		&:hover {
+			background: $selectioncolor;
+		}
+	}
 }
 
 /*

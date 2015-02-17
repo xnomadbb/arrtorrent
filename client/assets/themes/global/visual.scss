@@ -8,6 +8,7 @@ For pretty much global visual effects
 }
 
 .WindowClose              { cursor:    pointer; }
+.WindowButton             { cursor:    pointer; }
 .BaseTable .resizeHandle  { cursor:   e-resize; }
 .FlexResizer[data-axis=x] { cursor: col-resize; }
 .FlexResizer[data-axis=y] { cursor: row-resize; }

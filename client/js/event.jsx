@@ -15,7 +15,7 @@ ContextMenuManager.requestMenu(menuOptions, [clientX, clientY]):
 	Spawns a context menu, needs to be modal and top-level or else we'd
 	need plumbing for anything that could house a menu.
 
-WindowManager.requestWindow(windowClass):
+WindowManager.requestWindow(windowClass, windowProps):
 	Spawns a window, see ContextMenuManager.requestMenu for rationale.
 
 PaneResize(void):

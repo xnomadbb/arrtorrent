@@ -4,6 +4,8 @@ var ArrRpc = require('../rpc');
 var ViewStore = require('../stores/view');
 var TorrentStore = require('../stores/torrent');
 var log = require('../stores/log').module('TorrentMenu');
+var Event = require('../event');
+var NewLabelWindow = require('../windows/new-label');
 
 function isTorrentStoppedOrPaused(t) {
 	return (t.is_active === '0' || t.mystery_state === '0');
@@ -135,30 +137,55 @@ module.exports = function(selectedRows) {
 		key: 'labels',
 		name: 'Labels',
 		type: 'submenu',
-		menuOptions: ViewStore.viewGroups.label.map(function(viewId) {
-			var viewName = ViewStore.viewNames[viewId];
-			var labelValue = (viewId === 'label_none') ? '' : viewName;
-			return {
-				key: viewId,
-				name: viewName,
-				handleClick: function() {
-					var calls = [];
-					for (var i=0; i < hashes.length; i++) {
-						calls.push(['d.set_custom1', [hashes[i], labelValue]]);
-					}
-
-					ArrRpc.sendRequest('arr.multicall', calls, function(response) {
-						if (response.error !== null) {
-							log.user_error('LabelFail', 'Failed to change label', response.error);
-						} else {
-							log.user_info('LabelSuccess', 'Successfully changed label', calls.length);
+		menuOptions: [].concat(
+			ViewStore.viewGroups.label.map(function(viewId) {
+				var viewName = ViewStore.viewNames[viewId];
+				var labelValue = (viewId === 'label_none') ? '' : viewName;
+				return {
+					key: viewId,
+					name: viewName,
+					handleClick: function() {
+						var calls = [];
+						for (var i=0; i < hashes.length; i++) {
+							calls.push(['d.set_custom1', [hashes[i], labelValue]]);
 						}
 
-						TorrentStore.queryHashListInfo(hashes);
-					});
+						ArrRpc.sendRequest('arr.multicall', calls, function(response) {
+							if (response.error !== null) {
+								log.user_error('LabelFail', 'Failed to change label', response.error);
+							} else {
+								log.user_info('LabelSuccess', 'Successfully changed label', calls.length);
+							}
+
+							TorrentStore.queryHashListInfo(hashes);
+						});
+					},
+				};
+			}),
+			{type: 'separator'},
+			{
+				key: 'newlabel',
+				name: 'New Label',
+				handleClick: function() {
+					Event.emit('WindowManager.requestWindow', NewLabelWindow, {onSubmit: function(newLabel) {
+						var calls = [];
+						for (var i=0; i < hashes.length; i++) {
+							calls.push(['d.set_custom1', [hashes[i], newLabel]]);
+						}
+
+						ArrRpc.sendRequest('arr.multicall', calls, function(response) {
+							if (response.error !== null) {
+								log.user_error('LabelNewFail', 'Failed to add label', response.error);
+							} else {
+								log.user_info('LabelNewSuccess', 'Successfully added label', calls.length);
+							}
+
+							TorrentStore.queryHashListInfo(hashes);
+						});
+					}});
 				},
-			};
-		}),
+			}
+		),
 	};
 
 	var priorityOption = {

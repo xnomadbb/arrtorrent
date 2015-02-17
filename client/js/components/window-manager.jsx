@@ -7,6 +7,7 @@ var WindowManager = React.createClass({
 	getInitialState: function() {
 		return {
 			windowClass: null,
+			windowProps: {},
 		};
 	},
 
@@ -17,9 +18,10 @@ var WindowManager = React.createClass({
 		Event.removeListener('WindowManager.requestWindow', this.handleWindowRequest);
 	},
 
-	handleWindowRequest: function(windowClass) {
+	handleWindowRequest: function(windowClass, windowProps) {
 		this.setState({
 			windowClass: windowClass,
+			windowProps: windowProps,
 		});
 	},
 
@@ -37,7 +39,7 @@ var WindowManager = React.createClass({
 		var WindowClass = this.state.windowClass;
 		return (
 			<div className="WindowManager active">
-				<WindowClass closeWindow={this.closeWindow} />
+				<WindowClass closeWindow={this.closeWindow} {...this.state.windowProps} />
 			</div>
 		);
 	},

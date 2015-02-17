@@ -43,13 +43,13 @@ wrap the closeWindow prop instead.
 	
 	Usage:
 	```jsx
-	Event.emit('WindowManager.requestWindow', windowClass);
+	Event.emit('WindowManager.requestWindow', windowClass, {propName: 'propValue'});
 	var Window = require('./window.jsx');
 	var windowClass = React.createClass({
 		render: function() {
 			return (
 				<Window disallowClose={true} closeWindow={this.props.closeWindow} title="Window Title">
-					Window contents go here
+					Window contents go here: {this.props.propName}
 				</Window>
 			);
 		},

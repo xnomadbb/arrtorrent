@@ -82,6 +82,20 @@ Large top-level components
 .HeaderPane {
 	background: $offwhite;
 	flex-basis: 32px;
+
+	.HeaderButton {
+		float: left;
+		height: 30px;
+		line-height: 28px;
+		border: 1px solid white;
+		margin: 1px;
+		padding: 0 5px;
+		&:hover {
+			background: $selectioncolor;
+		}
+		&.add:after    { content: 'Add'; }
+		&.create:after { content: 'Create'; }
+	}
 }
 .FooterPane {
 	background: $offwhite;

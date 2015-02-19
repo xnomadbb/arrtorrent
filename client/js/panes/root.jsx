@@ -1,6 +1,7 @@
 var React = require('react/addons');
 var SidebarPane = require('./sidebar');
 var MainPane = require('./main');
+var HeaderPane = require('./header');
 var FooterPane = require('./footer');
 var ContextMenuManager = require('../components/context-menu-manager');
 var WindowManager = require('../components/window-manager');
@@ -21,7 +22,7 @@ var RootPane = React.createClass({
 	render: function() {
 		return (
 			<div className="RootPane">
-				<div className="HeaderPane">Header stuff</div>
+				<HeaderPane />
 				<div className="CenterPane">
 					<SidebarPane ref="flexResizerTarget" activeView={this.state.activeView} onChoose={this.changeView} />
 					{ this.flexResizerRenderHandle('x', 'pos') }

@@ -21,7 +21,7 @@ var SidebarItem = React.createClass({
 });
 
 
-var SidebarPane = module.exports = React.createClass({
+var SidebarPane = React.createClass({
 	componentWillMount: function() {
 		ViewStore.on('change', this.viewDidChange);
 	},

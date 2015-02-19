@@ -1,6 +1,0 @@
-%:
-	@./grunt $@
-
-all:
-	@./grunt
-

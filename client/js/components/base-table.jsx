@@ -1,5 +1,6 @@
 var React = require('react/addons');
 var _ = require('lodash');
+var classnames = require('classnames');
 var log = require('../stores/log').module('BaseTable');
 var ContextMenuMixin = require('../mixins/context-menu');
 var Event = require('../event');
@@ -10,12 +11,7 @@ var TableBodyCell = React.createClass({
 	},
 	render: function() {
 		var contents = this.props.columnDescription.renderCellContents(this.props.rowData);
-
-		var classes = {};
-		classes['align_' + this.props.columnDescription.align] = true;
-		classes[this.props.columnDescription.key] = true;
-		classes = React.addons.classSet(classes);
-
+		var classes = classnames(['align_' + this.props.columnDescription.align, this.props.columnDescription.key]);
 		return (
 			<td key={this.props.columnDescription.key} className={classes}>
 				{ contents }
@@ -47,7 +43,7 @@ var TableBodyRow = React.createClass({
 			);
 		}
 
-		var classes = React.addons.classSet({
+		var classes = classnames({
 			focused: this.props.focused,
 			selected: this.props.selected,
 		});
@@ -403,7 +399,7 @@ var BaseTable = React.createClass({
 		if (this.state.sortKey === columnKey) {
 			classes['sort_' + this.state.sortDirection] = true;
 		}
-		classes = React.addons.classSet(classes);
+		classes = classnames(classes);
 
 		return (
 			<th key={columnKey} ref={'head_' + columnKey} className={classes} title={columnDescription.tooltip} draggable="true"

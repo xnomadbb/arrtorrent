@@ -1,5 +1,6 @@
 var React = require('react/addons');
 var _ = require('lodash');
+var classnames = require('classnames');
 var ViewStore = require('../stores/view');
 var ContextMenuMixin = require('../mixins/context-menu');
 var GetMenuOptions = require('../torrent/menu');
@@ -11,9 +12,7 @@ var SidebarItem = React.createClass({
 		this.props.onChoose(this.props.viewId);
 	},
 	render: function() {
-		var classes = React.addons.classSet({
-			'active': this.props.isActive
-		});
+		var classes = classnames({active: this.props.isActive});
 		return <li className={classes} onClick={this.handleClick} title={this.props.tooltip}>
 			{this.props.name} ({this.props.count})
 		</li>;

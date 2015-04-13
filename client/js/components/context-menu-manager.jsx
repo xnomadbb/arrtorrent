@@ -1,6 +1,7 @@
 var React = require('react/addons');
 var NativeListener = require('react-native-listener');
 var _ = require('lodash');
+var classnames = require('classnames');
 var Event = require('../event');
 var log = require('../stores/log').module('ContextMenuManager');
 
@@ -21,14 +22,15 @@ var ContextMenu = React.createClass({
 			return <div key={'separator' + i} className="ContextSeparator"></div>;
 		}
 
-		var classes = {};
-		classes.enabled  =  option.enabled;
-		classes.disabled = !option.enabled;
+		var classes = {
+			enabled:  option.enabled,
+			disabled: !option.enabled,
+		};
 		classes[option.key] = true;
 
 		if (option.type === 'submenu') {
 			classes.ContextSubmenu = true;
-			classes = React.addons.classSet(classes);
+			classes = classnames(classes);
 			return (
 				<div key={option.key} className={classes}>
 					{option.name}
@@ -39,7 +41,7 @@ var ContextMenu = React.createClass({
 			// normal
 			var onClick = option.enabled ? this.handleClick.bind(this, option.handleClick) : _.noop;
 			classes.ContextOption = true;
-			classes = React.addons.classSet(classes);
+			classes = classnames(classes);
 			return (
 				<div key={option.key} className={classes} onClick={onClick}>
 					{option.name}

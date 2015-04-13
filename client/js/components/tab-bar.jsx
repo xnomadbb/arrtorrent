@@ -1,4 +1,5 @@
 var React = require('react/addons');
+var classnames = require('classnames');
 var log = require('../stores/log').module('TabBar');
 
 var TabBar = React.createClass({
@@ -18,11 +19,7 @@ var TabBar = React.createClass({
 		for (var i=0; i < this.props.children.length; i++) {
 			var tabBody = this.props.children[i];
 			var tabKey = tabBody.props.tabKey;
-			var classes = React.addons.classSet({
-				TabHeader: true,
-				active:   (this.state.activeTab === tabKey),
-				inactive: (this.state.activeTab !== tabKey),
-			});
+			var classes = classnames('TabHeader', {active: this.state.activeTab === tabKey}, {inactive: this.state.activeTab !== tabKey});
 			var tabHeader = (
 				<div className={classes} key={tabKey} data-tab={tabKey}
 				onClick={this.handleTabClick.bind(this, tabKey)}>

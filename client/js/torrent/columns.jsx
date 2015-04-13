@@ -1,4 +1,5 @@
 var React = require('react/addons');
+var classnames = require('classnames');
 var ProgressBar = require('../components/progress-bar');
 var util = require('../util');
 
@@ -32,11 +33,7 @@ var columns = {
 		renderCellContents: function(row) {
 			var status_error = util.torrent.getStatusFromTorrent(row);
 			var statusName = util.torrent.statusNames[status_error[0]];
-
-			var classes = {};
-			classes.error = status_error[1];
-			classes['status_' + status_error[0]] = true;
-			classes = React.addons.classSet(classes);
+			var classes = classnames('status_' + status_error[0], {error: status_error[1]});
 
 			return (<span className={classes}>{statusName}</span>);
 		},

@@ -4,11 +4,7 @@ BASEDIR=$(dirname $0)
 cd "$BASEDIR"
 
 # check openssl existence
-if ! which openssl &> /dev/null; then
-	which openssl
-	echo 'ERROR: openssl not found in PATH (see above)'
-	exit 1
-fi
+command -v openssl >/dev/null 2>&1 || { echo >&2 "ERROR: openssl not found"; exit 1; }
 
 cat <<EOF > tmpconfig
 [ req ]

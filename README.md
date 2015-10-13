@@ -7,6 +7,8 @@
 I has hipster badges, stay tuned.
 
 ## Try it out ##
+Do not run with default credentials on an untrusted network if you are running on bare-metal or if anonymity is a concern. Anyone who authenticates can run arbitrary commands using XMLRPC, as with rutorrent.
+
 1. [Install Vagrant](https://www.vagrantup.com/downloads.html)
 2. [Install VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 3. `git clone --depth 1 https://github.com/xnomadbb/arrtorrent; cd arrtorrent`

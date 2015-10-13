@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var url = require('url');
 var sha1 = require('sha1');
 var log = require('./stores/log').module('util');

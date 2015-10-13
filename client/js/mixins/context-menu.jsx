@@ -1,12 +1,13 @@
-var React = require('react/addons');
+var React = require('react');
+var ReactDOM = require('react-dom');
 var Event = require('../event');
 
 var ContextMenuMixin = {
 	componentDidMount: function() {
-		this.getDOMNode().addEventListener('contextmenu', this.handleContextMenu);
+		ReactDOM.findDOMNode(this).addEventListener('contextmenu', this.handleContextMenu);
 	},
 	componentWillUnmount: function() {
-		this.getDOMNode().removeEventListener('contextmenu', this.handleContextMenu);
+		ReactDOM.findDOMNode(this).removeEventListener('contextmenu', this.handleContextMenu);
 	},
 	handleContextMenu: function(e) {
 		var coords = [e.clientX, e.clientY];

@@ -1,4 +1,5 @@
-var React = require('react/addons');
+var React = require('react');
+var ReactDOM = require('react-dom');
 var LoginPane = require('./panes/login');
 var RootPane = require('./panes/root');
 var ArrRpc = require('./rpc');
@@ -33,7 +34,7 @@ var ArrTorrent = React.createClass({
 });
 
 
-React.render(
+ReactDOM.render(
 	<ArrTorrent />,
 	document.getElementById('arr')
 );

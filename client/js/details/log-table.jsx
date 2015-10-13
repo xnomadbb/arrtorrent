@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var BaseTable = require('../components/base-table');
 var LogStore = require('../stores/log');
 var LogColumns = require('./log-table-columns');

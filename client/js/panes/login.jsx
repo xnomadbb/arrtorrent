@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var ArrRpc = require('../rpc');
 var log = require('../stores/log').module('ArrRoot');
 
@@ -9,8 +9,8 @@ var LoginPane = React.createClass({
 		};
 	},
 	handleSubmit: function() {
-		var username = this.refs.username.getDOMNode().value;
-		var password = this.refs.password.getDOMNode().value;
+		var username = this.refs.username.value;
+		var password = this.refs.password.value;
 		ArrRpc.configure({username: username, password: password});
 		ArrRpc.once('wsError', this.authDidFail);
 		ArrRpc.connect(ArrRpc.createUrl());
@@ -30,7 +30,7 @@ var LoginPane = React.createClass({
 	},
 	componentDidMount: function() {
 		// autofocus attribute doesn't work here
-		this.refs.username.getDOMNode().focus();
+		this.refs.username.focus();
 	},
 	render: function() {
 		var authFail = this.state.didAuthFail ? (<div className="authFail">Authentication failed</div>) : '';

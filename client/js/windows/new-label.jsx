@@ -1,15 +1,15 @@
-var React = require('react/addons');
+var React = require('react');
 var Window = require('../components/window');
 var WindowButton = require('../components/window-button');
 
 var NewLabelWindow = React.createClass({
 	handleSubmit: function() {
-		var newLabel = this.refs.labelInput.getDOMNode().value;
+		var newLabel = this.refs.labelInput.value;
 		this.props.onSubmit(newLabel);
 		this.props.closeWindow();
 	},
 	componentDidMount: function() {
-		this.refs.labelInput.getDOMNode().focus();
+		this.refs.labelInput.focus();
 	},
 	render: function() {
 		return (

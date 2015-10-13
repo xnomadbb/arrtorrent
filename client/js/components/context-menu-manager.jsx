@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var NativeListener = require('react-native-listener');
 var _ = require('lodash');
 var classnames = require('classnames');

@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 
 var WindowButton = React.createClass({
 	handleAction: function() {

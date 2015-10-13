@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var SidebarPane = require('./sidebar');
 var MainPane = require('./main');
 var HeaderPane = require('./header');

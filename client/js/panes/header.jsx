@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var log = require('../stores/log').module('HeaderPane');
 var Event = require('../event');
 var AddTorrentWindow = require('../windows/add-torrent');

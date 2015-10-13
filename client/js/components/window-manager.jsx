@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var _ = require('lodash');
 var Event = require('../event');
 var log = require('../stores/log').module('WindowManager');

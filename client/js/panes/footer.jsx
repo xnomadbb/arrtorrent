@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var log = require('../stores/log').module('FooterPane');
 var ArrRpc = require('../rpc');
 var util = require('../util');

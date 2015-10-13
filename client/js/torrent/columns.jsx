@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var classnames = require('classnames');
 var ProgressBar = require('../components/progress-bar');
 var util = require('../util');

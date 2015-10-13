@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var _ = require('lodash');
 var classnames = require('classnames');
 var log = require('../stores/log').module('BaseTable');
@@ -174,8 +174,8 @@ var BaseTable = React.createClass({
 	headerResizeHandleDragStart: function(columnKey, e) {
 		log.debug('ColumnResizeDragStart', 'Began column resize', columnKey);
 		var initial_left = Math.ceil(e.target.parentNode.getBoundingClientRect().left);
-		var table_offset = this.refs.tableRoot.getDOMNode().scrollLeft - this.refs.tableRoot.getDOMNode().getBoundingClientRect().left;
-		this.refs.columnResizeStripe.getDOMNode().style.left = e.clientX + table_offset + 'px';
+		var table_offset = this.refs.tableRoot.scrollLeft - this.refs.tableRoot.getBoundingClientRect().left;
+		this.refs.columnResizeStripe.style.left = e.clientX + table_offset + 'px';
 		e.dataTransfer.setDragImage(document.createElement('span'), 0, 0); // Don't display anything for drag image
 		e.dataTransfer.setData(JSON.stringify({
 			'action': 'header_resize',
@@ -205,7 +205,7 @@ var BaseTable = React.createClass({
 
 			// Determine where column would be dropped based on which half of the th we're dragging over
 			var destIndicator;
-			var destTh = this.refs.tableHeader.getDOMNode().querySelector('th.' + columnKey);
+			var destTh = this.refs.tableHeader.querySelector('th.' + columnKey);
 			var destRect = destTh.getBoundingClientRect();
 			if (e.clientX <= destRect.left + destRect.width/2) {
 				// Left half of column, highlight previous column handle
@@ -218,7 +218,7 @@ var BaseTable = React.createClass({
 			}
 
 			// Add class only to destIndicator
-			var allIndicators = this.refs.tableHeader.getDOMNode().querySelectorAll('.resizeHandle');
+			var allIndicators = this.refs.tableHeader.querySelectorAll('.resizeHandle');
 			for (var i=0; i < allIndicators.length; i++) {
 				if (allIndicators[i] !== destIndicator) {
 					allIndicators[i].classList.remove('IsReorderTarget');
@@ -236,7 +236,7 @@ var BaseTable = React.createClass({
 				return;
 			}
 			// Handle resize update
-			this.refs.columnResizeStripe.getDOMNode().style.left = e.clientX + data.table_offset + 'px';
+			this.refs.columnResizeStripe.style.left = e.clientX + data.table_offset + 'px';
 
 		} else {
 				log.debug('RejectColumnDragOver', 'Rejected invalid event', data);
@@ -256,14 +256,14 @@ var BaseTable = React.createClass({
 			columnOrder.splice(columnOrder.indexOf(fromColumnKey), 1); // Remove the column we're moving from the list
 
 			// Remove any drop indicators
-			var allIndicators = this.refs.tableHeader.getDOMNode().querySelectorAll('.resizeHandle');
+			var allIndicators = this.refs.tableHeader.querySelectorAll('.resizeHandle');
 			for (var i=0; i < allIndicators.length; i++) {
 				allIndicators[i].classList.remove('IsReorderTarget');
 			}
 
 			// Determine where column should be placed based on which half of the target we've dropped over
 			var targetIndex = columnOrder.indexOf(toColumnKey);
-			var destRect = this.refs.tableHeader.getDOMNode().querySelector('th.' + toColumnKey).getBoundingClientRect();
+			var destRect = this.refs.tableHeader.querySelector('th.' + toColumnKey).getBoundingClientRect();
 			if (e.clientX <= destRect.left + destRect.width/2) {
 				// Left half of column, place before this column
 				// targetIndex is correct
@@ -279,10 +279,10 @@ var BaseTable = React.createClass({
 
 		} else if (data.action === 'header_resize') {
 			// Resize columns
-			this.refs.columnResizeStripe.getDOMNode().style.left = -1 + 'px';
+			this.refs.columnResizeStripe.style.left = -1 + 'px';
 			var newWidth = (e.clientX - data.initial_left) + 'px';
-			this.refs.tableHeader.getDOMNode().querySelector('col.' + fromColumnKey).style.width = newWidth;
-			this.refs.tableBody.getDOMNode().querySelector(  'col.' + fromColumnKey).style.width = newWidth;
+			this.refs.tableHeader.querySelector('col.' + fromColumnKey).style.width = newWidth;
+			this.refs.tableBody.querySelector(  'col.' + fromColumnKey).style.width = newWidth;
 			log.debug('AcceptColumnResize', 'Column resize', fromColumnKey, newWidth);
 		}
 
@@ -332,12 +332,12 @@ var BaseTable = React.createClass({
 		this.updateScrollInfo();
 	},
 	updateScrollInfo: function() {
-		var scrollContainer = this.refs.scrollContainer.getDOMNode();
+		var scrollContainer = this.refs.scrollContainer;
 
 		this.setState({
 			tableHeight: scrollContainer.getBoundingClientRect().height,
 			tableTopOffset: scrollContainer.scrollTop,
-			headerRowHeight: this.refs.tableHeader.getDOMNode().getBoundingClientRect().height,
+			headerRowHeight: this.refs.tableHeader.getBoundingClientRect().height,
 		});
 
 		// Only update the row height if there's something there with non-zero height (it's 0 during display:none)
@@ -355,7 +355,7 @@ var BaseTable = React.createClass({
 	resetScroll: function() {
 		var scrollContainer = this.refs.scrollContainer;
 		if (scrollContainer) {
-			scrollContainer.getDOMNode().scrollTop = 0;
+			scrollContainer.scrollTop = 0;
 			this.setState({tableTopOffset: 0});
 		}
 	},

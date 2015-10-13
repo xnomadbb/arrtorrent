@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var TorrentTable = require('../torrent/table');
 var DetailsPane = require('./details');
 var FlexResizerMixin = require('../mixins/flex-resizer');

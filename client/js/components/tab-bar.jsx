@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var classnames = require('classnames');
 var log = require('../stores/log').module('TabBar');
 

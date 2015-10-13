@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var _ = require('lodash');
 var classnames = require('classnames');
 var ViewStore = require('../stores/view');

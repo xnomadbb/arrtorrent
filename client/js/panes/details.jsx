@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 var LogTable = require('../details/log-table');
 var TabBar = require('../components/tab-bar');
 
